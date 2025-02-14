@@ -3,9 +3,13 @@
 
 \section{Spring Boot and Kotlin}
 \setauthor{Michael Stenz}
-For the backend logic, we had to use Spring Boot, because Spring boot is in the main Stack of Solvistas, and the project should later be maintainable by Solvistas developers. TODO: Mehr spring schreiben
+For the backend logic, we had to use Spring Boot, because Spring boot is in the main Stack of Solvistas, and the project should later be maintainable by Solvistas developers. The problems, that our backend had to solve were: handling the storing of the Seatplan metadata, converting the SVG's into image tiles, uploading the converted tiles to an S3 bucket, and serving all of this data to our frontend via REST. For the converting, resizing and slicing of the SVG's and PNG's, we considered Python as an alternative, because there are lots of easy to use and well documented image manipulation libraries like CairoSVG or the OpenCV python wrapper, but the processing of the images is also possible within Java/Kotlin with libraries like Batik and ImageIO, but it's not as straight forward as in python because it's not as popular and therefore there's a lot less documentation, and there are other limitations like heap size always have to be kept in mind. As for the uploading the files to an S3 Bucket, Amazaon provides good support for Java and Kotlin with their S3 SDK for Java/Kotlin and also has lots of documentation and examples all the operations with the S3 buckets. In the end we went with Spring boot and Kotlin because of our proficiency and expertise with the language, and all the other components of the Ticketing software were also written in Spring Boot.
 
 As for the language we used Kotlin in Spring boot even though it's not used in many of Solvistas projects. We still decided that Kotlin was the better option because it is a modern language that is fully interoperable with Java and has many features that make it easier to write clean and concise code, thus reducing errors, improving readability and maintainability. It eliminates much of the boilerplate code required in Java and provides a rich standard library with many built-in utility functions, significantly reducing development time. Kotlin has no essential functionalities that java couldn't provide, but it is more modern and has a more concise syntax. TODO: Da a bissi mehr schreibi so kotlin vs java ka
+
+\section{Database}
+\setauthor{Michael Stenz}
+We use PostgreSQL as our database for the following reasons. We needed a relational database because the data we have comes in a structure we designed, and it's easily representable in classic relations. Also we wanted to make exporting the generated data from this Tool into the Ticketing database as easy as possible, and the Ticketing database is also a relational database. 
 
 
 \section{AWS}
