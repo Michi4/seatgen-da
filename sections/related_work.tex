@@ -31,3 +31,19 @@ On the technical side, the SeatGen application integrates with:
 \end{itemize}
 
 In practice, large or complex venues may have thousands of individual seat entities, potentially impacting performance if the data management is not optimized. Additionally, the zoom levels demand loads of memory- and compute-efficient image slicing and compression, to avoid excessive storage usage on AWS. Our design choises underly these constraints and requirements in many places.
+
+\section{Requirements and Challanges}
+\setauthor{Michael Ruep}
+A core requirement of SeatGen is “direct manipulation” \cite{Hutchins01121985}, which states that users interact more effectively when objects can be selected, dragged, and dropped in a way that mimics the real-world arrangement of physical seats or standing areas. Therefore the usability and user experience is a key Challange. The following elements are particularly relevant:
+
+\begin{itemize}
+    \item \textbf{Immediate Feedback:} When a user modifies a seat position, the update is reflected instantly on the map. Hence dragging seats should happen instant and following the user just like if you would take something in real-life.
+    \item \textbf{Simplicity and Learnability:} Due to Familiar mouse-based interactions performing tasks rather specific and complex tasks such as grouping seats, creating standing areas, or categorizing should be possible without any specialized training or introduction to the meaning of coordinates.
+    \item \textbf{Cognitive Offloading:} By representing seats visually, the mental effort to interpret raw text-based seat coordinates or stadium layouts is reduced significantly. Which improves efficiency and accuracy by a huge margin.
+\end{itemize}
+
+Leaflet Maps in React were chosen primarily to streamline the development of such dynamic, visually rich interfaces. Additionally for further efficiency improvements quick actions in form of hotkeys are added.
+
+\section{Summary}
+\setauthor{Michael Ruep}
+In summary, the environment for SeatGen includes a mix of business and technical constraints, demanding a straighforward, userfriendly and yet powerful visual editor. In the following chapters we will further describe the technical and logical aspects of how the set requirements are met.
