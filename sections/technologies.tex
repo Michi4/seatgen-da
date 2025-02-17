@@ -3,9 +3,29 @@
 
 \section{Spring Boot and Kotlin}
 \setauthor{Michael Stenz}
-For the backend logic, we had to use Spring Boot, because Spring boot is in the main Stack of Solvistas, and the project should later be maintainable by Solvistas developers. The problems, that our backend had to solve were: handling the storing of the Seatplan metadata, converting the SVG's into image tiles, uploading the converted tiles to an S3 bucket, and serving all of this data to our frontend via REST. For the converting, resizing and slicing of the SVG's and PNG's, we considered Python as an alternative, because there are lots of easy to use and well documented image manipulation libraries like CairoSVG or the OpenCV python wrapper, but the processing of the images is also possible within Java/Kotlin with libraries like Batik and ImageIO, but it's not as straight forward as in python because it's not as popular and therefore there's a lot less documentation, and there are other limitations like heap size always have to be kept in mind. As for the uploading the files to an S3 Bucket, Amazaon provides good support for Java and Kotlin with their S3 SDK for Java/Kotlin and also has lots of documentation and examples all the operations with the S3 buckets. In the end we went with Spring boot and Kotlin because of our proficiency and expertise with the language, and all the other components of the Ticketing software were also written in Spring Boot.
+For the backend logic, we chose Spring Boot as it is a core technology in Solvistas' tech stack. This decision ensures that the project remains maintainable by Solvistas developers in the long run. Our backend had several key responsibilities, including:
+\begin{compactitem}
+    \item Handling the storage of the seatplan metadata
+    \item Converting SVGs into image tiles
+    \item Uploading the converted tiles to an S3 bucket
+    \item Serving all of this data to the frontend via REST
+\end{compactitem}
 
-As for the language we used Kotlin in Spring boot even though it's not used in many of Solvistas projects. We still decided that Kotlin was the better option because it is a modern language that is fully interoperable with Java and has many features that make it easier to write clean and concise code, thus reducing errors, improving readability and maintainability. It eliminates much of the boilerplate code required in Java and provides a rich standard library with many built-in utility functions, significantly reducing development time. Kotlin has no essential functionalities that java couldn't provide, but it is more modern and has a more concise syntax. TODO: Da a bissi mehr schreibi so kotlin vs java ka
+For image processing tasks such as resizing and slicing SVGs and PNGs, we initially considered Python due to its well-documented and easy-to-use image manipulation libraries like CairoSVG and OpenCV. However, we ultimately decided to keep the processing within the Java/Kotlin ecosystem, using libraries like Batik and ImageIO. While Java/Kotlin image processing is not as straightforward as Python due to less extensive documentation and fewer community resources, it allowed us to keep our backend technology stack consistent. Additionally, using Java/Kotlin ensured we did not need to manage separate runtime environments. One challenge with Java-based image processing is memory management—heap size and garbage collection must always be considered, especially when processing large images.
+
+For file uploads, Amazon S3 provides excellent support for Java and Kotlin through the AWS SDK, with extensive documentation and examples. This made it easy to integrate S3 into our backend for storing and retrieving image tiles efficiently.
+
+As for the language, we used Kotlin in Spring Boot even though it's not used in many of Solvistas' projects. We still decided that Kotlin was the better option because it is a modern language that is fully interoperable with Java and has many features that make it easier to write clean and concise code, thus reducing errors, improving readability, and maintainability. It eliminates much of the boilerplate code required in Java and provides a rich standard library with many built-in utility functions, significantly reducing development time. Kotlin has no essential functionalities that Java couldn't provide, but it is more modern and has a more concise syntax.
+
+Additionally, Kotlin introduces powerful features such as null safety, which helps create more robust applications with fewer runtime errors. Furthermore, Kotlin provides strong support for functional programming, including higher-order functions, lambda expressions, and extension functions, making it easier to write expressive and reusable code.
+
+Another key advantage is Kotlin’s coroutines, which allow for highly efficient asynchronous programming without the complexity of Java’s traditional thread management. This makes Kotlin particularly well-suited for handling concurrent tasks, such as processing multiple image transformations simultaneously which reduces our image processing time by a factor a lot.
+
+Kotlin’s seamless integration with Spring Boot also allows for idiomatic DSLs (Domain-Specific Languages), which can simplify configuration and reduce verbosity in code. The language’s structured concurrency and intuitive syntax contribute to cleaner, more maintainable backend services, ensuring long-term scalability.
+
+Finally, Kotlin’s growing adoption within the Spring ecosystem, along with first-class support from JetBrains and the Spring team, makes it a viable choice for modern backend development. Its developer-friendly nature, combined with reduced verbosity and enhanced safety features, makes it a forward-thinking investment despite its lower adoption within Solvistas' existing projects.
+
+In the end, we chose Spring Boot with Kotlin because of our team's expertise with the language and the fact that all other components of the Ticketing software were already written in Spring Boot.
 
 \section{Database}
 \setauthor{Michael Stenz}
@@ -47,9 +67,16 @@ When considering how to store our image data, we evaluated PostgreSQL’s built-
 Even though, TOAST is very performant and automatically compresses and stores large column values outside the main table structure, making it a more attractive option than traditional BLOBs, accessing and manipulating the stored images via SQL queries can become a bottleneck. ORMs like Hibernate tend to retrieve large column values by default unless explicitly configured otherwise, potentially leading to performance degradation when dealing with frequent queries. This means extra effort would be required to optimize database queries to avoid unnecessary data retrieval, increasing development complexity.
 
 
-
-\section{AWS}
+\section{AWS - S3}
 \setauthor{Michael Stenz}
+Amazon S3 (Simple Storage Service) is a scalable object storage service provided by Amazon Web Services (AWS). It allows users to store and retrieve large amounts of data in the cloud, with a focus on high availability, durability, and security. S3 is widely used for storing static assets such as images, videos, documents, and backups, and it is designed to provide low-latency access to data from anywhere in the world and in our case the image tiles of the seatplan. With features such as data encryption, versioning, and lifecycle policies, S3 offers a flexible and cost-effective solution for managing large datasets. S3 also provides an extensive API that allows developers to interact with their storage buckets programmatically. In this application we access the API via the AWS SDK for Java which is provided and maintained by Amazon.
+
+In the Ticketing project, all image tiles are stored in an AWS S3 bucket. S3 was required due to its robust performance, reliability, and seamless integration with the AWS ecosystem, which is already in use at Solvistas. By utilizing the Amazon S3 SDK, the file upload process is automated, reducing manual effort and minimizing the risk of errors.
+
+Using S3 also improves frontend performance by ensuring that image retrieval does not depend on the backend server’s speed. Instead of acting as a middleware for serving images, the backend delegates this task directly to S3, reducing its workload and enhancing response times.
+
+AWS S3 was the only option considered, as it is the cloud platform used by Solvistas, and the infrastructure costs are funded by the company.
+
 
 \section{Leaflet}
 \setauthor{Michael Ruep}
