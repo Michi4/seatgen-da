@@ -9,8 +9,8 @@ Stadiums are typically operated by sports clubs, concert organizers, or third-pa
 
 From a user-experience standpoint, these challenges make it clear that an intuitive, graphical editing interface is needed to replace the text-based seat data manipulation. This concept aligns with the principles of \emph{direct manipulation interfaces}, as described by Hutchins, Hollan, and Norman, which emphasize reducing the cognitive distance between user intent and system actions by allowing direct interaction with visual representations~\cite{Hutchins01121985}. In the context of SeatGen, users can place, move, and edit seats through an intuitive graphical interface rather than modifying abstract raw text data. Similar to how direct manipulation in statistical tools allows users to interact with data graphs instead of numbers, SeatGen provides a \textbf{spatially direct approach} to stadium seat planning.
 
-
 \section{Stakeholder Analysis}
+\setauthor{Michael Ruep}
 Several parties interact with the SeatGen tool:
 \begin{itemize}
     \item \textbf{Developers:} Historically, Solvistas' developers modified the seat layout text files. Our new approach aims to minimize their involvement in the long term, except for initial and advanced configurations.
@@ -19,3 +19,15 @@ Several parties interact with the SeatGen tool:
 \end{itemize}
 
 By identifying these actors and their needs, we put the main focus on a graphical, user-friendly solution for seat map creation and maintenance.
+
+\section{Technical Environment}
+\setauthor{Michael Ruep}
+On the technical side, the SeatGen application integrates with:
+\begin{itemize}
+    \item \textbf{AWS S3 Buckets:} Image tiles and map data are uploaded to and fetched from a secure Amazon Web Services (AWS) cloud environment.
+    \item \textbf{React-based Frontend:} Provides an interactive user interface for managing and modifying seat layouts with real-time updates.  
+    \item \textbf{Spring Boot / Kotlin Backend:} Manages image processing and seat data handling.  
+    \item \textbf{PostgreSQL Database:} Stores seat configurations, categories, groups, sectors, and map data.  
+\end{itemize}
+
+In practice, large or complex venues may have thousands of individual seat entities, potentially impacting performance if the data management is not optimized. Additionally, the zoom levels demand loads of memory- and compute-efficient image slicing and compression, to avoid excessive storage usage on AWS. Our design choises underly these constraints and requirements in many places.
