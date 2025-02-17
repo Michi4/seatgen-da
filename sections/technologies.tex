@@ -9,11 +9,44 @@ As for the language we used Kotlin in Spring boot even though it's not used in m
 
 \section{Database}
 \setauthor{Michael Stenz}
-We chose PostgreSQL as our database for several key reasons. First, we needed a relational database because our data follows a structured design that is best represented through classic relations. Additionally, we wanted to simplify the process of exporting generated data into the Ticketing database, which is also relational.
+We chose PostgreSQL as our database for several key reasons. First, we required a relational database since our data follows a structured design that is best represented through classical relational models. Additionally, using a relational database simplifies the process of exporting generated data into the Ticketing database, which also adheres to a relational structure.
 
-Our system is designed to work with multiple relational databases, not just PostgreSQL, as we use JPA as our ORM. To maintain database flexibility, we deliberately avoided PostgreSQL-specific commands. While using PL/pgSQL for business logic could have improved security, performance, and data consistency, we prioritized keeping our database easily interchangeable.
+Our system is designed to be compatible with multiple relational databases, not just PostgreSQL, as we utilize Java Persistence API (JPA) as our Object-Relational Mapping (ORM) framework. To maintain database flexibility, we deliberately avoided PostgreSQL-specific commands. While leveraging PL/pgSQL for business logic could have provided benefits such as enhanced security, improved performance, and greater data consistency, we prioritized keeping our database implementation interchangeable.
 
-For the database connection in our Spring Boot application, we used the Spring Data JPA library. This library simplifies the process of connecting to a database and executing queries. It also provides a repository pattern that allows us to define custom queries in an interface, which Spring Boot automatically implements at runtime. This pattern makes it easy to write and maintain queries, as we can use the repository methods directly in our code. We also use the Flyway library to manage database migrations. Flyway allows us to define database changes as SQL scripts, which are executed automatically when the application starts. This ensures that our database schema is always up-to-date with the latest changes. Doing migrations this way simplifies the deployment process drastically and helps avoid conflicts in the deployment and on the local production environment. Another advantage of using Flyway database migrations instead of migrating the database by hand, is that other developers in the team don't run into unexpected errors because of different database versions, and because migrations consist of whole SQL scripts, we have the possibility to not only execute DDL (Data Definition Language) commands but also DML (Data Manipulation Language) commands, which can be useful in a lot of scenarios, for example when migrating data from one table to another, changing the data type of column, and applying other business logic on data in the tables. We had to decide between Liquibase and Flyway for the database migrations. Both tools are very similar in a lot of aspects. They are both open source, both provide support for Spring Boot and other Java frameworks. The key differences are very subtle for out use case which does not need any complex features. We decided to go with Flyway because we do not need the more features and flexibility that Liquibase provides. Because we are a small team and changes on the database don't happen often in parallel, we have no problem with using Flyway's linear database migration approach, even though it could lead to problems in bigger teams with more parallel changes on the database. Flyway's versioning is also cleaner because the filenames of the migrations have to start with a specific prefix that contains the version of the migration in the following form \texttt{VX.X.X\_\_migration\_name.sql} (where X.X.X is the version of the migration). On the other hand Liquibase stores its changes in changelog files, this would allow a lot more features but also comes with a lot of unnecessary complexity. A changelog file can be written in SQL, XML, YAML, or JSON formats, but comments there is a lot of overhead and unnecessary metadata that has to be specified as seen in 
+For database connectivity in our Spring Boot application, we utilized the Spring Data JPA library. This library streamlines the process of connecting to a database and executing queries while implementing the repository pattern. Through this pattern, we define custom queries in an interface, which Spring Boot automatically implements at runtime. This approach simplifies query management, making it easier to maintain and use repository methods directly within our codebase.
+
+To manage database migrations efficiently, we adopted the Flyway library. Flyway enables us to define database changes through SQL scripts that execute automatically when the application starts. This ensures our database schema remains consistent with the latest changes, significantly simplifying deployment and mitigating potential conflicts across different environments. Managing migrations this way also helps prevent issues arising from different database versions among team members. Additionally, since Flyway migrations consist of entire SQL scripts, we can execute both Data Definition Language (DDL) and Data Manipulation Language (DML) commands. This capability is particularly beneficial for tasks such as migrating data between tables, altering column data types, and implementing other business logic-related transformations.
+
+When selecting a migration tool, we evaluated both Liquibase and Flyway. While both are open-source and provide seamless integration with Spring Boot and other Java frameworks, we ultimately opted for Flyway due to its simplicity and our specific use case. Since we are a small team with infrequent parallel database changes, Flyway’s linear migration approach suits our workflow without introducing complications. Although this approach might present challenges in larger teams with concurrent database modifications, it remains a practical choice for our current needs.
+
+Flyway also offers a cleaner versioning system by requiring migration filenames to follow a structured naming convention: \texttt{VX.X.X\_\_migration\_name.sql} (where X.X.X is the version of the migration). In contrast, Liquibase utilizes changelog files, which provide additional features but introduce unnecessary complexity for our use case. These changelog files can be written in SQL, XML, YAML, or JSON, but they require extensive Liquibase-specific formatting. The following example illustrates a Liquibase-formatted SQL changelog file \ref{lst:liquibase:example}. Flyway's approach, which relies on plain SQL migration files, makes it more readable and easier to maintain.
+
+\begin{lstlisting}[language=Sql,caption=Liquibase example changelog,label=lst:liquibase:example]
+    --liquibase formatted sql
+    
+    --changeset nvoxland:1
+    create table test1 (  
+        id int primary key,
+        name varchar(255)  
+    );  
+    --rollback drop table test1; 
+    
+    --changeset nvoxland:2 
+    insert into test1 (id, name) values (1, 'name 1');
+    insert into test1 (id,  name) values (2, 'name 2');  
+    
+    --changeset nvoxland:3 dbms:oracle
+    create sequence seq_test;
+\end{lstlisting}
+    
+To ensure database consistency, Flyway generates a flyway\_schema\_history table that tracks all executed migrations. This table stores metadata for each migration, including the version, description, execution timestamp, and a checksum. The checksum prevents modifications to previously applied migrations, ensuring consistency but potentially causing unexpected errors during local development. In such cases, manual intervention in the flyway\_schema\_history table may be required, but except for these rare cases the flyway\_schema\_history table should not be manipulated manually.
+
+By maintaining this history, Flyway can determine which migrations have been applied and which are still pending. Each migration also has a state, which can be pending, applied, failed, undone, and more—detailed in the Flyway documentation. These states allow system administrators to quickly identify and resolve migration and deployment issues.
+
+When considering how to store our image data, we evaluated PostgreSQL’s built-in options, including BLOBs (Binary Large Objects) and TOAST (The Oversized-Attribute Storage Technique). While these mechanisms allow PostgreSQL to handle large binary files, we ultimately decided against using them due to performance concerns, maintenance overhead, scalability limitations and company reasons.
+Even though, TOAST is very performant and automatically compresses and stores large column values outside the main table structure, making it a more attractive option than traditional BLOBs, accessing and manipulating the stored images via SQL queries can become a bottleneck. ORMs like Hibernate tend to retrieve large column values by default unless explicitly configured otherwise, potentially leading to performance degradation when dealing with frequent queries. This means extra effort would be required to optimize database queries to avoid unnecessary data retrieval, increasing development complexity.
+
+
 
 \section{AWS}
 \setauthor{Michael Stenz}
