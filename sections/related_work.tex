@@ -30,7 +30,7 @@ On the technical side, the SeatGen application integrates with:
     \item \textbf{PostgreSQL Database:} Stores seat configurations, categories, groups, sectors, and map data.  
 \end{itemize}
 
-In practice, large or complex venues may have thousands of individual seat entities, potentially impacting performance if the data management is not optimized. Additionally, the zoom levels demand loads of memory- and compute-efficient image slicing and compression, to avoid excessive storage usage on AWS. Our design choises underly these constraints and requirements in many places.
+In practice, large or complex venues may have thousands of individual seat entities, potentially impacting performance if the data management is not optimized. Additionally, the zoom levels demand loads of memory- and compute-efficient image slicing and compression, to avoid excessive storage usage on Amazon Web Services. Our design choices reflect these constraints and requirements in multiple areas.
 
 \section{Requirements and Challenges}
 \setauthor{Michael Ruep}
@@ -46,4 +46,4 @@ Leaflet, used within React, handles dynamic rendering and live interaction for t
 
 \section{Summary}
 \setauthor{Michael Ruep}
-In summary, the environment for SeatGen includes a mix of business and technical constraints, demanding a straightforward, userfriendly and yet powerful visual editor. In the following chapters we will further describe the technical and logical aspects of how the set requirements are met.
+In summary, the environment for SeatGen includes a mix of business and technical constraints, demanding a straightforward, user-friendly and yet powerful visual editor. In the following chapters we will further describe the technical and logical aspects of how the set requirements are met.
