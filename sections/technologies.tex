@@ -1,9 +1,10 @@
 \section{React}
 \setauthor{Michael Ruep}
+The frontend of SeatGen is built using the React framework. This choice was primarily motivated by the existing expertise within Solvistas, ensuring that the company’s developers could easily maintain and adjust the project to their needs. Additionally, React provides an ideal balance between flexibility, performance, and a vibrant ecosystem, which are factors that proved crucial when building an interactive seatingplan editor for stadiums. Also our team was already experienced with component-based single page application frontend frameworks.
 
 \section{Spring Boot and Kotlin}
 \setauthor{Michael Stenz}
-For the backend logic, we chose Spring Boot as it is a core technology in Solvistas' tech stack. This decision ensures that the project remains maintainable by Solvistas developers in the long run. Our backend had several key responsibilities, including:
+For the backend logic, we chose Spring Boot as it is a core technology in Solvistas’ tech stack. This decision ensures that the project remains maintainable by Solvistas developers in the long run. Our backend had several key responsibilities, including:
 \begin{compactitem}
     \item Handling the storage of the seatplan metadata
     \item Converting SVGs into image tiles
@@ -15,7 +16,7 @@ For image processing tasks such as resizing and slicing SVGs and PNGs, we initia
 
 For file uploads, Amazon S3 provides excellent support for Java and Kotlin through the AWS SDK, with extensive documentation and examples. This made it easy to integrate S3 into our backend for storing and retrieving image tiles efficiently.
 
-As for the language, we used Kotlin in Spring Boot even though it's not used in many of Solvistas' projects. We still decided that Kotlin was the better option because it is a modern language that is fully interoperable with Java and has many features that make it easier to write clean and concise code, thus reducing errors, improving readability, and maintainability. It eliminates much of the boilerplate code required in Java and provides a rich standard library with many built-in utility functions, significantly reducing development time. Kotlin has no essential functionalities that Java couldn't provide, but it is more modern and has a more concise syntax.
+As for the language, we used Kotlin in Spring Boot even though it’s not used in many of Solvistas’ projects. We still decided that Kotlin was the better option because it is a modern language that is fully interoperable with Java and has many features that make it easier to write clean and concise code, thus reducing errors, improving readability, and maintainability. It eliminates much of the boilerplate code required in Java and provides a rich standard library with many built-in utility functions, significantly reducing development time. Kotlin has no essential functionalities that Java couldn’t provide, but it is more modern and has a more concise syntax.
 
 Additionally, Kotlin introduces powerful features such as null safety, which helps create more robust applications with fewer runtime errors. Furthermore, Kotlin provides strong support for functional programming, including higher-order functions, lambda expressions, and extension functions, making it easier to write expressive and reusable code.
 
@@ -23,9 +24,9 @@ Another key advantage is Kotlin’s coroutines, which allow for highly efficient
 
 Kotlin’s seamless integration with Spring Boot also allows for idiomatic DSLs (Domain-Specific Languages), which can simplify configuration and reduce verbosity in code. The language’s structured concurrency and intuitive syntax contribute to cleaner, more maintainable backend services, ensuring long-term scalability.
 
-Finally, Kotlin’s growing adoption within the Spring ecosystem, along with first-class support from JetBrains and the Spring team, makes it a viable choice for modern backend development. Its developer-friendly nature, combined with reduced verbosity and enhanced safety features, makes it a forward-thinking investment despite its lower adoption within Solvistas' existing projects.
+Finally, Kotlin’s growing adoption within the Spring ecosystem, along with first-class support from JetBrains and the Spring team, makes it a viable choice for modern backend development. Its developer-friendly nature, combined with reduced verbosity and enhanced safety features, makes it a forward-thinking investment despite its lower adoption within Solvistas’ existing projects.
 
-In the end, we chose Spring Boot with Kotlin because of our team's expertise with the language and the fact that all other components of the Ticketing software were already written in Spring Boot.
+In the end, we chose Spring Boot with Kotlin because of our team’s expertise with the language and the fact that all other components of the Ticketing software were already written in Spring Boot.
 
 \section{Database}
 \setauthor{Michael Stenz}
@@ -39,7 +40,7 @@ To manage database migrations efficiently, we adopted the Flyway library. Flyway
 
 When selecting a migration tool, we evaluated both Liquibase and Flyway. While both are open-source and provide seamless integration with Spring Boot and other Java frameworks, we ultimately opted for Flyway due to its simplicity and our specific use case. Since we are a small team with infrequent parallel database changes, Flyway’s linear migration approach suits our workflow without introducing complications. Although this approach might present challenges in larger teams with concurrent database modifications, it remains a practical choice for our current needs.
 
-Flyway also offers a cleaner versioning system by requiring migration filenames to follow a structured naming convention: \texttt{VX.X.X\_\_migration\_name.sql} (where X.X.X is the version of the migration). In contrast, Liquibase utilizes changelog files, which provide additional features but introduce unnecessary complexity for our use case. These changelog files can be written in SQL, XML, YAML, or JSON, but they require extensive Liquibase-specific formatting. The following example illustrates a Liquibase-formatted SQL changelog file \ref{lst:liquibase:example}. Flyway's approach, which relies on plain SQL migration files, makes it more readable and easier to maintain.
+Flyway also offers a cleaner versioning system by requiring migration filenames to follow a structured naming convention: \texttt{VX.X.X\_\_migration\_name.sql} (where X.X.X is the version of the migration). In contrast, Liquibase utilizes changelog files, which provide additional features but introduce unnecessary complexity for our use case. These changelog files can be written in SQL, XML, YAML, or JSON, but they require extensive Liquibase-specific formatting. The following example illustrates a Liquibase-formatted SQL changelog file \ref{lst:liquibase:example}. Flyway’s approach, which relies on plain SQL migration files, makes it more readable and easier to maintain.
 
 \begin{lstlisting}[language=Sql,caption=Liquibase example changelog,label=lst:liquibase:example]
     --liquibase formatted sql
