@@ -62,6 +62,10 @@
 }
 \makeatother
 
+\newcommand\YAMLcolonstyle{\color{red}\mdseries}
+\newcommand\YAMLkeystyle{\color{black}\bfseries}
+\newcommand\YAMLvaluestyle{\color{blue}\mdseries}
+
 \renewcommand{\lstlistlistingname}{List of Listings}
 % TODO: define other languages as needed
 \lstset{language=Python,
@@ -101,6 +105,27 @@ morekeywords={base,var,in,out,dynamic,from,where,select,orderby,function,\$,grou
 	morestring=[b]',
 	morestring=[b]"
 }
+
+
+
+\lstdefinelanguage{Yaml}{
+  keywords={true,false,null,y,n},
+  keywordstyle=\color{darkgray}\bfseries,
+  sensitive=false,
+  comment=[l]{\#},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{purple}\ttfamily,
+  moredelim=[l][\color{orange}]{\&},
+  moredelim=[l][\color{magenta}]{*},
+  moredelim=**[il][\YAMLcolonstyle{:}\YAMLvaluestyle]{:},   % switch to value style at :
+  morestring=[b]',
+  morestring=[b]",
+  literate =    {---}{{\ProcessThreeDashes}}3
+                {>}{{\textcolor{red}\textgreater}}1     
+                {|}{{\textcolor{red}\textbar}}1 
+                {\ -\ }{{\mdseries\ -\ }}3,
+}
+ 
 
 \lstdefinelanguage{Kotlin}{
   comment=[l]{//},

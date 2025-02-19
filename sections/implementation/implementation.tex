@@ -29,7 +29,7 @@
 
 A significant milestone in the project was the development of the map generation functionality. This feature enables the user to generate an empty seat plan, which relies on the map to serve as the basic visual representation of the venue. The map is interactive in the frontend, and the user can configure several key parameters:
 
-\begin{itemize} \item The venue plan \item The name of the map \item The size of each tile (default is 256x256px for most use cases) \item The number of zoom levels \item The image compression rate \end{itemize}
+\begin{itemize} \item The venue plan \item The name of the map \item The size of each tile (default is 256x256px for most use cases) \item The number of zoom levels \item The image compression algorithm, which is a dropdown menu with the options: No compression, Default algorithm and Zopfli \end{itemize}
 
 These configuration options are accessible under the "New Map" button, as depicted in Figure \ref{fig:impl:mapgen}.
 
@@ -85,9 +85,109 @@ graphics.dispose()
 
 In this code, \texttt{sliceSize} represents the size of each individual tile (e.g., 256x256px), and \texttt{x} and \texttt{y} are the coordinates of the current tile. The image is drawn on the \texttt{subImage} BufferedImage, which is a sub-region of the original image.
 
-The resulting sub-images are saved as individual PNG files, each representing one tile of the map at the specified zoom level. These tiles are then going to be uploaded to the S3 bucket, so that the fronzend can fetch them as needed.
+The resulting sub-images are saved as individual PNG files, each representing one tile of the map at the specified zoom level. These tiles are then going to be uploaded to the S3 bucket, so that the fronzend can fetch them as needed. By splitting the image into tiles, we can load and display the map interactively, only fetching the tiles that are currently in view. This tiling strategy is essential for efficient handling of large map layers at the later zoom levels.
 
-By splitting the image into tiles, we can load and display the map interactively, only fetching the tiles that are currently in view. This tiling strategy is essential for efficient handling of large map layers at the later zoom levels.
+LZ77 algorithm is a dictionary-based compression technique that replaces repeated occurrences of data with references to previous instances, reducing redundancy. Huffman coding, on the other hand, assigns shorter binary codes to more frequently occurring byte sequences, further optimizing storage efficiency. Together, these methods enable PNG files to achieve significant compression while maintaining full image fidelity.
+
+\subsection{Step 3: Compression}
+
+To optimize AWS costs and improve image loading speed in the frontend of the Ticketing project, images are compressed before being uploaded to the S3 bucket. However, this presents a challenge, as Solvistas requires PNG format for their project. Unlike lossy formats such as JPEG, which achieve smaller file sizes by discarding some image data, PNG is a lossless format, meaning it retains all original data. While this ensures sharp and clear images, it also results in larger file sizes, which can be problematic when numerous images are loaded from AWS in a web environment.
+
+To address this challenge, we employ lossless compression techniques. PNG compression primarily relies on the Deflate algorithm, which combines LZ77 and Huffman coding.
+
+\begin{compactitem}
+\item{}LZ77 is a dictionary-based compression method that reduces redundancy by replacing repeated sequences of data with references to earlier occurrences, thus minimizing file size without loss of quality.
+\item{}Huffman coding optimizes storage efficiency by assigning shorter binary codes to frequently occurring byte sequences, further improving compression rates.
+\end{compactitem}
+
+Together, these methods enable PNG files to achieve significant compression while maintaining full image fidelity.
+
+During the map generation process, users can choose from the following compression algorithms:
+
+\begin{compactitem}
+    
+\item{}None – No compression applied (fastest processing time, largest file size).
+\item{}Default – Standard compression using Deflate (balanced efficiency).
+\item{}Zopfli – Advanced, high-efficiency compression (better compression rates, slower processing).
+\end{compactitem}
+
+The None option results in a 0\% compression rate, making it the fastest but least efficient choice.
+
+For compression, we utilize the Pngtastic library, a lightweight, pure Java library with no dependencies. It provides a simple API for PNG manipulation, supporting both file size optimization and PNG image layering.
+
+The Zopfli algorithm, developed by Google engineers Lode Vandevenne and Jyrki Alakuijala in 2013, offers an advanced, high-efficiency compression technique. While it still utilizes the Deflate algorithm, it applies exhaustive entropy modeling and shortest path search techniques to achieve a higher compression ratio than standard Deflate and zlib implementations.
+
+Zopfli can generate raw Deflate data streams or encapsulate them into gzip and zlib formats. It achieves superior data compression by extensively analyzing different possible representations of the input data and selecting the most efficient encoding.
+
+By default, Zopfli performs 15 iterations to refine compression, though this can be adjusted for higher or lower processing times. Under standard settings, Zopfli output is typically 3–8% smaller than zlib’s maximum compression, but it is approximately 80 times slower due to its computational intensity.
+
+According to Google developers: \cite{ZopfliGoogleBlog}
+
+\begin{quote}
+    The smaller compressed size allows for better space utilization, faster data transmission, and lower web page load latencies. Furthermore, the smaller compressed size has additional benefits in mobile use, such as lower data transfer fees and reduced battery use.
+\end{quote}
+
+While Zopfli is significantly slower than standard Deflate or zlib, its higher compression ratio makes it particularly beneficial for static assets that are compressed once and distributed multiple times. This makes it ideal for optimizing web images, static assets, and other resources where storage and bandwidth efficiency are a priority.
+
+By testing the compression algorithms within this application with different parameters, that range from the 3 algorithm, different maps and different number of zoom levels, we can see that Zopfli is the best option for the compression of the images, if the time is willing to be spent on compressing the data. All the test results are visualized in the following table:
+
+
+TABLE HERE TODO
+
+Another significant decision during development was whether to compress the images before or after the slicing process. Ultimately, we decided to compress the images before slicing them into tiles. This approach was favored for several reasons.
+
+Firstly, compressing the entire image as a whole is generally more efficient than compressing individual tiles. Compression algorithms benefit from analyzing the entire dataset, allowing them to identify and eliminate redundancies more effectively. When an image is compressed in its entirety, the algorithm can exploit correlations and patterns that might not be as apparent when processing smaller segments. This leads to a better overall compression ratio, resulting in reduced file sizes without sacrificing quality.
+
+Secondly, by compressing the images only once for each zoom level, we minimize the processing overhead. If we were to compress the images after slicing, we would have to compress the same visual data multiple times for different tile sizes or zoom levels. This redundancy not only wastes computational resources but also increases the time required for image processing, ultimately slowing down the application.
+
+Additionally, compressing the images before slicing simplifies the process of parallelization. Given the extensive computational resources required for image compression, handling this task on the complete image allows us to better allocate resources and optimize performance.
+
+
+
+
+\subsection{Step 4: Uploading Tiles to S3}
+
+The final step in the map generation process involves uploading the generated tiles to an Amazon S3 bucket. This is achieved using the AWS SDK for Java, which provides a robust and efficient way to interact with AWS services. The SDK allows us to create an S3 client, which facilitates seamless communication with the S3 bucket. The only required configuration parameters for the client are the AWS region (set to eu-central-1 in our case), the access key, and the secret key. Once configured, as demonstrated in Listing \ref{lst:kotlin:s3client}, the S3Client instance provides a range of operations, including putObject, getObject, and listObjectsV2, among others.
+
+\begin{lstlisting}[language=Kotlin,caption=Configuring the S3 Client,label=lst:kotlin:s3client]
+@ConfigurationProperties(prefix = "aws")
+data class S3Config @ConstructorBinding constructor(
+    val awsRegion: String,
+    val accessKey: String,
+    val secretKey: String
+){
+    @Bean(destroyMethod = "close")
+    fun s3Client() : S3Client {
+        return S3Client
+            .builder()
+            .overrideConfiguration(ClientOverrideConfiguration.builder()
+                .apiCallTimeout(Duration.ofSeconds(10)).build()
+            )
+            .region(Region.regions()
+                .find { region -> region.toString() == awsRegion }
+            )
+            .credentialsProvider(
+                StaticCredentialsProvider.create(
+                    AwsBasicCredentials.create(accessKey, secretKey)
+                )
+            )
+            .build()
+}
+\end{lstlisting}
+
+The configuration is managed using the @ConfigurationProperties(prefix = ``aws'') annotation, which enables automatic injection of required properties. These values—defined in the primary constructor with @ConstructorBinding—are retrieved from an external properties file under the aws prefix. This approach ensures that configuration values remain externalized rather than hardcoded, making it easier to switch between environments such as development, testing, and production. The relevant configuration in application.yml is illustrated in Listing \ref{lst:yaml:aws}.
+\begin{lstlisting}[language=Yaml, caption=AWS Configuration in application.yml, label=lst:yaml:aws]
+aws:
+    awsRegion: ${AWS_REGION:eu-central-1}
+    access-key: ${AWS_ACCESS_KEY}
+    secret-key: ${AWS_SECRET_KEY}
+\end{lstlisting}
+
+By using environment variables for sensitive credentials, we enhance security while maintaining flexibility in deployment configurations.
+The SDK’s S3Client.builder() method is used to instantiate and configure the client with the required credentials and region settings. Because the client is defined as a Spring bean, it can be easily injected into any class requiring interaction with the S3 bucket. This is a key advantage in Spring-based applications, as it promotes modularity and maintainability. Unlike in Quarkus, where dependency injection is handled differently, Spring allows defining such functions as beans and seamlessly injecting them where necessary.
+
+After executing all of these steps, they have to be repeated for each zoom level asked for. 
+
 
 
 \subsection{AWS}
