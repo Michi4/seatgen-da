@@ -234,6 +234,18 @@ aws:
 By using environment variables for sensitive credentials, we enhance security while maintaining flexibility in deployment configurations.
 The SDK’s S3Client.builder() method is used to instantiate and configure the client with the required credentials and region settings. Because the client is defined as a Spring bean, it can be easily injected into any class requiring interaction with the S3 bucket. This is a key advantage in Spring-based applications, as it promotes modularity and maintainability. Unlike in Quarkus, where dependency injection is handled differently, Spring allows defining such functions as beans and seamlessly injecting them where necessary.
 
+The name provided by the user doesn't have any major restrictions for special characters, that's because the customer shouldn't be bothered with technical restrictions. They should be able to choose the name they want. Technically there are still some restrictions. The name provided by the user will be used in two situations, that have limitations. 
+\begin{compactenum}
+    \item Directory names in the S3 buckets
+    \item Path in our URL frontend for editor page
+\end{compactenum}
+
+S3 looks like a standard file system, but actually it's not, and therefore the name for the ``directory'' doesn't have huge limitations. 
+
+Normally data in an Amazon S3 bucket, is stored in a flat structure instead of a hierarchy one as seen in standard file systems. Amazon still supports the organization of data like in file systems. This is done by giving all the grouped objects a shared string prefix. The prefix is therefore the folder name. The data, is actually still stored in a flat structure, but it's visualized like folders in the Amazon S3 console.
+
+The second place where name is utilized, is the URL path in the frontend. This is a bit more restricted, because it's part of the URL and therefore some characters could lead to errors. These following characters are reserved and can't be used in the URL path: \texttt{/\&?=:\%}. When these are used this leads to errors. This is why we prepare the name for the URL path by replacing these characters with an underscore. To still give the user the requested name, we store the original name in our database as well as the prepared name. The original name is only used for displaying purposes in the frontend.
+
 After executing all of these steps, they have to be repeated for each zoom level asked for. 
 
 \subsection{Optimizations \& Memory}
