@@ -21,6 +21,13 @@ React’s component-based architecture keeps each feature modular to make the pr
 Each of those elements have their own modules, allowing developers to modify or expand individual features without affecting unrelated parts of the application. This approach simplifies debugging, since issues can often be traced to a specific component rather than across the entire codebase. It is also suitable for collaborative development by letting team members work on separate components in parallel, which significantly accelerated our development process. Overall, React’s modular design reduces complexity which assists a more organized and maintainable codebase.
 ~\cite{ReactCBA01, ReactCBA02, ReactCBA03}
 
+\subsection{Integration of Libraries}
+\setauthor{Michael Ruep}
+One of SeatGen’s central requirements is to enable direct manipulation for seat layouts. React’s flexible architecture 
+allows us to easily incorporate third-party libraries. For example, we integrated Leaflet to render the stadium map using its efficient, canvas-based engine. React uses its Context API to manage global state and user interactions, while Leaflet is responsible for the map rendering. This separation ensures that intensive mapping operations do not interfere with overall UI responsiveness. We used Reacts Context to manage global state effectively, rather than relying on more complex solutions. This approach meet the specific requirements of seat manipulation, multi-layered zoom levels, and user interactions.
+
+
+
 \section{Spring Boot and Kotlin}
 \setauthor{Michael Stenz}
 For the backend logic, we chose Spring Boot as it is a core technology in Solvistas’ tech stack. This decision ensures that the project remains maintainable by Solvistas developers in the long run. Our backend had several key responsibilities, including:
