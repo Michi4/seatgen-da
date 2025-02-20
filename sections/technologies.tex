@@ -18,24 +18,24 @@ React’s component-based architecture keeps each feature modular to make the pr
     \item Toolbar Component
     \item Detail Component
 \end{compactitem}
-Each of those elements have their own modules, allowing developers to modify or expand individual features without affecting unrelated parts of the application. This approach simplifies debugging, since issues can often be traced to a specific component rather than across the entire codebase. It is also suitable for collaborative development by letting team members work on separate components in parallel, which significantly accelerated our development process. Overall, React’s modular design reduces complexity which assists a more organized and maintainable codebase.
+Each of those elements has its own module, allowing developers to modify or expand individual features without affecting unrelated parts of the application. This approach simplifies debugging, since issues can often be traced to a specific component rather than across the entire codebase. It is also suitable for collaborative development by letting team members work on separate components in parallel, which significantly accelerated our development process. Overall, React’s modular design reduces complexity which assists a more organized and maintainable codebase.
 ~\cite{ReactCBA01, ReactCBA02, ReactCBA03}
 
 \subsection{Integration of Libraries}
 \setauthor{Michael Ruep}
 One of SeatGen’s central requirements is to enable direct manipulation for seat layouts. React’s flexible architecture 
-allows us to easily incorporate third-party libraries. For example, we integrated Leaflet to render the stadium map using its efficient, canvas-based engine. React uses its Context API to manage global state and user interactions, while Leaflet is responsible for the map rendering. This separation ensures that intensive mapping operations do not interfere with overall UI responsiveness. We used Reacts Context to manage global state effectively, rather than relying on more complex solutions. This approach meet the specific requirements of seat manipulation, multi-layered zoom levels, and user interactions.
+allows us to easily incorporate third-party libraries. For example, we integrated Leaflet to render the stadium map using its efficient, canvas-based engine. React uses its Context API to manage global state and user interactions, while Leaflet is responsible for the map rendering. This separation ensures that intensive mapping operations do not interfere with overall UI responsiveness. We used Reacts Context to manage global state effectively, rather than relying on more complex solutions. This approach meets the specific requirements of seat manipulation, multi-layered zoom levels, and user interactions.
 
 \subsection{Developer Familiarity and Team Expertise}
 \setauthor{Michael Ruep}
 Since React was already in use at Solvistas, its adoption ensured that the company’s developers could seamlessly work with and extend the project. Additionally, our team had prior experience with component-based frontend frameworks, making it easy to understand React’s structure, including concepts such as routing, state management, data binding, and components. This familiarity allowed us to quickly understand and use React, and we immediately had our first running prototype.
-\subsubsection{Comparism To Other Frameworks}
+\subsubsection{Comparison to Other Frameworks}
 \setauthor{Michael Ruep}
 Compared to alternative frameworks such as Angular or Vue studies have shown that React and Vue generally demonstrate superior rendering performance and faster load times in dynamic applications~\cite{SPAComp}. Additionally, React is preferred by developers for SPAs with frequent UI updates, with a reported 34\% higher satisfaction rate compared to other frameworks~\cite{SPAComp}. 
 
 \subsection{Summary}
 \setauthor{Michael Ruep}
-React’s widespread adoption, strong ecosystem, and proven efficiency in building dynamic web applications make it a reliable choice for modern frontend development. Its Virtual DOM ensures optimized rendering performance, while its component-based architecture keeps the application modular and maintainable. Additionally, React Context provides a lightweight yet effective solution for managing global state, allowing seamless integration with external libraries such as Leaflet for real-time seat rendering~\cite{ReactVirtualDOM, ReactCBA01}. 
+React’s widespread adoption, strong ecosystem, and proven efficiency in building dynamic web applications make it a reliable choice for modern frontend development. Its Virtual DOM ensures optimized rendering performance, while its component-based architecture keeps the application modular and maintainable. Additionally, React Context provides a lightweight yet effective solution for managing global state. This allows seamless integration with external libraries such as Leaflet for real-time seat rendering~\cite{ReactVirtualDOM, ReactCBA01}. 
 
 With React already in use within the company, adopting it ensured maintainability and smooth collaboration. Its performance advantages in Single Page Applications (SPAs), along with high developer satisfaction rates~\cite{SPAComp}, further validated its suitability for SeatGen’s interactive seating plan editor.
 
