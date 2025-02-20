@@ -12,11 +12,11 @@ React’s Virtual DOM architecture is particularly advantageous for applications
 \subsection{Component-based Architecture}
 \setauthor{Michael Ruep}
 TODO: numoi drüber lesen auf süß
-React’s component-based architecture keeps each feature modular and make the project easier to maintain as it grows. Instead of bundling all functionality into a single monolithic view, UI features are developed as self-contained components. In our case for example:
+React’s component-based architecture keeps each feature modular to make the project easier to maintain as it grows. Instead of bundling all functionality into a single monolithic view, UI features are developed as self-contained components. In our case for example:
 \begin{compactitem}
-    \item Seat map interface
-    \item Toolbar actions
-    \item Detail panels
+    \item Seat Map Component
+    \item Toolbar Component
+    \item Detail Component
 \end{compactitem}
 Each of those elements have their own modules, allowing developers to modify or expand individual features without affecting unrelated parts of the application. This approach simplifies debugging, since issues can often be traced to a specific component rather than across the entire codebase. It is also suitable for collaborative development by letting team members work on separate components in parallel, which significantly accelerated our development process. Overall, React’s modular design reduces complexity which assists a more organized and maintainable codebase.
 ~\cite{ReactCBA01, ReactCBA02, ReactCBA03}
