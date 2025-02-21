@@ -118,3 +118,14 @@ AWS S3 was the only option considered, as it is the cloud platform used by Solvi
 
 \section{Leaflet}
 \setauthor{Michael Ruep}
+Leaflet is an open-source JavaScript library designed for interactive maps. Developed by Vladimir Agafonkin and maintained by a large community, it is widely used for its lightweight nature and ease of integration with modern web applications~\cite{Leaflet}. Unlike heavyweight mapping solutions such as Google Maps or OpenLayers, Leaflet is specifically optimized for rendering custom vector layers and handling dynamic user interactions efficiently. These characteristics make it an ideal choice for SeatGen’s stadium seat visualization, where real-time updates and performance optimization are critical.
+
+\subsection{Why We Chose Leaflet}
+\setauthor{Michael Ruep}
+For SeatGen, choosing the right mapping library was crucial to ensuring smooth and interactive seat visualization. Leaflet was selected due to its lightweight architecture, extensibility, and strong performance when rendering custom vector layers. Unlike Google Maps or OpenLayers, which offer extensive GIS functionalities but often introduce unnecessary overhead, Leaflet is designed for **fast, customizable, and lightweight mapping** solutions~\cite{Leaflet}. 
+
+A key advantage of Leaflet is its low dependency footprint. Unlike other mapping solutions that rely on external APIs or heavy SDKs, Leaflet provides a standalone JavaScript library that integrates seamlessly with React. This lightweight approach gives us great map performance, even when handling large stadiums with thousands of seats. In contrast, frameworks like Google Maps API enforce rate limits and external API calls, which can introduce latency unnecessary costs.
+
+Leaflet’s customizability also played a significant role in our decision. SeatGen requires custom zoom levels, and real-time updates, all of which are efficiently handled using Leaflet’s open architecture. Unlike proprietary mapping tools, Leaflet allows full control over rendering logic, making it easier to optimize performance and adjust the visualization to match stadium layouts precisely~\cite{Leaflet}. Futhermore we manipulated existing code and used it to our advantage, for example for selecting seats or the grid tool we used existing Leaflet functions which significantly helped us speeding up the development process.
+
+By selecting Leaflet, we ensured that SeatGen could efficiently handle multi-layered rendering, interactive zoom, custom maps, and seamless seat selection, all while maintaining a lightweight and scalable frontend architecture.
