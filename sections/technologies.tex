@@ -143,3 +143,20 @@ Leaflet provides several core functionalities that are essential for our interac
 \end{itemize}
 
 These features collectively make Leaflet a powerful tool for handling the seat visualization requirements. By leveraging Leaflet’s efficient rendering engine and customization capabilities, we created a seamless user experience that allows for real-time adjustments and intuitive stadium navigation.
+
+\subsection{Integration with React}
+\setauthor{Michael Ruep}
+Integrating Leaflet with React was straightforward thanks to React Leaflet, a library that provides React components for Leaflet~\cite{ReactLeafletDocs}. This greatly simplified the integration process, as we could manage Leaflet elements within React components without direct manipulation of the DOM.
+
+One challenge we faced was handling state management and data binding between Leaflet and React. Since Leaflet operates independently from React’s Virtual DOM~\cite{ReactLeafletDocs}, synchronizing real-time seat selections, modifications, grid placements and so on required a structured approach.
+
+Beyond standard Leaflet functionality, we also extended and customized existing Leaflet features to meet our specific needs. Tools such as the seat selection tool and grid tool, leveraged Leaflet’s built-in functions but were adapted and modified to SeatGen’s requirements. By understanding and modifying Leaflet’s core functions, we were able to create a tailored solution that aligned with our requirements for real-time seat arrangement and stadium visualization.
+
+\subsection{Summary}
+\setauthor{Michael Ruep}
+
+Leaflet’s lightweight architecture, flexibility, and strong customization capabilities made it the ideal choice for an interactive seating plan editor. Unlike heavier GIS-focused (geographic information system focused) alternatives, Leaflet provided a high-performance mapping solution tailored for real-time seat rendering and selection. 
+
+Its custom zoom levels, allowed us to create an intuitive and responsive seating visualization tool. Additionally, React Leaflet streamlined the integration process, enabling us build faster within React~\cite{ReactLeafletDocs}. 
+
+By leveraging Leaflet’s existing functionality while extending its core features to suit stadium seat planning, we ensured a clean working tool suite and a performant real time intercation. This makes Leaflet an essential part of our frontend architecture.
