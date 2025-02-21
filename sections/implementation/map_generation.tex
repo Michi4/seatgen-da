@@ -111,6 +111,8 @@ According to Google developers: \cite{ZopfliGoogleBlog}
 
 While Zopfli is significantly slower than standard Deflate or zlib, but this isn't a huge problem for this usecase, because time can be sacrificed once for the optimization and speed improvement for the user.
 
+\subsubsection{Analysis of Compression Algorithms}
+
 \begin{figure}
     \centering
     \includegraphics[scale=0.8]{pics/test_stadium.png}
@@ -150,7 +152,7 @@ By testing the compression algorithms within this application with different par
         4 & 289606 & 289134 & 51388 & 0.16\% \\ \hline
         5 & 700382 & 699310 & 180054 & 0.15\% \\ \hline
     \end{tabularx}
-    \caption{Compression Results for DEFAULT Compression Method}
+    \caption{Conversion Results for DEFAULT Compression Method}
     \label{tab:compression_default}
 \end{table}
 
@@ -160,32 +162,39 @@ By testing the compression algorithms within this application with different par
     \begin{tabularx}{\textwidth}{|c|X|X|X|X|}
         \hline
         \textbf{Zoom Level} & \textbf{Size Before Compression (Bytes)} & \textbf{Size After Compression (Bytes)} & \textbf{Time Taken (ms)} & \textbf{Percent Saved} \\ \hline
-        0 & 12148 & 9000 & 450 & 26.50\% \\ \hline
-        1 & 28218 & 21000 & 1200 & 25.53\% \\ \hline
-        2 & 61540 & 48000 & 3600 & 22.05\% \\ \hline
-        3 & 131470 & 120000 & 8000 & 8.50\% \\ \hline
-        4 & 289606 & 270000 & 16000 & 6.75\% \\ \hline
-        5 & 700382 & 680000 & 35000 & 2.04\% \\ \hline
+        0 & 12148 & 9745 & 13179 & 19.73\% \\ \hline
+        1 & 28218 & 23343 & 35591 & 17.29\% \\ \hline
+        2 & 61540 & 54519 & 111915 & 11.41\% \\ \hline
+        3 & 131470 & 119405 & 363794 & 9.18\% \\ \hline
+        4 & 289606 & 266976 & 1166758 & 7.82\% \\ \hline
+        5 & 700382 & 658512 & 3004721 & 5.98\% \\ \hline
     \end{tabularx}
-    \caption{Compression Results for Zopfli Compression Method}
+    \caption{Conversion Results for ZOPFLI Compression Method}
     \label{tab:compression_zopfli}
 \end{table}
 
 % Summary Table
 \begin{table}[h]
     \centering
-    \begin{tabular}{|p{7cm}|p{2.1cm}|p{2.1cm}|p{2.1cm}|p{2.1cm}|p{2.1cm}|}
+    \begin{tabular}{|p{7cm}|p{2.1cm}|p{2.1cm}|p{2.1cm}|}
         \hline
-        \textbf{Compression Method} & \textbf{NONE} & \textbf{DEFAULT} & \textbf{Zopfli} \\ \hline
+        \textbf{Compression Method} & \textbf{NONE} & \textbf{DEFAULT} & \textbf{ZOPFLI} \\ \hline
         \textbf{Total Size Before Compression (Bytes)} & 1223364 & 1223364 & 1223364 \\ \hline
-        \textbf{Total Size After Compression (Bytes)} & 1223364 & 1213061 & 1160000 \\ \hline
-        \textbf{Total Bytes Saved (Bytes)} & 0 & 10303 & 53364 \\ \hline
-        \textbf{Total Percent Saved} & 0\% & 0.84\% & 4.37\% \\ \hline
-        \textbf{Total Time Taken (ms)} & 7519 & 195929 & 70000 \\ \hline
+        \textbf{Total Size After Compression (Bytes)} & 1223364 & 1213061 & 1132500 \\ \hline
+        \textbf{Total Bytes Saved (Bytes)} & 0 & 10303 & 90964 \\ \hline
+        \textbf{Total Percent Saved} & \textbf{0\%} & \textbf{0.84\%} & \textbf{7.44\%} \\ \hline
+        \textbf{Total Time Taken (ms)} & 7519 & 195929 & 4696028 \\ \hline
+        \textbf{Total Time Taken (min)} & 0.13 & 3.27 & 78.27 \\ \hline
     \end{tabular}
-    \caption{Summary of Compression Results}
+    \caption{Summary of Conversion Results}
     \label{tab:summary_compression}
 \end{table}
+
+To ensure that this test data is viable, the calculation has been computed with 4 dedicated processors, that were configured like this as java vm options:
+
+\texttt{-XX:ActiveProcessorCount=4}
+
+As you can observe in the summary table \ref{tab:summary_compression} and as expected has amazing compression but is a very time intensive process. In the end we save 6.6\% more than the default algorithm, but it takes ~24 times longer, and waiting times for over an hour should be calculated when using the algorithm. This is a trade-off that has to be considered. Because this would only be a one time process the decision could fall for Zopfli, but in comparison to the total 90964 Bytes (88.83=KiB) saved this is still not a huge amount of data saved, when considering the time taken. In the end all the data produced is not very large, so the operator has to decide if the time is worth the saved data. If the time and resources don't want to be spent for such a low storage and performance improvement, the default algorithm is still a good choice, because a waiting period of 3 minutes 16 seconds is still acceptable for a small bit of optimization. As mentioned previously it's very important, that the user can decide what algorithm should be used because of lots of factors. When the program is hosted on an external cloud provider with dynamic cost calculation, the user probably doesn't want to spend the extra money for the Zopfli algorithm, because the cost for the extra time could be higher than the saved money for the storage. If the program is executed locally or servers that have enough free resources the Zopfli algorithm is an excelent choice.
 
 Another significant decision during development was whether to compress the images before or after the slicing process. Ultimately, we decided to compress the images before slicing them into tiles. This approach was favored for several reasons.
 
