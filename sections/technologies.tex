@@ -27,6 +27,8 @@ Finally, Kotlin’s growing adoption within the Spring ecosystem, along with fir
 
 In the end, we chose Spring Boot with Kotlin because of our team's expertise with the language and the fact that all other components of the Ticketing software were already written in Spring Boot.
 
+SeatGen also utilizes SwaggerUi and SwaggerUi codegen to generate a REST API documentation and client code for the frontend. This allows for easy integration of the backend with the frontend and ensures that the frontend developers always have the most up-to-date API documentation. This is done via the OpenApi gradlew plugin, which generates the SwaggerUi documentation and client code for all the api endpoints and required models. The generated docs can be fetched by the frontend developers with a script within the \texttt{package.json} file, under the name \texttt{fetch-openapi-docs}. This script fetches the api-docs.yaml file from the backend and saves it in the frontend project. When starting or building the frontend, the  \texttt{swagger-typescript-api} plugin generates the client code from this file. The frontend developer now can use the generated client code to interact with the backend API through the generated functions and models without having to manually maintain the API client code.
+
 \section{Database}
 \setauthor{Michael Stenz}
 We chose PostgreSQL as our database for several key reasons. First, we required a relational database since our data follows a structured design that is best represented through classical relational models. Additionally, using a relational database simplifies the process of exporting generated data into the Ticketing database, which also adheres to a relational structure.
