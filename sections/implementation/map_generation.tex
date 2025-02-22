@@ -56,7 +56,7 @@ If the image is not square, it is centered within a square canvas, with the rema
 
 In this step, the PNG image generated in the previous step is sliced into smaller tiles. The size of the tiles is determined by the user, with 256x256px being the default. Given that the image is always square and its dimensions are divisible by the tile size, the image can be split into an integer number of tiles without complications. 
 
-The slicing process works by iterating through the image and extracting a sub-image of the specified tile size. This is done by calculating the appropriate coordinates for each tile and using the \texttt{Graphics.drawImage} method to copy the respective portion of the image into a new BufferedImage for each tile.
+The slicing process works by iterating through the image and extracting a sub-image of the specified tile size. This is done by calculating the appropriate coordinates for each tile and using the \texttt{Graphics.drawImage} method to copy the respective portion of the image into a new \texttt{BufferedImage} for each tile.
 
 Here is the Kotlin code implementation for the slicing process:
 
@@ -254,6 +254,8 @@ S3 looks like a standard file system, but actually it's not, and therefore the n
 Normally data in an Amazon S3 bucket, is stored in a flat structure instead of a hierarchy one as seen in standard file systems. Amazon still supports the organization of data like in file systems. This is done by giving all the grouped objects a shared string prefix. The prefix is therefore the folder name. The data, is actually still stored in a flat structure, but it's visualized like folders in the Amazon S3 console.
 
 The second place where name is utilized, is the URL path in the frontend. This is a bit more restricted, because it's part of the URL and therefore some characters could lead to errors. These following characters are reserved and can't be used in the URL path: \texttt{/\&?=:\%}. When these are used this leads to errors. This is why we prepare the name for the URL path by replacing these characters with an underscore. To still give the user the requested name, we store the original name in our database as well as the prepared name. The original name is only used for displaying purposes in the frontend.
+
+Then the tiles are uploaded with the prefixes according to their coordinates. The final filenames are in the format \texttt{<mapName>/<z>/<x>/<y>.png}. The map name is the name provided by the user, and the zoom level, x, and y are the coordinates of the tile. The tiles are uploaded to the S3 bucket in a hierarchical structure, with each zoom level containing a set of directories for the x and y coordinates.
 
 After executing all of these steps, they have to be repeated for each zoom level asked for. 
 

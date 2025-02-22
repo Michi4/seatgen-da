@@ -1,0 +1,25 @@
+@startuml
+
+entity sector {
+    + id: integer [PK, NN]
+    + map_id: integer [NN, FK -> map.id]
+    + name: varchar
+    + capacity: integer
+}
+
+entity sector_node {
+    + id: integer [PK, NN]
+    + sector_id: integer [FK -> sector.id]
+    + sector_map_id: integer [FK -> sector.map_id]
+    + next_sector_node_id: integer [UQ, FK -> sector_node.id, d:cascade]
+    + x: integer [NN]
+    + y: integer [NN]
+}
+
+entity map {
+}
+
+sector "*"--> "1"map
+sector_node "*" --> "1" sector
+sector_node "1" --> "*" sector_node
+@enduml
