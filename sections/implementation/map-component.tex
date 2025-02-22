@@ -228,3 +228,117 @@ const handleSeatClick = useCallback((id: number, event: L.LeafletMouseEvent) => 
     \item Holding \textbf{Ctrl} allows multi-selection, useful for bulk actions.
     \item Clicking a seat opens the \textbf{DetailEditor sidebar} for further modifications.
 \end{itemize}
+
+
+\subsubsection{Implementing Live Seat Dragging and Moving}
+\setauthor{Michael Ruep}
+
+In SeatGen, users can drag and reposition multiple selected seats dynamically. The challenge was ensuring that \textbf{all} selected seats move smoothly and live directly following the cursor while keeping their relative distances intact. To achieve this, we implemented a real-time position tracking mechanism using Leaflet events and React state updates.
+
+\subsubsection{Tracking Initial Positions}
+Before moving seats, we store their initial positions so that relative offsets can be preserved:
+
+\begin{lstlisting}[language=TypeScript, caption=Storing Initial Positions Before Dragging, label=lst:seat-initial-pos]
+const initialPositionsRef = useRef<{ [key: number]: L.Point }>({});
+
+const storeInitialPositions = useCallback(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    initialPositionsRef.current = {};
+    selectedSeats.forEach(seat => {
+        initialPositionsRef.current[seat.id] = map.latLngToLayerPoint(seat.position);
+    });
+
+    // Register move action for undo functionality
+    context.doAction(new MoveAction(selectedSeats, context.setSeats));
+}, [selectedSeats, context]);
+\end{lstlisting}
+
+\textbf{How This Works:}
+\begin{itemize}
+    \item We create a reference (\texttt{initialPositionsRef}) to store the pixel positions of selected seats by converting the Latitude and Longitude into Layer Points which are x and y Cartesian System points.
+    \item These positions are saved when the user starts dragging a seat.
+    \item The relative distance between seats is maintained, preventing unwanted misalignment.
+\end{itemize}
+
+\subsubsection{Updating Seats in Real-Time During Dragging}
+While the user drags a seat, we calculate the drag distance and apply it to all selected seats:
+
+\begin{lstlisting}[language=TypeScript, caption=Updating Seat Positions During Dragging, label=lst:seat-live-dragging]
+const updateSelectedSeatsPosition = useCallback((draggedSeatId: number, newLatLngPosition: { lat: number; lng: number }) => {
+    const map = mapRef.current;
+    const primarySeat = context.seats.find(s => s.id === draggedSeatId);
+
+    if (!map || !primarySeat || !primarySeat.selected) return;
+
+    const newPosition = map.latLngToLayerPoint(newLatLngPosition);
+    const oldPosition = initialPositionsRef.current[draggedSeatId];
+
+    const deltaX = newPosition.x - oldPosition.x;
+    const deltaY = newPosition.y - oldPosition.y;
+
+    context.setSeats(prevSeats =>
+        prevSeats.map(seat => {
+            if (seat.selected) {
+                const initialPosition = initialPositionsRef.current[seat.id];
+                const newPosX = initialPosition.x + deltaX;
+                const newPosY = initialPosition.y + deltaY;
+                const newLatLngPos = map.layerPointToLatLng(new L.Point(newPosX, newPosY));
+                return { ...seat, position: newLatLngPos };
+            }
+            return seat;
+        })
+    );
+
+    // Update MoveAction for undo tracking
+    const currentAction = context.getCurrentAction();
+    if (currentAction instanceof MoveAction) {
+        currentAction.setNewSeats(selectedSeats);
+    }
+}, [context.seats, context]);
+\end{lstlisting}
+
+\textbf{Breakdown of Logic:}
+\begin{itemize}
+    \item We calculate the drag delta (change in X/Y position) between the starting position and the new cursor position.
+    \item The same delta is applied to all selected seats, ensuring they move together.
+    \item Positions are converted between LatLng (geo-coordinates) and pixel points, so dragging works consistently at different zoom levels.
+    \item We track changes using \texttt{MoveAction}, allowing the operation to be undone if needed.
+\end{itemize}
+
+\subsubsection{Finalizing the Seat Position After Dragging}
+When the user releases the dragged seat, we commit the final position to the global state:
+
+\begin{lstlisting}[language=TypeScript, caption=Finalizing Seat Position After Dragging, label=lst:seat-drop-final]
+const finalizeSeatPosition = useCallback(() => {
+    context.setSeats(prevSeats =>
+        prevSeats.map(seat => ({ ...seat, draggable: false }))
+    );
+}, [context]);
+\end{lstlisting}
+
+\textbf{How This Works:}
+\begin{itemize}
+    \item Ensures that seats remain in their new positions after releasing the mouse.
+    \item Prevents further unnecessary state updates.
+    \item Syncs the final positions with the backend when saving changes.
+\end{itemize}
+
+\subsubsection{Optimizations and Challenges}
+\textbf{Major Challenges Encountered:}
+\begin{itemize}
+    \item Preventing position drift when switching between zoom levels.
+    \item Ensuring smooth movement with large seat selections.
+    \item Avoiding excessive re-renders that slow down performance.
+\end{itemize}
+
+\textbf{Performance Optimizations:}
+\begin{itemize}
+    \item Used \texttt{useRef} to store initial positions instead of state (prevents extra re-renders).
+    \item Applied batch updates for all selected seats instead of updating them individually.
+    \item Optimized Leaflet latLng to pixel conversion for to be able to drag the seats naturally (direct manipulation~\cite{Hutchins01121985}).
+\end{itemize}
+
+\subsubsection{Final Summary}
+The live dragging implementation allows users to dynamically reposition multiple seats while keeping their relative distances intact. By leveraging Leaflet’s coordinate system and real-time state updates, we achieved a fluid and high-performance dragging experience whilst also beeing able to undo and redo the movement.
