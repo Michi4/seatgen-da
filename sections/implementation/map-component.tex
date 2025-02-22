@@ -1,0 +1,230 @@
+
+
+The \textbf{MapComponent.tsx} is one of the most critical components in SeatGen, responsible for rendering and managing the stadium seating map. It integrates with \textbf{Leaflet.js} to provide interactive seat visualization, selection, and manipulation.
+
+\textbf{Key Responsibilities:}
+\begin{itemize}
+    \item Initializes and manages the \textbf{Leaflet map instance}.
+    \item Loads seat and standing area data dynamically from the backend.
+    \item Renders seats and standing areas as \textbf{interactive markers and polygons}.
+    \item Handles user interactions such as \textbf{clicking, selecting, and dragging seats}.
+    \item Implements \textbf{state synchronization} with the global context (\textbf{MapContext.tsx}).
+    \item Provides support for \textbf{tool-based seat editing} (e.g., adding, deleting, moving).
+\end{itemize}
+
+\textbf{Component Structure:}
+\begin{itemize}
+    \item \textbf{State Management:} Uses \texttt{useState}, \texttt{useEffect}, and \texttt{useContext} to manage map data.
+    \item \textbf{Leaflet Integration:} Utilizes \texttt{MapContainer} from \texttt{react-leaflet} for seamless map rendering.
+    \item \textbf{Performance Enhancements:} Implements \texttt{useCallback} and \texttt{useRef} to optimize re-renders.
+\end{itemize}
+
+\subsubsection{Map Initialization and Leaflet Integration}
+
+The \textbf{MapComponent.tsx} initializes the Leaflet map using the react-leaflet \texttt{MapContainer} component.
+
+\begin{lstlisting}[language=TypeScript, caption=Initializing Leaflet Map in React, label=lst:react-leaflet]
+const MapComponent: FC<MapProps> = ({ editable: initialEditable }) => {
+    const context = useMapContext(); // Access global state (MapContext.tsx)
+    const { bucketName, mapName } = useParams(); // Retrieve map identifiers from URL params
+
+    const [editable, setEditable] = useState(initialEditable ?? true);
+    const mapRef = useRef<L.Map>(null);
+
+    return (
+        <MapContainer
+            crs={L.CRS.Simple} // Uses a flat, pixel-based coordinate system
+            className="leaflet-container h-full w-full"
+            ref={mapRef}
+            center={[context.mapInfo.tileSize / (-2), context.mapInfo.tileSize / (2)]}
+            zoom={context.mapInfo.defaultZoom}
+            maxZoom={context.mapInfo.maxZoom}
+            minZoom={context.mapInfo.minZoom}
+            scrollWheelZoom={true}
+            zoomControl={false}
+            doubleClickZoom={false}
+            preferCanvas={true}
+            dragging={true}
+            tap={false}
+            renderer={L.canvas()} // Use Canvas for better performance
+        >
+            <TileLayer tms={true} url={`${context.mapInfo.mapDto.baseUrl}/{z}/{x}/{y}.png`} />
+        </MapContainer>
+    );
+};
+\end{lstlisting}
+
+\textbf{Custom CRS (Coordinate Reference System):}
+\begin{itemize}
+    \item Uses \textbf{L.CRS.Simple}, a \textbf{2D pixel-based coordinate system}.
+    \item Unlike traditional geographic maps, SeatGen does not need a curved map.
+    \item All coordinates can be converted to a Cartesian X/Y grid.
+\end{itemize}
+
+\textbf{Custom Rendering Engine:}
+\begin{itemize}
+    \item Uses \textbf{L.canvas()} instead of SVG for performance.
+    \item Enables handling of thousands of seat markers.
+    \item Reduces DOM load by rendering elements in a drawing surface.
+\end{itemize}
+
+\textbf{Dynamically Loading Map Tiles:}
+\begin{itemize}
+    \item The tile URL is dynamically constructed based on \texttt{context.mapInfo}.
+    \item Tiles are loaded asynchronously to improve map load times.
+\end{itemize}
+
+
+\subsubsection{Fetching Seat and Standing Area Data}
+\setauthor{Michael Ruep}
+
+The MapComponent.tsx fetches seat and standing area data from the backend when the component mounts. This is done using the api client in the useEffect hook.
+
+\begin{lstlisting}[language=TypeScript, caption=Fetching Seat and Category Data, label=lst:fetch-seats]
+useEffect(() => {
+    if (bucketName && mapName) {
+        // Fetch basic stadium map information
+        seatgenApiClient.api.info(bucketName, mapName)
+            .then(response => context.setMapInfo(response.data))
+            .catch(error => console.error('Error fetching map info:', error));
+
+        // Fetch seat categories before retrieving individual seats
+        seatgenApiClient.api.getAllCategories().then((r) => {
+            if (r.ok) {
+                context.setCategories(r.data);
+                seatgenApiClient.api.getSeatsByMap(bucketName, mapName).then(response => {
+                    if (r.ok) {
+                        context.setSeats(response.data.map((s) => ({
+                            id: s.seatId!,
+                            position: { lat: s.xcoord!, lng: s.ycoord! },
+                            category: r.data.find(it => it.id === s.categoryId) ?? null
+                        })));
+                    }
+                });
+            }
+        });
+
+        // Fetch standing areas
+        seatgenApiClient.api.getSectorByMap(bucketName, mapName).then((r) => {
+            if (r.ok) {
+                context.setStandingAreas(r.data.map((data) => ({
+                    id: data.id!,
+                    name: data.name!,
+                    capacity: data.capacity,
+                    coordinates: data.coordinates?.map((c) => new L.LatLng(c.x!, c.y!)) ?? [],
+                    selected: false
+                })));
+            }
+        });
+
+    } else {
+        console.error("BucketName or MapName not set");
+    }
+}, [bucketName, mapName]);
+\end{lstlisting}
+
+\textbf{Breakdown of Logic:}
+\begin{itemize}
+    \item Fetches stadium metadata (mapInfo) and sets it globally.
+    \item Retrieves seat categories.
+    \item Retrieves seat positions from the backend and maps them into React state.
+    \item Ensures data consistency by linking seats to their corresponding categories.
+\end{itemize}
+
+\textbf{Example of Mapped Seat Object:}
+\begin{lstlisting}[language=TypeScript, caption=Seat Object in State, label=lst:seat-object]
+{
+    id: 1234,
+    position: { lat: 48.3069, lng: 14.2858 }, // Example coordinates
+    category: { id: 2, name: "VIP", color: "#FFD700" } // Associated category
+}
+\end{lstlisting}
+
+\subsubsection{Fetching Standing Area / Sector Data}
+In addition to seats, the component also retrieves standing areas, which are handled separately.
+
+\begin{lstlisting}[language=TypeScript, caption=Fetching Standing Areas, label=lst:fetch-standingareas]
+seatgenApiClient.api.getSectorByMap(bucketName, mapName).then((r) => {
+    if (r.ok) {
+        context.setStandingAreas(r.data.map((data) => ({
+            id: data.id!,
+            name: data.name!,
+            capacity: data.capacity,
+            coordinates: data.coordinates?.map((c) => new L.LatLng(c.x!, c.y!)) ?? [],
+            selected: false
+        })));
+    }
+});
+\end{lstlisting}
+
+\textbf{Explanation:}
+\begin{itemize}
+    \item The API returns a list of sector polygons.
+    \item Each area consists of a unique ID, name, capacity, and a list of coordinates.
+    \item Coordinates are transformed into Leaflet’s LatLng format to be rendered as a polygon.
+\end{itemize}
+
+\textbf{Example of a Standing Area Object in State:}
+\begin{lstlisting}[language=TypeScript, caption=Standing Area Object in State, label=lst:standingarea-object]
+{
+    id: 5678,
+    name: "Sektor 1",
+    capacity: 500,
+    coordinates: [
+        { lat: 48.3069, lng: 14.2858 },
+        { lat: 48.3075, lng: 14.2862 },
+        { lat: 48.3080, lng: 14.2856 }
+    ],
+    selected: false
+}
+\end{lstlisting}
+
+\subsubsection{State Management and Performance}
+\begin{itemize}
+    \item \texttt{useEffect} Dependency Array:
+    \begin{itemize}
+        \item Ensures the API calls only run when \texttt{bucketName} or \texttt{mapName} change.
+        \item Prevents unnecessary re-fetching on every render.
+    \end{itemize}
+    
+    \item Efficient State Updates:
+    \begin{itemize}
+        \item Avoids unnecessary re-renders by batching state updates for seats and standing areas.
+        \item No prop-drilling by storing globaly needed fetched data in the \texttt{MapContext}.
+    \end{itemize}
+
+    \item Error Handling:
+    \begin{itemize}
+        \item If any API call fails, an error is logged, and the operation is skipped.
+        \item Ensures that failures in one request do not crash the entire component.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Rendering Seats and Handling Selection}
+\setauthor{Michael Ruep}
+
+Each seat in the stadium is rendered as a Leaflet marker, allowing users to interact with them dynamically. The selection mechanism is designed to provide an intuitive experience while supporting multi-selection for bulk operations.
+
+\textbf{Rendering Seat Markers:}
+\begin{lstlisting}[language=TypeScript, caption=Rendering and Selecting Seats, label=lst:seat-rendering]
+const handleSeatClick = useCallback((id: number, event: L.LeafletMouseEvent) => {
+    const isCtrlPressed = event.originalEvent?.ctrlKey;
+
+    context.setSeats(prevSeats => prevSeats.map(seat => {
+        if (seat.id === id) {
+            const selected = isCtrlPressed ? !seat.selected : true;
+            return { ...seat, selected };
+        }
+        return isCtrlPressed ? seat : { ...seat, selected: false };
+    }));
+
+    setOpenSideBar(true);
+}, [context]);
+\end{lstlisting}
+
+\textbf{How This Works:}
+\begin{itemize}
+    \item Clicking a seat toggles its selected state.
+    \item Holding \textbf{Ctrl} allows multi-selection, useful for bulk actions.
+    \item Clicking a seat opens the \textbf{DetailEditor sidebar} for further modifications.
+\end{itemize}
