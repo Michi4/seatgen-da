@@ -18,7 +18,15 @@ The undo/redo mechanism is essential for usability, providing users with the fle
 
 Given the application's complexity, a variation of the Command Pattern has been implemented for the undo/redo functionality. This approach ensures scalability, efficiency, and maintainability while minimizing redundancy of data and code.
 
-Our implementation defines an abstract \texttt{Action} class that all user actions must implement. This class enforces the inclusion of \texttt{execute} and \texttt{undo} methods, ensuring a standardized approach to action management.
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.5]{pics/command-pattern.png}
+    \caption{Command Pattern in SeatGen}
+    \label{fig:command-pattern}
+\end{figure}
+
+Our implementation defines an abstract \texttt{Action} class that all actions must implement. An overview of this is seen in \ref{fig:command-pattern}. This class enforces the inclusion of \texttt{execute} and \texttt{undo} methods, ensuring a standardized approach to action management.
 
 \begin{lstlisting}[language=TypeScript,caption={Action class},label={lst:action-class}]
 export abstract class Action {
@@ -191,3 +199,100 @@ context.doAction(new AddSeatAction(context.setSeats, lat, lng))
 This controller stores all the actions in the form of a loop, with the size defined by the \texttt{loopSize} variable. The variable is set to 50 because more than 50 undoable actions back are not necessary. A circular buffer for storing this kind of data is very advantageous because when the buffer is full, the oldest action is overwritten by the newest action because the oldest data is not needed anymore. Other very important variables are the \texttt{minIndex} and \texttt{maxIndex} variables. They define the range of the actions that can be undone and redone. When undoing, it's checked that the current index which is represented by the \texttt{historyIndex} is not the same as the \texttt{minIndex} and there is also an undoable action, because then there would be no more actions to undo. Only if these conditions are fulfilled, there are actions to undo, and the \texttt{undo()} this is called, and the \texttt{historyIndex} is decreased. A similar logic is applied for the \texttt{redo()} function, but with the \texttt{maxIndex} and the \texttt{increase()} function. The \texttt{doAction()} function is used to handle new actions. It increases the \texttt{historyIndex} and sets the \texttt{maxIndex} to the \texttt{historyIndex} and overwriting all the no longer needed Actions with undefined. The \texttt{minIndex} is set to the \texttt{increase(maxIndex)} to ensure that when the loop is full, that the changes that are too old they are removed. At last the action is added to the list of actions and the \texttt{execute()} function is called.
 
 The \texttt{increase()} and \texttt{decrease()} functions are used to increase and decrease the index in a circular way. This is necessary because the buffer is circular and when the end of the buffer is reached, the index has to be set to the beginning of the buffer again. This is done by checking if the index is at the end of the buffer and then setting it to the beginning of the buffer again.
+
+\subsection{Tools}
+Tools were a big part during development, so it was very important to make the implementation of new tools as easy and fast as possible. To achieve this we ended up with a Tool interface, were instances of it just need to be added to an array where the tools are. This final version of the interface looks like seen in listing \ref{lst:tool-interface}.
+
+\begin{lstlisting}[language=TypeScript,caption={Tool interface},label={lst:tool-interface}]
+export interface Tool {
+    id: string
+    icon: ReactNode,
+    onSelect?: ()=>void,
+    hotkey?: string
+}
+\end{lstlisting}
+
+The attributes of the interface are the following:
+\begin{compactitem}
+\item \textbf{id}: The id, which is used to identify the tool. Normally this is a string which is the name.
+\item \textbf{icon}: The icon of the tool, which is displayed in the toolbar. This has the type \texttt{ReactNode} because first a simple string was used, to pass it to an icon component, but then it was decided to use the \texttt{ReactNode} type, because it's more flexible, and the icons are not only limited to the icons of one UI library, but any icon can be used, including SVG icons.
+\item \textbf{onSelect}: The function that is called when the tool is selected. This is optional because not every tool needs a function to be called when it's selected. Some tools are handled externally.
+\item \textbf{hotkey}: The hotkey is a string that defines the hotkey for the tool. This is optional because not every tool needs a hotkey.
+\end{compactitem}
+
+In listing \ref{lst:implemented-tools} list of all the implemented Tools and how they look, when the coresponding image \ref{fig:tools} of how they are rendered.
+
+\begin{lstlisting}[language=TypeScript,caption={Implemented Tools},label={lst:implemented-tools}]
+const tools: Tool[] = [
+    {
+        id: "mouseTool",
+        icon: <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path
+                d="..."
+            />
+        </svg>,
+        onSelect: () => handleToolSelect(() => {
+        }, "mouseTool", "default"),
+        hotkey: "v"
+    },
+    {
+        id: "addTool",
+        icon: <PlusIcon></PlusIcon>,
+        onSelect: () => handleToolSelect((e) => {
+            props.addSeat(e.latlng.lat, e.latlng.lng)
+        }, "addTool", "cell"),
+        hotkey: "c"
+    },
+    {
+        id: "addGridTool",
+        icon: <TableCellsIcon></TableCellsIcon>,
+        onSelect: () => handleToolSelect(() => {
+        }, "addGridTool", "cell"),
+        hotkey: "g"
+    },
+    {
+        id: "squareSelectTool",
+        icon: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+            <path
+                d="..."/>
+        </svg>,
+        onSelect: () => handleToolSelect(() => console.log("Clicked"), "squareSelectTool", "crosshair"),
+        hotkey: "a"
+    },
+    {
+        id: "standingAreaTool",
+        icon: <UserGroupIcon />,
+        onSelect: () => handleToolSelect(() =>console.log("standingtool"), "standingAreaTool", "crosshair"),
+        hotkey: "s"
+    }
+];
+\end{lstlisting}
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.2]{pics/toolbar.png}
+    \caption{Tools in SeatGen}
+    \label{fig:tools}
+\end{figure}
+
+
+The \texttt{handleToolSelect} function is a function that is called when a tool is selected. It's responsible for setting the current tool and the cursor as shown in listing \ref{lst:handle-tool-select}.
+
+\begin{lstlisting}[language=TypeScript,caption={Handle tool select function},label={lst:handle-tool-select}]
+const handleToolSelect = useCallback((toolFunction: (e: LeafletMouseEvent) => void, toolId: string, cursorIcon?: string) => {
+    const cursorName = L.DomUtil.getClass(props.map.current!.getContainer()).split(" ").find((it) => it.startsWith("cursor-"));
+    if (cursorName) {
+        L.DomUtil.removeClass(props.map.current!.getContainer(), cursorName);
+    }
+    if (cursorIcon !== undefined) {
+        L.DomUtil.addClass(props.map.current!.getContainer(), `cursor-${cursorIcon}`);
+    }
+    setActiveToolFunction(() => toolFunction);
+    context.setSelectedToolId(toolId);
+}, [props.map, setActiveToolFunction]);
+\end{lstlisting}
+
+After all this is set, the tools are simply rendered with a component, that handles all these properties like hotkeys and the icon.
+
+\subsection{Backend Services}
+For the backend services SeatGen uses a very general and exchangeable approach that works with Spring. For the services we define an interface that is implemented by the services. This interface is used to define the methods that are needed for the services. In the controller the service is injected, and spring automatically creates an instance of the correct service implementation and injects it into the controller. This is a very common approach in Spring and is used in many projects.
