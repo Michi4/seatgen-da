@@ -1,0 +1,123 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class bucket {
+   name: varchar(255)
+   id: integer
+}
+class category {
+   color: varchar(7)
+   name: varchar(255)
+   id: integer
+}
+class map {
+   name: varchar(255)
+   bucket_id: integer
+   default_zoom: integer
+   max_zoom: integer
+   min_zoom: integer
+   tile_size: integer
+   display_name: varchar(255)
+   id: integer
+}
+class seat {
+   x_coord: double precision
+   y_coord: double precision
+   row_id: double precision
+   column_id: double precision
+   category_id: integer
+   map_id: integer
+   id: integer
+}
+class seatgroup {
+   groupname: varchar(255)
+   id: integer
+}
+class seatgroup_seat {
+   seat_id: integer
+   seatgroup_id: integer
+}
+class sector {
+   name: varchar(255)
+   capacity: integer
+   id: integer
+   map_id: integer
+}
+class sector_node {
+   sector_id: integer
+   sector_map_id: integer
+   next_sector_node_id: integer
+   x: integer
+   y: integer
+   id: integer
+}
+
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class bucket {
+   name: varchar(255)
+   id: integer
+}
+class category {
+   color: varchar(7)
+   name: varchar(255)
+   id: integer
+}
+class map {
+   name: varchar(255)
+   bucket_id: integer
+   default_zoom: integer
+   max_zoom: integer
+   min_zoom: integer
+   tile_size: integer
+   display_name: varchar(255)
+   id: integer
+}
+class seat {
+   x_coord: double precision
+   y_coord: double precision
+   row_id: double precision
+   column_id: double precision
+   category_id: integer
+   map_id: integer
+   id: integer
+}
+class seatgroup {
+   groupname: varchar(255)
+   id: integer
+}
+class seatgroup_seat {
+   seat_id: integer
+   seatgroup_id: integer
+}
+class sector {
+   name: varchar(255)
+   capacity: integer
+   id: integer
+   map_id: integer
+}
+class sector_node {
+   sector_id: integer
+   sector_map_id: integer
+   next_sector_node_id: integer
+   x: integer
+   y: integer
+   id: integer
+}
+
+map             -[#595959]->  bucket         : "bucket_id:id"
+seat            -[#595959]->  category       : "category_id:id"
+seat            -[#595959]->  map            : "map_id:id"
+seatgroup_seat  -[#595959]->  seat           : "seat_id:id"
+seatgroup_seat  -[#595959]->  seatgroup      : "seatgroup_id:id"
+sector          -[#595959]->  map            : "map_id:id"
+sector_node     -[#595959]->  sector         : "sector_id, sector_map_id:id, map_id"
+sector_node     -[#595959]->  sector_node    : "next_sector_node_id:id"
+@enduml
