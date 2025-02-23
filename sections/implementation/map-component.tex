@@ -382,9 +382,16 @@ const handleStandingAreaClick = useCallback((id: number) => {
 \textbf{Selection and Editing Process:}
 \begin{itemize}
     \item Clicking a standing area toggles its selected state.
-    \item In the Detail Editor panel renaming, capacity adjustments, and category updates are possible.
+    \item In the Detail Editor panel renaming, capacity adjustments, and category (including color coding) updates are possible.
     \item The user can resize the polygons on creation to modify the area covered.
 \end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{pics/MapComponentCategoryAndSelectedSeat.png}
+    \caption{Map, Seats with Category Color, and Selected Seat in MapComponent.tsx}
+    \label{fig:map-component-category}
+\end{figure}
 
 \subsubsection{Event Handling in Leaflet}
 \setauthor{Michael Ruep}
