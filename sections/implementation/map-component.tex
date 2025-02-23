@@ -523,12 +523,14 @@ This saving mechanism ensures that the application remains responsive while keep
 \subsubsection{Final Summary of MapComponent.tsx}
 The \textbf{MapComponent.tsx} is the core of SeatGen’s interactive seating system. It efficiently manages:
 \begin{itemize}
+    \item Renders the Leaflet-based interactive seating map.
     \item Seat and Standing Area Rendering
     \item Group Selection and Bulk Editing
     \item Drag-and-Drop Seat Repositioning
     \item Event Handling for User Interaction
+    \item Synchronizes data with global state (MapContext.tsx).
     \item Asynchronous Backend Synchronization
 \end{itemize}
 
-Its optimized architecture ensures smooth operation even for large stadium layouts with thousands of seats.
+It ensures smooth operation even for large stadium layouts with thousands of seats.
 
