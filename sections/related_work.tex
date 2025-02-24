@@ -30,7 +30,7 @@ On the technical side, the SeatGen application integrates with:
     \item \textbf{PostgreSQL Database:} Stores seat configurations, categories, groups, sectors, and map data.  
 \end{itemize}
 
-In practice, large or complex venues may have thousands of individual seat entities, potentially impacting performance if the data management is not optimized. Additionally, the zoom levels demand loads of memory- and compute-efficient image slicing and compression, to avoid excessive storage usage on AWS. Our design choises underly these constraints and requirements in many places.
+In practice, large or complex venues may have thousands of individual seat entities, which could impact performance if data management is not optimized. Additionally, the zoom levels require memory- and compute-efficient image slicing and compression to avoid excessive storage usage on AWS. The design choices reflect these constraints and requirements in multiple areas.
 
 \section{Requirements and Challanges}
 \setauthor{Michael Ruep}

@@ -1,4 +1,4 @@
-In the development of our application, we incorporated various design patterns to address specific challenges efficiently. Many sectors of the application required distinct patterns, including the interactive editor and tool functionalities. Because the interactive editor and tool system included a lot of complex features, we needed specific solutions. Undoing actions, for instance, is a widely expected usability feature in almost every modern editor, whether text-based or visual. This feature is applied broadly across software products, and various solutions exist. Special implementations of design patterns were utilized for these following parts of the application:
+During the development of the application, various design patterns were incorporated to efficiently address specific challenges. Different sectors of the application required distinct patterns, particularly in the interactive editor and tool functionalities. Given the complexity of these components, tailored solutions were necessary. For instance, implementing an undo functionality—a widely expected usability feature in modern editors, both text-based and visual—required careful design considerations. This feature is commonly applied across software products, with multiple solutions available. Specialized implementations of design patterns were employed in the following aspects of the application:
 \begin{compactitem}
 \item Undo/Redo functionality of Actions
 \item Tool System
@@ -27,7 +27,7 @@ Given the application's complexity, a variation of the Command Pattern has been 
     \label{fig:command-pattern}
 \end{figure}
 
-Our implementation defines an abstract \texttt{Action} class that all actions must implement. An overview of this is seen in \ref{fig:command-pattern}. This class enforces the inclusion of \texttt{execute} and \texttt{undo} methods, ensuring a standardized approach to action management.
+The implementation defines an abstract \texttt{Action} class that all actions must implement. An overview of this is seen in \ref{fig:command-pattern}. This class enforces the inclusion of \texttt{execute} and \texttt{undo} methods, ensuring a standardized approach to action management.
 
 \begin{lstlisting}[language=TypeScript,caption={Action class},label={lst:action-class}]
 export abstract class Action {
@@ -202,7 +202,7 @@ This controller stores all the actions in the form of a loop, with the size defi
 The \texttt{increase()} and \texttt{decrease()} functions are used to increase and decrease the index in a circular way. This is necessary because the buffer is circular and when the end of the buffer is reached, the index has to be set to the beginning of the buffer again. This is done by checking if the index is at the end of the buffer and then setting it to the beginning of the buffer again.
 
 \subsection{Tools}
-Tools were a big part during development, so it was very important to make the implementation of new tools as easy and fast as possible. To achieve this we ended up with a Tool interface, were instances of it just need to be added to an array where the tools are. This final version of the interface looks like seen in listing \ref{lst:tool-interface}.
+Tools played a significant role during development, making it essential to ensure that the implementation of new tools was as easy and fast as possible. To achieve this, a Tool interface was designed, where instances only need to be added to an existing array containing the tools. The final version of this interface is presented in Listing. \ref{lst:tool-interface}.
 
 \begin{lstlisting}[language=TypeScript,caption={Tool interface},label={lst:tool-interface}]
 export interface Tool {
@@ -296,4 +296,4 @@ const handleToolSelect = useCallback((toolFunction: (e: LeafletMouseEvent) => vo
 After all this is set, the tools are simply rendered with a component, that handles all these properties like hotkeys and the icon.
 
 \subsection{Backend Services}
-For the backend services SeatGen uses a very general and exchangeable approach that works with Spring. For the services we define an interface that is implemented by the services. This interface is used to define the methods that are needed for the services. In the controller the service is injected, and spring automatically creates an instance of the correct service implementation and injects it into the controller. This is a very common approach in Spring and is used in many projects.
+For the backend services SeatGen uses a very general and exchangeable approach that works with Spring. For the services, an interface is defined, which is then implemented by the respective service classes. This interface is used to define the methods that are needed for the services. In the controller the service is injected, and spring automatically creates an instance of the correct service implementation and injects it into the controller. This is a very common approach in Spring and is used in many projects.
