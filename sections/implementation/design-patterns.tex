@@ -277,7 +277,7 @@ const tools: Tool[] = [
 \end{figure}
 
 
-The \texttt{handleToolSelect} function is a function that is called when a tool is selected. It's responsible for setting the current tool and the cursor as shown in listing \ref{lst:handle-tool-select}. The cursors supported are the names of all the cursors names supported by the browser. These can be viewed on the Mozilla developer documentation.
+The \texttt{handleToolSelect} function is a function that is called when a tool is selected. It's responsible for setting the current tool and the cursor as shown in listing \ref{lst:handle-tool-select}. The cursors supported are the names of all the cursors names supported by the browser. These can be viewed on the Mozilla developer documentation \cite{MDNCursor}.
 
 \begin{lstlisting}[language=TypeScript,caption={Handle tool select function},label={lst:handle-tool-select}]
 const handleToolSelect = useCallback((toolFunction: (e: LeafletMouseEvent) => void, toolId: string, cursorIcon?: string) => {

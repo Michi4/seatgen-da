@@ -101,12 +101,12 @@ The Default option, uses the Deflate algorithm, which is used for as a base for 
 
 Together, these methods enable PNG files to achieve significant compression while maintaining full image fidelity.
 
-The Zopfli algorithm, developed by Google engineers Lode Vandevenne and Jyrki Alakuijala in 2013, offers an advanced, high-efficiency compression technique. While it still utilizes the Deflate algorithm, it applies exhaustive entropy modeling and shortest path search techniques to achieve a higher compression ratio than standard Deflate and zlib implementations. Zopfli achieves superior data compression by extensively analyzing different possible representations of the input data and selecting the most efficient encoding. By default, Zopfli performs 15 iterations to refine compression, though this can be adjusted for higher or lower processing times. Under standard settings, Zopfli output is typically 3–8\% smaller than zlib’s maximum compression, but it is approximately 80 times slower due to its computational intensity.
+The Zopfli algorithm\cite{ZopfliGitHub}, developed by Google engineers Lode Vandevenne and Jyrki Alakuijala in 2013, offers an advanced, high-efficiency compression technique. While it still utilizes the Deflate algorithm, it applies exhaustive entropy modeling and shortest path search techniques to achieve a higher compression ratio than standard Deflate and zlib\cite{ZlibGitHub} implementations. Zopfli achieves superior data compression by extensively analyzing different possible representations of the input data and selecting the most efficient encoding. By default, Zopfli performs 15 iterations to refine compression, though this can be adjusted for higher or lower processing times. Under standard settings, Zopfli output is typically 3–8\% smaller than zlib’s maximum compression, but it is approximately 80 times slower due to its computational intensity.
 
 According to Google developers: \cite{ZopfliGoogleBlog}
 
 \begin{quote}
-    The smaller compressed size allows for better space utilization, faster data transmission, and lower web page load latencies. Furthermore, the smaller compressed size has additional benefits in mobile use, such as lower data transfer fees and reduced battery use.
+    ...we believe that Zopfli represents the state of the art in Deflate-compatible compression.
 \end{quote}
 
 While Zopfli is significantly slower than standard Deflate or zlib, but this isn't a huge problem for this usecase, because time can be sacrificed once for the optimization and speed improvement for the user.
@@ -122,7 +122,7 @@ While Zopfli is significantly slower than standard Deflate or zlib, but this isn
 
 By testing the compression algorithms within this application with different parameters, which range from the three algorithms, different maps, and different numbers of zoom levels, it can be observed that Zopfli is the best option for the compression of the images, provided that time is allocated for compressing the data. All the test results are visualized in the following table, and the image used for testing is the BW-Linz stadium \ref{fig:impl:bw-stadium}, which is an example taken from production.
 
-\begin{table}[h]
+\begin{table}[H]
     \centering
     \begin{tabularx}{\textwidth}{|c|X|X|X|X|}
         \hline
@@ -139,7 +139,7 @@ By testing the compression algorithms within this application with different par
 \end{table}
 
 % Second Table
-\begin{table}[h]
+\begin{table}[H]
     \centering
     \begin{tabularx}{\textwidth}{|c|X|X|X|X|}
         \hline
@@ -156,7 +156,7 @@ By testing the compression algorithms within this application with different par
 \end{table}
 
 % Zopfli Compression Table with Fictional Data
-\begin{table}[h]
+\begin{table}[H]
     \centering
     \begin{tabularx}{\textwidth}{|c|X|X|X|X|}
         \hline
@@ -173,7 +173,7 @@ By testing the compression algorithms within this application with different par
 \end{table}
 
 % Summary Table
-\begin{table}[h]
+\begin{table}[H]
     \centering
     \begin{tabular}{|p{7cm}|p{2.1cm}|p{2.1cm}|p{2.1cm}|}
         \hline
@@ -249,7 +249,7 @@ The name provided by the user doesn't have any major restrictions for special ch
 
 S3 looks like a standard file system, but actually it's not, and therefore the name for the ``directory'' doesn't have huge limitations. 
 
-Normally data in an Amazon S3 bucket, is stored in a flat structure instead of a hierarchy one as seen in standard file systems. Amazon still supports the organization of data like in file systems. This is done by giving all the grouped objects a shared string prefix. The prefix is therefore the folder name. The data, is actually still stored in a flat structure, but it's visualized like folders in the Amazon S3 console.
+Normally data in an Amazon S3 bucket, is stored in a flat structure instead of a hierarchy one as seen in standard file systems. Amazon still supports the organization of data like in file systems. This is done by giving all the grouped objects a shared string prefix. The prefix is therefore the folder name. The data, is actually still stored in a flat structure, but it's visualized like folders in the Amazon S3 console. \cite{AWSUsingFolders}
 
 The second place where the name is utilized is the URL path in the frontend. This is more restricted because it is part of the URL, and therefore some characters could lead to errors. The following characters are reserved and cannot be used in the URL path: \texttt{/\&?=:\%}. Using these characters leads to errors. For this reason, the name is prepared for the URL path by replacing these characters with an underscore. To still provide the user with the requested name, the original name is stored in the database alongside the prepared name. The original name is used solely for display purposes in the frontend.
 
