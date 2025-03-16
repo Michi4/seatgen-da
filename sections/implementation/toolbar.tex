@@ -1,0 +1,145 @@
+The \textbf{ToolBar.tsx} component provides an intuitive interface for tool selection, map management, and saving operations within SeatGen. It enables users to interact efficiently with the stadium layout by offering a structured toolbar for tool activation, map naming, and data persistence.
+
+\textbf{Key Responsibilities:}
+\begin{itemize}
+    \item \textbf{Tool Selection:} Provides quick access to various editing tools.
+    \item \textbf{Map Title Editing:} Allows renaming the map for better organization.
+    \item \textbf{Saving and Previewing:} Ensures seamless data persistence and view-only mode.
+\end{itemize}
+
+\subsubsection{Component Structure}
+The \textbf{ToolBar.tsx} consists of the following elements:
+\begin{itemize}
+    \item \textbf{Tool Icons:} Represent different editing modes (selection, adding seats, grid placement, area selection, standing area placement).
+    \item \textbf{Map Name Editor:} Enables modifying the displayed name of the stadium layout.
+    \item \textbf{Save and Preview Buttons:} Handles storing changes and switching to a preview mode.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{pics/toolbar01.png}
+    \caption{Toolbar Icons in ToolBar.tsx}
+    \label{fig:toolbar-icons}
+\end{figure}
+
+Figure~\ref{fig:toolbar-icons} illustrates the available tool icons, where users can select different functionalities. The currently active tool is highlighted.
+
+\subsubsection{Tool Selection and Activation}
+The toolbar supports multiple tools, each represented by an icon. Users can switch between tools to perform various stadium layout modifications.
+
+\begin{lstlisting}[language=TypeScript, caption=Defining Available Tools, label=lst:toolbar-tools]
+const tools: Tool[] = [
+    {
+        id: "addTool",
+        icon: <PlusIcon></PlusIcon>,
+        onSelect: () => handleToolSelect((e) => {
+            props.addSeat(e.latlng.lat, e.latlng.lng)
+        }, "addTool", "cell"),
+        hotkey: "c"
+    },
+    {
+        id: "addGridTool",
+        icon: <TableCellsIcon></TableCellsIcon>,
+        onSelect: () => handleToolSelect(() => {
+        }, "addGridTool", "cell"),
+        hotkey: "g"
+    },
+    {
+        id: "standingAreaTool",
+        icon: <UserGroupIcon />,
+        onSelect: () => handleToolSelect(() =>console.log("standingtool"), "standingAreaTool", "crosshair"),
+        hotkey: "s"
+    }
+];
+\end{lstlisting}
+
+\textbf{How It Works:}
+\begin{itemize}
+    \item Each tool has an icon and an activation function.
+    \item Hotkeys allow quick switching between tools.
+    \item Selected tools modify the user’s interaction mode (e.g., clicking, selecting, adding seats).
+\end{itemize}
+
+\subsubsection{Editing the Map Name}
+The toolbar includes an editable text field for renaming the stadium layout. Clicking the pencil icon toggles the edit mode.
+
+\begin{lstlisting}[language=TypeScript, caption=Editing Map Name, label=lst:toolbar-edit-name]
+{
+    !editName ? (
+        <>
+            <p>{displayName}</p>
+            <PencilIcon onClick={() => setEditName(true)} className="mapNameEdit cursor-pointer" />
+        </>
+    ) : (
+        <>
+            <input
+                autoFocus
+                type='text'
+                className="text-center"
+                value={tempDisplayName}
+                onChange={(e) => setTempDisplayName(e.target.value)}
+            />
+            <CheckIcon onClick={() => {
+                seatgenApiClient.api.updateMapName({ bucketName: props.mapDto.bucketName, mapName: props.mapDto.mapName, displayName: tempDisplayName })
+                    .then((r) => setDisplayName(r.data.second))
+                setEditName(false);
+            }} className="cursor-pointer" />
+        </>
+    )
+}
+\end{lstlisting}
+
+\textbf{How It Works:}
+\begin{itemize}
+    \item Clicking the pencil icon allows editing the map title.
+    \item The name is updated and saved via an API request.
+    \item The change is immediately reflected in the UI.
+\end{itemize}
+
+\subsubsection{Save and Preview Buttons}
+The toolbar also contains buttons for saving progress and switching to a preview mode.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{pics/toolbar02.png}
+    \caption{Save and Preview Buttons in ToolBar.tsx}
+    \label{fig:toolbar-save-preview}
+\end{figure}
+
+\begin{lstlisting}[language=TypeScript, caption=Saving and Previewing, label=lst:toolbar-save-preview]
+<button className={SgButtonType.primarySmall} onClick={() => {
+    seatgenApiClient.api.saveSeats(context.seats.map((s) => ({
+        id: s.id,
+        x: s.position.lat,
+        y: s.position.lng,
+        categoryId: s.category?.id
+    })))
+    .then(context.updateSaveIndex);
+}} disabled={isSaveLoading}>
+    {isSaveLoading ? <Spinner size={4} /> : <span>Save</span>}
+</button>
+
+<button className={SgButtonType.primarySmall} onClick={() => {
+    props.setEditable(false);
+    setSelectedTool(null);
+}}>
+    Preview
+</button>
+\end{lstlisting}
+
+\textbf{How It Works:}
+\begin{itemize}
+    \item The \texttt{Save} button persists all seat and standing area modifications to the backend.
+    \item A checkmark icon confirms successful saving, while a warning icon indicates unsaved changes.
+    \item The \texttt{Preview} button switches the interface to a non-editable mode.
+\end{itemize}
+
+\subsubsection{Final Summary of ToolBar.tsx}
+\textbf{ToolBar.tsx} plays a critical role in SeatGen by providing an accessible interface for stadium layout editing. It includes:
+\begin{itemize}
+    \item \textbf{Interactive Tool Selection:} Enables switching between different seat and area modification tools.
+    \item \textbf{Map Naming:} Allows users to rename and organize stadium layouts.
+    \item \textbf{Save and Preview Mechanism:} Ensures data integrity and view-only mode.
+\end{itemize}
+
+By offering an efficient and intuitive interface, \textbf{ToolBar.tsx} enhances the overall usability of SeatGen.
