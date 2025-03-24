@@ -203,7 +203,7 @@ Had the choice been made to first slice the images and then compress the individ
 
 \subsection{Step 4: Uploading Tiles to S3}
 
-The final step in the map generation process involves uploading the generated tiles to an Amazon S3 bucket. This is achieved using the AWS SDK for Java, which provides a robust and efficient way to interact with AWS services. The SDK allows us to create an S3 client, which facilitates seamless communication with the S3 bucket. The only required configuration parameters for the client are the AWS region (set to eu-central-1 in SeatGen's case), the access key, and the secret key. Once configured, as demonstrated in Listing \ref{lst:kotlin:s3client}, the S3Client instance provides a range of operations, including putObject, getObject, and listObjectsV2, among others.
+The final step in the map generation process involves uploading the generated tiles to an Amazon S3 bucket. This is achieved using the AWS SDK for Java, which provides a robust and efficient way to interact with AWS services. The SDK allows creating an S3 client, which facilitates seamless communication with the S3 bucket. The only required configuration parameters for the client are the AWS region (set to eu-central-1 in SeatGen's case), the access key, and the secret key. Once configured, as demonstrated in Listing \ref{lst:kotlin:s3client}, the S3Client instance provides a range of operations, including putObject, getObject, and listObjectsV2, among others.
 
 \begin{lstlisting}[language=Kotlin,caption=Configuring the S3 Client,label=lst:kotlin:s3client]
 @ConfigurationProperties(prefix = "aws")

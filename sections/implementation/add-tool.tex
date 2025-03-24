@@ -1,2 +1,58 @@
-\section{Add-Tool}
-\setauthor{Michael Ruep}
+The \textbf{Add-Tool} in SeatGen provides the ability to manually place individual seats on the stadium map. It is primarily used for precise editing and complements bulk placement features such as the Grid-Tool.
+
+\textbf{Key Responsibilities:}
+\begin{itemize}
+    \item Enables manual placement of seats at a specific position on the map.
+    \item Internally dispatches an \texttt{AddSeatAction} to update global state.
+    \item Supports undo and redo via the action system.
+\end{itemize}
+
+\subsection{Triggering the Action}
+
+The seat is created externally and passed to the \texttt{AddSeatAction} class, which is then executed via the \texttt{doAction} method from context.
+
+\begin{lstlisting}[language=TypeScript, caption=Calling AddSeatAction, label=lst:add-tool-action-call]
+context.doAction(new AddSeatAction(newSeat, context.setSeats));
+\end{lstlisting}
+
+\textbf{Explanation:}
+\begin{itemize}
+    \item The \texttt{newSeat} is constructed outside and passed to the action.
+    \item The action handles the insertion of the seat into global state.
+    \item This mechanism ensures consistent integration with undo/redo logic.
+\end{itemize}
+
+\subsection{AddSeatAction Implementation}
+
+The actual seat insertion logic is encapsulated in the \texttt{AddSeatAction} class.
+
+\begin{lstlisting}[language=TypeScript, caption=AddSeatAction Implementation, label=lst:add-seat-action]
+export default class AddSeatAction extends Action {
+    private readonly newSeat: Seat;
+    private readonly setSeats: React.Dispatch<React.SetStateAction<Seat[]>>;
+
+    constructor(newSeat: Seat, setSeats: React.Dispatch<React.SetStateAction<Seat[]>>) {
+        super();
+        this.newSeat = newSeat;
+        this.setSeats = setSeats;
+    }
+
+    execute(): void {
+        this.setSeats(prev => [...prev, this.newSeat]);
+    }
+
+    undo(): void {
+        this.setSeats(prev => prev.filter(seat => seat.id !== this.newSeat.id));
+    }
+}
+\end{lstlisting}
+
+\textbf{How It Works:}
+\begin{itemize}
+    \item \texttt{execute()} appends the new seat to the seat list.
+    \item \texttt{undo()} removes it again by filtering the ID.
+    \item This implementation ensures full undo/redo compatibility.
+\end{itemize}
+
+\subsection{Conclusion}
+The \textbf{Add-Tool} provides a foundational editing feature in SeatGen, allowing users to place single seats precisely. It ties into the system's action-based architecture and contributes to a robust and reversible seat editing experience.

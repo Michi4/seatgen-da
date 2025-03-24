@@ -7,7 +7,7 @@ Because a standing area is in the for of nodes, which are connected to each othe
     \label{fig:standing_area_db_model}
 \end{figure}
 
-The sector\_node entity in the database has a foreign key, that references itself. This allows us to model a hierarchy, and in this case this hierarchy looks like a loop. To ensure database integrity, a unique constraint is set on the next\_sector\_node\_id. This makes sure, that there is only one sector node, that is the successor of a given sector node. When fetching a standing area two options were considered to do so.
+The sector\_node entity in the database has a foreign key, that references itself. This allows modeling a hierarchy, and in this case this hierarchy looks like a loop. To ensure database integrity, a unique constraint is set on the next\_sector\_node\_id. This makes sure, that there is only one sector node, that is the successor of a given sector node. When fetching a standing area two options were considered to do so.
 
 \begin{compactenum}
 \item Fetch all sector nodes from a map and build the standing area in the backend.

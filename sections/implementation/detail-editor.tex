@@ -146,19 +146,26 @@ interface Category {
 
 When a user selects a seat, they can assign or change its category using the \textbf{DetailEditor.tsx}.
 
+\begin{lstlisting}[language=TypeScript, caption=onChange Assigning Categories to Selected Seats, label=lst:assign-category]
+onChange={(newVal) => {
+    console.log(newVal)
+    context.doAction(new UpdateCategoryAction(selectedSeats, newVal ? newVal.value : null))
+    setCurrentSelectedCategory(newVal ? newVal.value : null);
+}}
+\end{lstlisting}
+
 \begin{lstlisting}[language=TypeScript, caption=Assigning Categories to Selected Seats, label=lst:assign-category]
-const assignCategoryToSelectedSeats = (categoryId: number) => {
-    context.setSeats(prevSeats => 
-        prevSeats.map(seat => 
-            seat.selected ? { ...seat, category: context.categories.find(c => c.id === categoryId) } : seat
-        )
-    );
-};
+execute = () => {
+    this._oldCategories = this._selectedSeats.map(seat => seat.category)
+    this._selectedSeats.forEach((seat) => {
+        seat.category = this._newCategory
+    });
+}
 \end{lstlisting}
 
 \textbf{How It Works:}
 \begin{itemize}
-    \item The function loops through all selected seats.
+    \item The function in \texttt{UpdateCategoryAction} loops through all selected seats.
     \item The new category is assigned based on the provided \texttt{categoryId}.
     \item The UI updates instantly, applying the new color and classification.
 \end{itemize}
@@ -172,11 +179,34 @@ Users can manage categories by:
     \item Deleting unused categories.
 \end{itemize}
 
-\begin{lstlisting}[language=TypeScript, caption=Managing Categories in Settings, label=lst:manage-categories]
-const addCategory = (name: string, color: string, price: number) => {
-    const newCategory: Category = { name, color, price };
-    context.setCategories(prev => [...prev, newCategory]);
-};
+\begin{lstlisting}[language=TypeScript, caption=Managing Categories, label=lst:manage-categories]
+onCreateOption={(inputValue) =>
+    seatgenApiClient.api.createCategory({name: inputValue, color: "#3768db"}).then((r) => {
+        if (r.ok) {
+            enqueueSnackbar("Successfully created category", {variant: 'success'})
+            selectedSeats.forEach((seat) => {
+                seat.category = r.data;
+            });
+            context.setCategories(prevCategories => [...prevCategories, r.data]);
+            context.categoryChecksums.current.set(r.data.id!, objectHash(r.data))
+            setCurrentSelectedCategory(r.data)
+        } else {
+            console.error('Error creating category:', r.statusText);
+            enqueueSnackbar('Error creating category', {variant: 'error'});
+        }
+    })
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=TypeScript, caption=Managing Category Color, label=lst:manage-categories]
+<input 
+    type="color"
+    value={currentSelectedCategory.color ?? "#3768db"}
+    onChange={(newColor) => {
+        selectedSeats[0].category!.color = newColor.target.value
+        setCurrentSelectedCategory({...currentSelectedCategory, color: newColor.target.value})
+    }));
+}}/>
 \end{lstlisting}
 
 \subsubsection{Category Visualization on the Map}
@@ -199,29 +229,6 @@ const renderedSeats = seats.map(seat => (
     \item Each seat marker inherits the category's color.
     \item Unassigned seats default to a neutral color (gray).
     \item Selecting a seat allows users to change its category.
-\end{itemize}
-
-\subsubsection{Bulk Category Assignment Using Groups}
-
-Seat groups enable bulk category assignments, allowing users to quickly change pricing tiers for multiple seats.
-
-\begin{lstlisting}[language=TypeScript, caption=Assigning Categories to Seat Groups, label=lst:group-category-assignment]
-const assignCategoryToGroup = (groupId: number, categoryId: number) => {
-    setSeatGroups(prevGroups => 
-        prevGroups.map(group => 
-            group.id === groupId 
-                ? { ...group, seats: group.seats.map(seat => ({ ...seat, category: context.categories.find(c => c.id === categoryId) })) }
-                : group
-        )
-    );
-};
-\end{lstlisting}
-
-\textbf{Advantages of Group Category Assignment:}
-\begin{itemize}
-    \item Speeds up pricing updates for entire sections.
-    \item Reduces manual selection efforts.
-    \item Ensures consistency in pricing and access restrictions.
 \end{itemize}
 
 \subsubsection{Conclusion}
@@ -296,23 +303,12 @@ const handleStandingCapacityChange = (capacity: string) => {
 \end{itemize}
 
 \subsubsection{Deleting a Standing Area}
-Standing areas can be removed when no longer needed.
+Standing areas can be removed using \texttt{DeleteStandingAreaAction} when no longer needed which is also undoable for user convenience.
 
 \begin{lstlisting}[language=TypeScript, caption=Deleting Standing Areas, label=lst:delete-standingarea]
-const deleteSelectedStandingAreas = useCallback(() => {
-    context.setStandingAreas(prev => prev.filter(area => 
-        !context.selectedStandingAreaIds.includes(area.id)
-    ));
-    context.setSelectedStandingAreaIds([]);
-}, [context]);
-\end{lstlisting}
+context.doAction(new DeleteStandingAreaAction(selectedStandingAreas, context))
 
-\textbf{How Deletion Works:}
-\begin{itemize}
-    \item The function filters out selected standing areas from the global state.
-    \item The selection state resets to prevent unintended deletions.
-    \item Deletion is undoable using the action history stack.
-\end{itemize}
+\end{lstlisting}
 
 \begin{figure}[H]
     \centering
@@ -327,7 +323,7 @@ Standing areas in SeatGen offer a structured approach to handling non-seated sec
 
 Beyond general standing areas, this feature can also be used to designate specific sections for specialized needs. For example, stadiums may allocate certain sectors for \textbf{wheelchair-accessible areas} or \textbf{priority seating for individuals with mobility impairments}. This flexibility ensures that accessibility requirements can be met while maintaining a clear and organized seating plan.
 
-\subsubsection{Final Summary of DetailEditor.tsx}
+\subsubsection{Summary}
 \textbf{DetailEditor.tsx} is a key component within SeatGen, offering intuitive tools for modifying stadium layouts. It enables:
 \begin{itemize}
     \item \textbf{Seat Editing:} Real-time adjustments to tooltips, positions, and assignments.
