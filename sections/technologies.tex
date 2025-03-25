@@ -32,7 +32,7 @@ Each of those elements has its own component, allowing developers to modify or e
 
 \subsection{Integration of Libraries}
 \setauthor{Michael Ruep}
-One of SeatGen’s central requirements is to enable direct manipulation for seat layouts. React’s flexible architecture allows for the easy incorporation of third-party libraries. For example, Leaflet was integrated to render the stadium map using its efficient, canvas-based engine. React uses its Context API to manage global state and user interactions, while Leaflet is responsible for the map rendering. This separation ensures that intensive mapping operations do not interfere with overall UI responsiveness. Reacts Context was used to manage global state effectively. This approach meets the specific requirements of seat manipulation, multi-layered zoom levels, and user interactions.
+One of SeatGen’s central requirements is to enable direct manipulation for seat layouts. React’s flexible architecture allows for the easy incorporation of third-party libraries. For example, Leaflet was integrated to render the stadium map using its efficient, canvas-based engine. React uses its Context API to manage global state and user interactions, while Leaflet is responsible for the map rendering. This separation ensures that intensive mapping operations do not interfere with overall UI responsiveness. React’s Context was used to manage global state effectively. This approach meets the specific requirements of seat manipulation, multi-layered zoom levels, and user interactions.
 
 \subsection{Developer Familiarity and Team Expertise}
 \setauthor{Michael Ruep}
@@ -141,7 +141,7 @@ A key advantage of Leaflet is its low dependency footprint. Unlike other mapping
 
 Leaflet’s customizability also played a significant role in our decision. SeatGen requires custom zoom levels, and real-time updates, all of which are efficiently handled using Leaflet’s open architecture. Unlike proprietary mapping tools, Leaflet allows full control over rendering logic, making it easier to optimize performance and adjust the visualization to match stadium layouts precisely~\cite{Leaflet}. Furthermore, existing Leaflet functions were adapted for tasks such as seat selection and the grid tool. This significantly accelerated the development process
 
-By selecting Leaflet, SeatGen ensures efficient handleing of multi-layered rendering, interactive zoom, custom maps, and seamless seat selection, all while maintaining a lightweight and scalable frontend architecture.
+By selecting Leaflet, SeatGen ensures efficient handling of multi-layered rendering, interactive zoom, custom maps, and seamless seat selection, all while maintaining a lightweight and scalable frontend architecture.
 
 \subsection{Key Features Used in SeatGen}
 \setauthor{Michael Ruep}
@@ -150,7 +150,7 @@ Leaflet provides several core functionalities that are essential for our interac
 
 \begin{itemize}
     \item \textbf{Dynamic Seat Rendering:} Leaflet enables the efficient rendering of thousands of seat markers without significantly impacting performance. Since stadiums can contain a large number of seats, rendering was optimized using Leaflet layers to manage visibility at different zoom levels.
-    \item \textbf{Custom Zoom Levels and Scaling:} Leaflet allows the definition of custom zoom levels, ensuring precise seat selection when zoomed in and a full view of the stadium’s structure when zoomed out.
+    \item \textbf{Custom Zoom Levels and Scaling:} Leaflet supports custom zoom levels, ensuring precise seat selection when zoomed in and a full view of the stadium’s structure when zoomed out.
     \item \textbf{Interactive Seat Selection:} By leveraging Leaflet’s built-in event handling system, users can click and modify seats in real time. This is crucial for intuitively adjusting seating arrangements.
     \item \textbf{Grid-Based Seat Placement:} Leaflet’s selection, polygon, and coordinate functions were used to implement functions like the grid tool and selection tool, allowing for structured seat placement. This feature speeds up the process of generating rows and sections by automatically aligning seats according to predefined parameters.
     \item \textbf{Real-Time State Management with React Context:} Since Leaflet does not natively integrate with React’s state management, React Context was used to synchronize seat selections, updates, and modifications across the application. This ensures that any seat change is reflected immediately in both the UI and the underlying data model.
