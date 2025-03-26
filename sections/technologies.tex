@@ -121,7 +121,7 @@ Even though, TOAST is very performant and automatically compresses and stores la
 
 \section{AWS - S3}
 \setauthor{Michael Stenz}
-For image processing tasks such as resizing and slicing SVGs and PNGs, Python was initially considered due to its well-documented and easy-to-use image manipulation libraries like CairoSVG and OpenCV. However, the decision was ultimately made to keep the processing within the Java/Kotlin ecosystem, utilizing libraries such as Batik and ImageIO. While image processing in Java/Kotlin is not as straightforward as in Python due to less extensive documentation and fewer community resources, maintaining consistency within the backend technology stack was prioritized. One challenge associated with Java-based image processing is memory management—heap size and garbage collection must always be considered, especially when processing large images. For file uploads, Amazon S3 provides excellent support for Java and Kotlin through the AWS SDK, with extensive documentation and examples. This facilitated seamless integration of S3 into the backend for efficient storage and retrieval of image tiles.
+For file uploads, Amazon S3 provides excellent support for Java and Kotlin through the AWS SDK, with extensive documentation and examples. This facilitated seamless integration of S3 into the backend for efficient storage and retrieval of image tiles.
 
 In the Ticketing project, all image tiles are stored in an AWS S3 bucket. S3 was required due to its robust performance, reliability, and seamless integration with the AWS ecosystem, which is already in use at Solvistas. By utilizing the Amazon S3 SDK, the file upload process is automated, reducing manual effort and minimizing the risk of errors.
 
