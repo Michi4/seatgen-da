@@ -1,10 +1,10 @@
-To integrate Leaflet\cite{LeafletGitHub} in SeatGen the React Leaflet library\cite{ReactLeafletDocs2} was utilized as a wrapper for Leaflet, because of the easier React implementation. The library provides a set of React components for Leaflet maps, instead of just having to use the javascript functions of the Leaflet library. To get started with the integration of a basic map the \texttt{MapContainer} component and a map reference. The \texttt{MapContainer} is the area in the frontend where the map is displayed. The map reference is used to interact with the map, like adding layers or markers. The following code snippet shows how to create a basic map with the React Leaflet library. To make a map appear, there needs to be a \texttt{TileLayer} as a child of the \texttt{MapContainer}. There can also be multiple \texttt{TileLayer} components, to display different map layers, but it's not needed in the usecase of SeatGen. The one required property of the \texttt{TileLayer} is the \texttt{url} property, which is the URL of the map tiles. In the \texttt{url} property the place where \texttt{x}, \texttt{y} and \texttt{z} are placed is defined by the \texttt{\{x\}}, \texttt{\{y\}} and \texttt{\{z\}} placeholders. The \texttt{z} is the zoom level, \texttt{x} and \texttt{y} are the coordinates of the tile. A key part of the integration is the use of a map reference (mapRef), which allows programmatic interaction with the map instance. This reference is created using React’s useRef hook and is used to manipulate the map dynamically, such as adding layers, adjusting zoom levels, or panning to specific locations.
+To integrate Leaflet\cite{LeafletGitHub} in SeatGen the React Leaflet library\cite{ReactLeafletDocs2} was utilized as a wrapper for Leaflet, because of the easier React implementation. The library provides a set of React components for Leaflet maps, instead of just having to use the javascript functions of the Leaflet library. To get started with the integration of a basic map the \texttt{MapContainer} component and a map reference. The \texttt{MapContainer} is the area in the frontend where the map is displayed. The map reference is used to interact with the map, like adding layers or markers. The following code snippet shows how to create a basic map with the React Leaflet library. To make a map appear, there needs to be a \texttt{TileLayer} as a child of the \texttt{MapContainer}. There can also be multiple \texttt{TileLayer} components, to display different map layers, but it's not needed in the use case of SeatGen. The one required property of the \texttt{TileLayer} is the \texttt{url} property, which is the URL of the map tiles. In the \texttt{url} property the \texttt{x}, \texttt{y} and \texttt{z} are defined by the \texttt{\{x\}}, \texttt{\{y\}} and \texttt{\{z\}} placeholders. The \texttt{z} is the zoom level, \texttt{x} and \texttt{y} are the coordinates of the tile. A key part of the integration is the use of a map reference (mapRef), which allows programmatic interaction with the map instance. This reference is created using React’s useRef hook and is used to manipulate the map dynamically, such as adding layers, adjusting zoom levels, or panning to specific locations.
 
 The integration of custom markers in the map, the \texttt{Marker} component is used. The \texttt{Marker} component is a child of the \texttt{MapContainer} and has a position property.
 
 Lots of different components utilize positions to display them on the map. Leaflet has two kinds of positions, the \texttt{LatLng} and the \texttt{Point}. The \texttt{LatLng} is a geographical point with a latitude and longitude. The \texttt{Point} is a point with x and y coordinates in pixels. The \texttt{Point} is used to position elements on the map, like markers or popups. 
 
-Latitude and longitude are used for representation of Earth's surface. Latitude specifies the north-south position and ranges from -90° (South Pole) to +90° (North Pole). Longitude specifies the east-west position and ranges from -180° to +180°. These coordinates are used in geographic coordinate systems, which are essential for positioning objects on a global scale, but not useful for the usecase of SeatGen. When not transforming the coordinates correctly and using a marker, it can happen, that when moving a marker in a straight line, it will move in a curved direction. This is because of the aforementioned logic of the surface of the Earth. To avoid this, the \texttt{LatLng} coordinates can be converted to \texttt{Point} coordinates by providing the map reference. An example of such a conversion in the code of Seatgen is in listing \ref{lst:latlng-point}
+Latitude and longitude are used for representation of Earth's surface. Latitude specifies the north-south position and ranges from -90° (South Pole) to +90° (North Pole). Longitude specifies the east-west position and ranges from -180° to +180°. These coordinates are used in geographic coordinate systems, which are essential for positioning objects on a global scale, but not useful for the use case of SeatGen. When not transforming the coordinates correctly and using a marker, it can happen, that when moving a marker in a straight line, it will move in a curved direction. This is because of the aforementioned logic of the surface of the Earth. To avoid this, the \texttt{LatLng} coordinates can be converted to \texttt{Point} coordinates by providing the map reference. An example of such a conversion in the code of Seatgen is in listing \ref{lst:latlng-point}
 
 \begin{lstlisting}[language=TypeScript, caption={Latitude Longitude and Point conversion}, label={lst:latlng-point}]
     //Point to LatLng
@@ -14,7 +14,7 @@ Latitude and longitude are used for representation of Earth's surface. Latitude 
     const pointPosition: Point = map.latLngToLayerPoint(new L.Lat(lat, lng));
 \end{lstlisting}
 
-Leaflet also provides a lot of features which can be used by some part for this editor. This ranges for from fully usable features, that don't need a lot of reconfiguration to work for SeatGen's usecase, to features that need to be reworked or where only a small part of the feature is utilized, and the rest is rewritten. Some of the features that could be just used as they were, were:
+Leaflet also provides a lot of features which can be used by some part for this editor. This ranges from fully usable features, that don't need a lot of reconfiguration to work for SeatGen's use case, to features that need to be reworked or where only a small part of the feature is utilized, and the rest is rewritten. Some of the features that could be just used as they were, were:
 \begin{compactitem}
 \item Zoom
 \item Movement in the map
@@ -56,15 +56,15 @@ L.Map.Multiselect = L.Map.BoxZoom.extend({
 
 })
 
-L.Map.mergeOptions({boxPrinter: true});
-L.Map.addInitHook('addHandler', 'boxPrinter', L.Map.Multiselect);
+L.Map.mergeOptions({boxDemo: true});
+L.Map.addInitHook('addHandler', 'boxDemo', L.Map.Multiselect);
 
 L.Map.mergeOptions({boxZoom: false});
 
 \end{lstlisting}
 
 
-In the provided Leaflet extension code, mergeOptions is used to introduce and modify configuration options for the L.Map class. This method allows developers to add custom options to existing Leaflet classes without modifying the core library. By merging options and using addInitHook, the new feature seamlessly integrates with Leaflet maps. The result is that whenever a map instance is created, new Feature replaces the default BoxZoom functionality if boxPrinter is enabled.
+In the provided Leaflet extension code, mergeOptions is used to introduce and modify configuration options for the Leaflet Map class. This method allows developers to add custom options to existing Leaflet classes without modifying the core library. By merging options and using addInitHook, the new feature seamlessly integrates with Leaflet maps. The result is that whenever a map instance is created, new Feature replaces the default BoxZoom functionality if \texttt{boxDemo} is enabled.
 
 \subsection{Event Handling}
 \setauthor{Michael Stenz}

@@ -36,7 +36,7 @@ export abstract class Action {
 }
 \end{lstlisting}
 
-For both of these properties a function is expected that can be called to execute the action or to \texttt{undo} the \texttt{action}. This is a flexible approach and can be used for a lot of different actions. 
+For both of these properties a function is expected that can be called to execute the action or to undo the \texttt{Action}. This is a flexible approach and can be used for a lot of different actions. 
 
 Another important aspect of this application was to allow the execution of business logic while undoing specific actions, like sending requests to the backend. This is very easy to implement because each Action has its individual \texttt{execute} and \texttt{undo} function.
 
@@ -183,13 +183,13 @@ const redo = () => {
 const getCurrentAction = (): Action | null => actionHistory[historyIndex] ?? null;
 \end{lstlisting}
 
-To register a new Action in the controller, the \texttt{doAction} function has to be called with the action as a parameter like in this listing \ref{lst:register-action}. The context referenced here is the context containing business logic for the map as well as containing the logic for the undo and redo controller.
+To register a new Action in the controller, the \texttt{doAction} function has to be called with the action as a parameter like in this Listing \ref{lst:register-action}. The context referenced here contains the business logic for the map as well as the logic for the undo and redo controller.
 
 \begin{lstlisting}[language=TypeScript,caption={Registering a new action in the controller},label={lst:register-action}]
 context.doAction(new AddSeatAction(context.setSeats, lat, lng))
 \end{lstlisting}
 
-This controller stores all the actions in the form of a loop, with the size defined by the \texttt{loopSize} variable. The variable is set to 50 because more than 50 undoable actions back are not necessary. A circular buffer for storing this kind of data is very advantageous because when the buffer is full, the oldest action is overwritten by the newest action because the oldest data is not needed anymore. Other very important variables are the \texttt{minIndex} and \texttt{maxIndex} variables. They define the range of the actions that can be undone and redone. When undoing, it's checked that the current index which is represented by the \texttt{historyIndex} is not the same as the \texttt{minIndex} and there is also an undoable action, because then there would be no more actions to undo. Only if these conditions are fulfilled, there are actions to undo, and the \texttt{undo()} function can be called and the \texttt{historyIndex} can be decreased. A similar logic is applied for the \texttt{redo()} function, but with the \texttt{maxIndex} and the \texttt{increase()} function. The \texttt{doAction()} function is used to handle new actions. It increases the \texttt{historyIndex} and sets the \texttt{maxIndex} to the \texttt{historyIndex} and overwrites all the no longer needed actions with undefined. The \texttt{minIndex} is set to the \texttt{increase(maxIndex)} to ensure that when the loop is full, changes that are too old are removed. At last the action is added to the list of actions and the \texttt{execute()} function is called.
+This controller stores all the actions in the form of a loop, with the size defined by the \texttt{loopSize} variable. The variable is set to 50 because more than 50 undoable actions back are not necessary. A circular buffer for storing this kind of data is very advantageous because when the buffer is full, the oldest action is overwritten by the newest action because the oldest data is not needed anymore. Other very important variables are the \texttt{minIndex} and \texttt{maxIndex} variables. They define the range of the actions that can be undone and redone. When undoing, it's checked that the current index which is represented by the \texttt{historyIndex} is not the same as the \texttt{minIndex} and there is also an undoable action, because then there would be no more actions to undo. Only if these conditions are fulfilled, there are actions to undo, and the \texttt{undo()} function can be called and the \texttt{historyIndex} can be decreased. A similar logic is applied for the \texttt{redo()} function, but with the \texttt{maxIndex} and the \texttt{increase()} function. The \texttt{doAction()} function is used to handle new actions. It increases the \texttt{historyIndex} and sets the \texttt{maxIndex} to the \texttt{historyIndex} and overwrites all the no longer needed actions with undefined. The \texttt{minIndex} is set to the \texttt{increase(maxIndex)} to ensure that when the loop is full, changes that are too old get removed. At last the action is added to the list of actions and the \texttt{execute()} function is called.
 
 The \texttt{increase()} and \texttt{decrease()} functions are used to increase and decrease the index in a circular way. This is necessary because the buffer is circular and when the end of the buffer is reached, the index has to be set to the beginning of the buffer again. This is done by checking if the index is at the end of the buffer and then setting it to the beginning of the buffer again.
 
@@ -207,8 +207,8 @@ export interface Tool {
 
 The attributes of the interface are the following:
 \begin{compactitem}
-\item \textbf{id}: The id, which is used to identify the tool. Normally this is a string which is the name.
-\item \textbf{icon}: The icon of the tool, which is displayed in the toolbar. This has the type \texttt{ReactNode} because first a simple string was used, to pass it to an icon component, but then it was decided to use the \texttt{ReactNode} type, because it's more flexible, and the icons are not only limited to the icons of one UI library, but any icon can be used, including SVG icons.
+\item \textbf{id}: The id is a string with the name of the tool.
+\item \textbf{icon}: The icon of the tool, which is displayed in the toolbar. This has the type \texttt{ReactNode} because first a simple string was used to pass it to an icon component, but then it was decided to use the \texttt{ReactNode} type, because it's more flexible and the icons are not only limited to the icons of one UI library, but any icon can be used, including SVG icons.
 \item \textbf{onSelect}: The function that is called when the tool is selected. This is optional because not every tool needs a function to be called when it's selected. Some tools are handled externally.
 \item \textbf{hotkey}: The hotkey is a string that defines the hotkey for the tool. This is optional because not every tool needs a hotkey.
 \end{compactitem}
