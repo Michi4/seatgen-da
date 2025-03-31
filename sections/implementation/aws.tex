@@ -10,20 +10,20 @@ For administrators and developers, AWS provides multiple ways to interact with i
 
 For configuring the S3 Pod, the AWS CLI tool was utilized instead of the AWS Management Console due to its greater efficiency and the ability to save previously used queries in a text format. While the CLI is less beginner-friendly than the Web UI, it offers significantly more powerful functionalities. When configuring an S3 Pod with the AWS CLI tool for the first time, thoroughly reviewing AWS documentation is recommended to understand the underlying concepts, as numerous configuration options impact the security of the application. Cost considerations were not a concern in this project, as the IAM user provided by the company lacked permissions to modify billing-related settings. However, certain cost factors remain dependent on the development process rather than the configuration of the bucket itself.
 
-To set up the CLI tool, the for the developers operating system appropriate installation method has to be chosen. The specifics are well documented on the AWS's documentation page. For the initial configuration of the CLI tool, the command \texttt{aws configure} has to be executed. This command will prompt the user to enter the access key, secret key, region, and output format. The access key and secret key can be obtained from the AWS Management Console. The region is the geographical location where the S3 bucket will be created, in this case it is \texttt{eu-central-1}, and the output format can be set to JSON, text, or table. The configuration is stored in two files located under linux in \texttt{\textasciitilde~/.aws/} directory. In this directory lie the \texttt{config} and \texttt{credentials} files. The \texttt{config} file contains the region and the output format, while the \texttt{credentials} file contains the access key and the secret key. The configuration can be changed at any time by executing the \texttt{aws configure} command again. These files can contain multiple profiles, for multiple developers. This is very useful when working in a team, or when working on multiple projects. The profile can be specified by adding the \texttt{-{}-profile} flag to the \texttt{aws} command. 
+For the initial configuration of the CLI tool, the command \texttt{aws configure} has to be executed. This command will prompt the user to enter the access key, secret key, region, and output format. The access key and secret key can be obtained from the AWS Management Console. The region is the geographical location where the S3 bucket will be created, in this case the region is \texttt{eu-central-1}, and the output format can be set to JSON, text, or table. The configuration is stored in two files located under Linux in the \texttt{\textasciitilde~/.aws/} directory. In this directory lie the \texttt{config} and \texttt{credentials} files. The \texttt{config} file contains the region and the output format, while the \texttt{credentials} file contains the access key and the secret key. The configuration can be changed at any time by executing the \texttt{aws configure} command again. These files can store multiple profiles, for multiple developers. This is very useful when working in a team, or when working on multiple projects. The profile can be specified by adding the \texttt{-{}-profile} flag to the \texttt{aws} command. 
 
-Other than for testing and managing bucket configuration, the AWS CLI was a very useful tool during development, because it allows the developer to manipulate the data in the buckets manually, as well as reading and listing the data with additional statistics.
+Other than for testing purposes and managing bucket configuration, the AWS CLI was a very useful tool during development, because it allows the developer to manipulate the data in the buckets manually, as well as reading and listing the data with additional statistics.
 
-Some of the useful utility commands used during the development process are listed in listing \ref{lst:aws-cli-commands}
+Some useful utility commands used during the development process are listed in listing \ref{lst:aws-cli-commands}.
 
-\begin{lstlisting}[language=bash, caption={Usefull AWS CLI Commands}, label={lst:aws-cli-commands}]
+\begin{lstlisting}[language=bash, caption={Useful AWS CLI Commands}, label={lst:aws-cli-commands}]
 # Lists all buckets
 aws s3 ls --profile myprofile
 
 # Command to recursively delete every item inside a directory
 aws s3 rm --profile --recursive s3://ticketing-stadium-creator-dev/my-bucket/
 
-# List all the data inside directory and provide statistics, like file size, object count and tota filesize
+# List all the data inside a directory and provide statistics, such as file size, object count, and total file size
 s3 ls --profile solvistas --summarize --human-readable --recursive s3://ticketing-stadium-creator-dev/my-bucket
 
 # Count the number of objects in a bucket (similar but more compact results than in the previous command)
@@ -35,9 +35,9 @@ aws s3api get-bucket-policy --profile solvistas --bucket ticketing-stadium-creat
 \end{lstlisting}
 
 \subsection{S3 Bucket Configuration}
-The configuration of an S3 bucket is a crucial step in setting up an S3 pod, as it determines access permissions, storage classes, and other settings that influence the bucket’s behavior. Several key configuration options were implemented in this project:
+The configuration of an S3 bucket is crucial for the setup, as it determines access permissions, storage classes, and other settings that influence the bucket’s behavior. Several key configuration options were implemented in this project:
 
-To enable access to the S3 bucket for all users, the aws s3api put-bucket-policy command was utilized. This command applies a bucket policy that defines specific permissions for the bucket. In this case, public read access to the objects in the bucket was required. The following command was executed: \ref{lst:aws-cli-bucket-policy} with the \texttt{bucket-policy.json} configuration \ref{lst:bucket-policy}.
+To enable access to the S3 bucket for all users, the \texttt{aws s3api put-bucket-policy} command was used. This command applies a bucket policy that defines specific permissions for the bucket. In this case, public read access to the objects in the bucket was required. The following command, seen in Listing \ref{lst:aws-cli-bucket-policy}, was executed with the \texttt{bucket-policy.json} configuration shown in Listing \ref{lst:bucket-policy}.
 
 \begin{lstlisting}[language=bash, caption={AWS CLI command to set a bucket policy}, label={lst:aws-cli-bucket-policy}]
 aws s3api put-bucket-policy --bucket ticketing-stadium-creator-dev --policy file://bucket-policy.json
@@ -68,4 +68,4 @@ Amazon S3 provides \textbf{Access Control Lists (ACLs)} to manage access to buck
     \item \textbf{Authenticated Read}: The bucket and objects are readable by any authenticated AWS user (not just the bucket owner).
 \end{itemize}
 
-While ACLs are easy to use, they are less flexible than bucket policies or IAM policies. For more granular control, it is recommended to use bucket policies or IAM policies. IAM (Identity and Access Management) policies provide fine-grained access control to AWS resources. Unlike bucket policies, which are attached to the bucket, IAM policies are attached to IAM users, groups, or roles. For this use case bucket policies were sufficient, because the bucket was only used to store static files, which should be accessible by everyone.
+While ACLs are easy to use, they are less flexible than bucket policies or IAM policies. For more granular control, it is recommended to use bucket policies or IAM policies. IAM (Identity and Access Management) policies provide fine-grained access control to AWS resources. Unlike bucket policies, which are attached to the bucket, IAM policies are attached to IAM users, groups, or roles. For this use case, bucket policies were sufficient, because the bucket was only used to store static files, which should be accessible by everyone.
