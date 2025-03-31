@@ -1,4 +1,4 @@
-Because standing areas are polygons that consist of nodes, which are connected to each other, it can be viewed as a circular linked list. These have to be saved in the database. The database model is shown in figure \ref{fig:standing_area_db_model}. All the other tables are left out for simplicity.
+Because standing areas are polygons that consist of nodes, which are connected to each other, they can be viewed as a circular linked list. These have to be saved in the database. The database model is shown in figure \ref{fig:standing_area_db_model}. All the other tables are left out for simplicity.
 
 \begin{figure}
     \centering
@@ -7,14 +7,14 @@ Because standing areas are polygons that consist of nodes, which are connected t
     \label{fig:standing_area_db_model}
 \end{figure}
 
-The sector\_node entity in the database has a foreign key that references itself. This allows modeling a hierarchy, and in this case, the hierarchy forms a loop. To ensure database integrity, a unique constraint is set on the next\_sector\_node\_id. This makes sure that there is only one sector node that is the successor of a given sector node. When fetching a standing area two options were considered.
+The sector\_node entity in the database has a foreign key that references itself. This allows modeling a hierarchy, and in this case, the hierarchy forms a loop. To ensure database integrity, a unique constraint is set on the next\_sector\_node\_id. This makes sure that there is only one sector node that is the successor of a given sector node. When fetching a standing area, two options were considered.
 
 \begin{compactenum}
 \item Fetch all sector nodes from a map and build the standing area in the backend.
-\item Make a recursive query in the database, that fetches all sector nodes of a standing area.
+\item Make a recursive query in the database that fetches all sector nodes of a standing area.
 \end{compactenum}
 
-The advantage of the second approach is, that only the needed nodes are fetched, and the logic is closer to the database. The big problem is, that SQL queries in Postgres doesn't have  a built-in way to do recursion like oracle db has with its \texttt{connect by} clause. The solution for Postgres would have to be implemented with PostgreSQL-specific keywords. A query that fetches all the items in a loop would look as seen in listing \ref{lst:recursive_query}. 
+The advantage of the second approach is, that only the needed nodes are fetched, and the logic is closer to the database. The big problem is, that SQL queries in Postgres doesn't have  a built-in way to do recursion like Oracle DB has with its \texttt{connect by} clause. The solution for Postgres would have to be implemented with PostgreSQL-specific keywords. A query that fetches all the items in a loop would look as seen in listing \ref{lst:recursive_query}. 
 
 \begin{lstlisting}[language=SQL, caption=Recursive Query, label=lst:recursive_query]
 WITH RECURSIVE cte AS (
@@ -33,7 +33,7 @@ FROM   cte
 ORDER  BY level;
 \end{lstlisting}
 
-Here the \texttt{WITH RECURSIVE} clause is used to define a recursive query. The query selects the first node and then iterates through the linked list by repeatedly joining the sector\_node table with itself using the next\_sector\_node\_id field. This process continues until all nodes in the loop have been retrieved. The big disadvantage of this approach is that it uses a PostgreSQL specific keyword, this makes it not possible to seamlessly switch to another database. After executing all of these steps, they must be repeated for each requested zoom level. This is why the first approach was chosen. The standing areas of the map are fetched in the backend and ordered recursively in a way that represents the loop, like in listing \ref{lst:standing_area_backend}.
+Here the \texttt{WITH RECURSIVE} clause is used to define a recursive query. The query selects the first node and then iterates through the linked list by repeatedly joining the sector\_node table with itself using the next\_sector\_node\_id field. This process continues until all nodes in the loop have been retrieved. The big disadvantage of this approach is that it uses a PostgreSQL-specific keyword. This makes it impossible to seamlessly switch to another database. After executing all of these steps, they must be repeated for each requested zoom level. This is why the first approach was chosen. The standing areas of the map are fetched in the backend and ordered recursively in a way that represents the loop, like in listing \ref{lst:standing_area_backend}.
 
 \begin{lstlisting}[language=Kotlin, caption=Standing Area Backend, label=lst:standing_area_backend]
 override fun getSectorNodeBySector(sector: Sector): Set<SectorNode> {
