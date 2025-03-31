@@ -7,7 +7,7 @@
     \end{center}
 \end{wrapfigure}
 
-A significant milestone in the project was the development of the map generation functionality. This feature enables the user to generate an empty seat plan, the map serves as the basic visual representation of the venue. The map is interactive in the frontend, and the user can configure several key parameters:
+A significant milestone in the project was the development of the map generation functionality. This feature enables the user to generate an empty seat plan. The map serves as the basic visual representation of the venue. The map is interactive in the frontend, and the user can configure several key parameters:
 
 \begin{itemize} 
     \item The venue plan 
@@ -18,7 +18,7 @@ A significant milestone in the project was the development of the map generation
 
 These configuration options are accessible under the "New Map" button, as depicted in Figure \ref{fig:impl:mapgen}.
 
-The venue plan is always provided in SVG format, as the application does not support other file formats. To render the map Leaflet is used. A Leaflet map in this use case is structured as a 3-dimensional pyramid of tiles, where each tile represents an image. The map's zoom dimension can be considered the "z-axis," while the horizontal and vertical axes correspond to the "x" and "y" axes of the map. Importantly, the x and y axes remain consistent across all zoom levels.
+The venue plan is always provided in SVG format, as the application does not support other file formats. To render the map, Leaflet is used. A Leaflet map in this use case is structured as a 3-dimensional pyramid of tiles, where each tile represents an image. The map's zoom dimension can be considered the "z-axis," while the horizontal and vertical axes correspond to the "x" and "y" axes of the map. Importantly, the x and y axes remain consistent across all zoom levels.
 
 As a result, each tile is defined by a 3-dimensional coordinate in the map. These tiles are retrieved from an S3 bucket and processed by Leaflet in the frontend. The map's structure follows the form of a 3-dimensional pyramid with a square base, progressively expanding as the zoom level increases. The number of tiles per zoom level grows exponentially by a factor of two.
 
@@ -90,7 +90,7 @@ The None option results in a 0\% compression rate, making it the fastest but lea
 
 For the other two compression options, the Pngtastic library is utilized. Pngtastic is a lightweight, pure Java library with no dependencies. It provides a simple API for PNG manipulation, supporting both file size optimization and PNG image layering.
 
-The Default option uses the Deflate algorithm, which is used as a base for many lossless compression algorithms, it combines LZ77 and Huffman coding.
+The Default option uses the Deflate algorithm, which is used as a base for many lossless compression algorithms. It combines LZ77 and Huffman coding.
 
 \begin{compactitem}
 \item{}\textbf{LZ77} is a dictionary-based compression method that reduces redundancy by replacing repeated sequences of data with references to earlier occurrences, thus minimizing file size without loss of quality.
@@ -107,7 +107,7 @@ According to Google developers: \cite{ZopfliGoogleBlog}
     ...we believe that Zopfli represents the state of the art in Deflate-compatible compression.
 \end{quote}
 
-While Zopfli is significantly slower than standard Deflate or zlib, this isn't a huge problem for this use case, because time can be sacrificed once for the optimization and speed improvement for the user.
+While Zopfli is significantly slower than standard Deflate or zlib, this is not a huge problem for this use case, because time can be sacrificed once for the optimization and speed improvement for the user.
 
 \subsubsection{Analysis of Compression Algorithms}
 
@@ -239,7 +239,7 @@ aws:
 
 By using environment variables for sensitive credentials, security is enhanced while maintaining flexibility in deployment configurations.The SDK’s S3Client.builder() method is used to instantiate and configure the client with the required credentials and region settings. Because the client is defined as a Spring bean, it can be easily injected into any class requiring interaction with the S3 bucket. This is a key advantage in Spring-based applications, as it promotes modularity and maintainability. Unlike in Quarkus, where dependency injection is handled differently, Spring allows defining such functions as beans and seamlessly injecting them where necessary.
 
-The name provided by the user doesn't have any major restrictions for special characters, that's because the customer shouldn't be bothered with technical restrictions. They should be able to choose the name they want. Technically there are still some restrictions. The name provided by the user will be used in two situations, that have limitations. 
+The name provided by the user does not have any major restrictions for special characters, that's because the customer shouldn't be bothered with technical restrictions. They should be able to choose the name they want. Technically there are still some restrictions. The name provided by the user will be used in two situations, that have limitations. 
 \begin{compactenum}
     \item Directory names in the S3 buckets
     \item Path in the URL in the frontend for editor page
@@ -257,7 +257,7 @@ After executing all of these steps, they have to be repeated for each zoom level
 
 \subsection{Optimizations \& Memory}
 
-This process involves repetitive and computationally demanding tasks such as image slicing, format conversion and compression, making it well-suited for multi-threading. However, parallel execution introduces challenges, particularly with Java heap space management. During slicing and compression, a large amount of data is stored in memory at the same time. This includes both the upscaled source image and the processed image tiles, leading to high memory usage. At higher zoom levels, storage requirements can reach several gigabytes, potentially exceeding the allocated heap space and causing OutOfMemoryError exceptions.
+This process involves repetitive and computationally demanding tasks such as image slicing, format conversion, and compression, making it well-suited for multi-threading. However, parallel execution introduces challenges, particularly with Java heap space management. During slicing and compression, a large amount of data is stored in memory at the same time. This includes both the upscaled source image and the processed image tiles, leading to high memory usage. At higher zoom levels, storage requirements can reach several gigabytes, potentially exceeding the allocated heap space and causing OutOfMemoryError exceptions.
 
 To address this, the Java heap size can be manually adjusted using:
 
