@@ -2,7 +2,7 @@ The \textbf{Grid-Tool} allows the user to generate a rectangular grid of seats b
 
 \textbf{Key Responsibilities:}
 \begin{itemize}
-    \item Lets users draw a bounding box to define the grid area.
+    \item Allows users to draw a bounding box to define the grid area.
     \item Opens a modal dialog to configure the number of rows, columns, and padding.
     \item Internally dispatches an \texttt{AddMultipleSeatAction} to add the generated seats.
 \end{itemize}
@@ -24,7 +24,7 @@ const handleAddSeatGridBox = useCallback((bounds: L.LatLngBounds) => {
 \end{itemize}
 
 \subsection{Generating the Seat Grid}
-When the user confirms the modal, the tool computes and inserts a seat grid into the map:
+When the user confirms the configuration in the modal, the tool computes and inserts a seat grid into the map:
 
 \begin{lstlisting}[language=TypeScript, caption=Add Grid Logic, label=lst:grid-add-seat-logic]
 const addSeatGrid = useCallback((startPoint: L.LatLng, rows: number, columns: number, latStep: number, lngStep: number) => {
@@ -54,7 +54,7 @@ const addSeatGrid = useCallback((startPoint: L.LatLng, rows: number, columns: nu
 \begin{itemize}
     \item The bounds are converted into a grid layout using latitude and longitude step sizes.
     \item Margin (padding) is applied to space the grid evenly.
-    \item All seats are bundled into an \texttt{AddMultipleSeatAction} for batch insertion and undo support.
+    \item All seats are bundled into an \texttt{AddMultipleSeatAction} for batch insertion and undoing.
 \end{itemize}
 
 \subsection{Modal Interface}

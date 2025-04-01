@@ -9,7 +9,7 @@ The \textbf{Add-Tool} in SeatGen provides the ability to manually place individu
 
 \subsection{Triggering the Action}
 
-The seat is created externally and passed to the \texttt{AddSeatAction} class, which is then executed via the \texttt{doAction} method from context.
+A seat is created externally and passed to the \texttt{AddSeatAction} class, which is then executed via the \texttt{doAction} method from context.
 
 \begin{lstlisting}[language=TypeScript, caption=Calling AddSeatAction, label=lst:add-tool-action-call]
 context.doAction(new AddSeatAction(newSeat, context.setSeats));
@@ -19,7 +19,7 @@ context.doAction(new AddSeatAction(newSeat, context.setSeats));
 \begin{itemize}
     \item The \texttt{newSeat} is constructed outside and passed to the action.
     \item The action handles the insertion of the seat into global state.
-    \item This mechanism ensures consistent integration with undo/redo logic.
+    \item This mechanism ensures consistent integration with undo and redo logic.
 \end{itemize}
 
 \subsection{AddSeatAction Implementation}
@@ -51,7 +51,7 @@ export default class AddSeatAction extends Action {
 \begin{itemize}
     \item \texttt{execute()} appends the new seat to the seat list.
     \item \texttt{undo()} removes it again by filtering the ID.
-    \item This implementation ensures full undo/redo compatibility.
+    \item This implementation ensures full undo and redo compatibility.
 \end{itemize}
 
 \subsection{Conclusion}

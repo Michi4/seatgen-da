@@ -4,7 +4,7 @@ To maintain a modular and scalable UI, SeatGen’s frontend follows a structured
     \begin{center}
         \includegraphics[scale=0.3]{pics/frontend_architecture.png}
     \end{center}
-    \caption{Frontend Component Architecture Overview (Rough Overview)}
+    \caption{Frontend Component Architecture (Rough Overview)}
     \label{fig:frontend-architecture}
 \end{figure}
 
@@ -13,37 +13,37 @@ The diagram in Figure \ref{fig:frontend-architecture} illustrates the core inter
 Beyond the primary seating map, detail editor, and tool system, SeatGen's frontend also includes:
 
 \begin{itemize}
-    \item \textbf{Landing Page (LandingPage.tsx)}: The first screen that users see upon opening SeatGen. It provides an introduction to the tool and a project overview for first-time users.
+    \item \textbf{Landing Page}: The first screen that users see upon opening SeatGen. It provides an introduction to the tool and a project overview for first-time users.
     
-    \item \textbf{Home Menu (Home.tsx)}: This serves as the main project selection interface. Users can choose between loading an already saved seating plan or creating a new one. The UI provides an intuitive and minimalistic selection process while ensuring users can access their projects quickly.
+    \item \textbf{Home Menu}: This serves as the main project selection interface. Users can choose between loading an already saved seating plan or creating a new one. The UI provides a minimal and intuitive interface for quick access to projects.
     
-    \item \textbf{Menu and Navigation (Menu.tsx)}: The global navigation system connects different views within SeatGen. It allows users to switch between the seating map editor, settings, and export functionalities. The navigation is designed to remain persistent throughout the application to provide seamless transitions between different tasks.
+    \item \textbf{Menu and Navigation}: The global navigation system connects different views within SeatGen. It allows users to switch between the seating map editor, settings, and export functionalities. The navigation is designed to remain persistent throughout the application to provide seamless transitions between different tasks.
     
-    \item \textbf{Settings Panel (SettingsPanel.tsx)}: This panel allows users to configure global preferences that influence the overall seating arrangement experience. Options include:
+    \item \textbf{Settings Panel}: This panel allows users to configure global preferences that influence the overall seating arrangement experience. Options include:
     \begin{itemize}
         \item \textbf{Default seat categories}: Users can predefine categories to streamline seat assignments.
-        \item \textbf{Theme selection}: Dark or light mode based on user preference.
+        \item \textbf{Theme selection}: Dark or light mode, based on user preference.
         \item \textbf{Seat map scaling}: Allows fine-tuned adjustments of grid seat density.
     \end{itemize}
     
     \item \textbf{Modals and Popups}: The frontend includes various popups and confirmation dialogs:
     \begin{itemize}
-        \item \textbf{Modal.tsx}: Used for confirmations, warnings, and additional actions.
-        \item \textbf{LeavePagePopup.tsx}: Warns users about unsaved changes before leaving.
+        \item \textbf{Modals}: Used for confirmations, warnings, and additional actions.
+        \item \textbf{Leave Page Popup}: Warns users about unsaved changes before leaving.
     \end{itemize}
 \end{itemize}
 
-These elements, though not included in the diagram, play a significant role in navigating and managing seat plans efficiently and further improving the user experience.
+Although not included in the diagram, these elements play a significant role in efficiently navigating and managing seat plans, further enhancing the user experience.
 
 
-\subsection{MapComponent.tsx: Interactive Map Rendering}
+\subsection{Map Component: Interactive Map Rendering}
 \setauthor{Michael Ruep}
 \input{sections/implementation/map-component.tex}
 
-\subsection{DetailEditor.tsx: Editing Attributes}
+\subsection{Detail Editor: Editing Attributes}
 \setauthor{Michael Ruep}
 \input{sections/implementation/detail-editor.tex}
 
-\subsection{ToolBar.tsx: Tool Management and User Interaction}
+\subsection{Toolbar: Tool Management and User Interaction}
 \setauthor{Michael Ruep}
 \input{sections/implementation/toolbar.tex}

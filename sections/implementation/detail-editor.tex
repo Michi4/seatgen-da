@@ -1,4 +1,4 @@
-The \textbf{DetailEditor.tsx} component provides an interface for modifying selected seats, managing seat groups, categories, and configuring standing areas. It plays a huge role in SeatGen’s user interaction system by allowing users to efficiently modify stadium layouts in a structured and intuitive manner.
+The \textbf{Detail Editor} component provides an interface for modifying selected seats, managing seat groups, categories, and configuring standing areas. It plays a huge role in SeatGen’s user interaction system by allowing users to efficiently modify stadium layouts in a structured and intuitive manner.
 
 \textbf{Key Responsibilities:}
 \begin{itemize}
@@ -9,18 +9,18 @@ The \textbf{DetailEditor.tsx} component provides an interface for modifying sele
 \end{itemize}
 
 \subsection{Component Structure}
-The \textbf{DetailEditor.tsx} has the following core sections:
+The \textbf{Detail Editor} has the following core sections:
 \begin{itemize}
     \item \textbf{Seat Editing Panel:} Displays detailed information for selected seats and allows modifications.
     \item \textbf{Group Management Panel:} Handles seat grouping and bulk operations.
-    \item \textbf{Standing Area Editing Panel:} Enables editing of standing areas, including name and capacity.
+    \item \textbf{Standing Area Editing Panel:} Enables editing of standing areas, including their name and capacity.
     \item \textbf{Deletion and Bulk Actions:} Supports removing selected seats, groups, or selected standing areas.
 \end{itemize}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.6\textwidth]{pics/DetailEditorSeat.png}
-    \caption{Seat Editing Panel in DetailEditor.tsx}
+    \caption{Seat Editing Panel in Detail Editor}
     \label{fig:detail-editor-seat}
 \end{figure}
 
@@ -62,7 +62,7 @@ const updateSeatPosition = (x: number, y: number) => {
 \begin{itemize}
     \item Converts user-inputted X/Y values into map coordinates.
     \item Updates seat position dynamically.
-    \item With this the movement is optimized for both manual entry and real-time adjustments.
+    \item This optimizes movement for both manual entry and real-time adjustments.
 \end{itemize}
 
 \subsection{Group Management and Multi-Selection}
@@ -117,7 +117,7 @@ Seat categories allow users to classify seating arrangements based on (pricing) 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{pics/DetailEditorCategory.png}
-    \caption{Category Selection in DetailEditor.tsx}
+    \caption{Category Selection in Detail Editor}
     \label{fig:detail-editor-category}
 \end{figure}
 
@@ -144,11 +144,10 @@ interface Category {
 
 \subsubsection{Assigning Categories to Seats}
 
-When a user selects a seat, they can assign or change its category using the \textbf{DetailEditor.tsx}.
+When a user selects a seat, they can assign or change its category using the \textbf{Detail Editor}.
 
-\begin{lstlisting}[language=TypeScript, caption=onChange Assigning Categories to Selected Seats, label=lst:assign-category]
+\begin{lstlisting}[language=TypeScript, caption=Assigning Categories to Selected Seats onChange, label=lst:assign-category]
 onChange={(newVal) => {
-    console.log(newVal)
     context.doAction(new UpdateCategoryAction(selectedSeats, newVal ? newVal.value : null))
     setCurrentSelectedCategory(newVal ? newVal.value : null);
 }}
@@ -211,7 +210,7 @@ onCreateOption={(inputValue) =>
 
 \subsubsection{Category Visualization on the Map}
 
-Seat categories are visually represented by color-coded markers in \textbf{MapComponent.tsx}. Each seat marker dynamically updates based on its assigned category.
+Seat categories are visually represented by color-coded markers in \textbf{Map Component}. Each seat marker dynamically updates based on its assigned category.
 
 \begin{lstlisting}[language=TypeScript, caption=Rendering Seat Markers with Categories, label=lst:render-seat-category]
 const renderedSeats = seats.map(seat => (
@@ -236,7 +235,7 @@ Categories play a crucial role in SeatGen, providing a structured way to manage 
 
 \subsection{Standing Area Editing}
 \setauthor{Michael Ruep}
-Standing areas in SeatGen are defined as polygonal sectors rather than individual seats. Unlike seats, which are represented as distinct markers, standing areas are implementd using a defined boundary of polygons. Each standing area has a name, and a maximum capacity.
+Standing areas in SeatGen are defined as polygonal sectors rather than individual seats. Unlike seats, which are represented as distinct markers, standing areas are implemented using a defined boundary of polygons. Each standing area has a name, and a maximum capacity.
 
 \textbf{Key Features of Standing Areas:}
 \begin{itemize}
@@ -260,10 +259,10 @@ interface StandingArea {
 \end{lstlisting}
 
 \subsubsection{Creating and Selecting Standing Areas}
-Standing areas are created by defining polygonal boundary coordinates on the map. Once an area is selected, it becomes editable in the \texttt{DetailEditor.tsx}.
+Standing areas are created by defining polygonal boundary coordinates on the map. Once an area is selected, it becomes editable in the \texttt{Detail Editor}.
 
 \subsubsection{Renaming a Standing Area}
-Users can rename standing areas directly in the \texttt{DetailEditor.tsx} panel.
+Users can rename standing areas directly in the \texttt{Detail Editor} panel.
 
 \begin{lstlisting}[language=TypeScript, caption=Renaming Standing Areas, label=lst:rename-standingarea]
 const handleStandingNameChange = (name: string) => {
@@ -313,7 +312,7 @@ context.doAction(new DeleteStandingAreaAction(selectedStandingAreas, context))
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{pics/DetailEditorStandingArea.png}
-    \caption{Editing Standing Areas in DetailEditor.tsx}
+    \caption{Editing Standing Areas in Detail Editor}
     \label{fig:detail-editor-standingarea}
 \end{figure}
 
@@ -324,13 +323,13 @@ Standing areas in SeatGen offer a structured approach to handling non-seated sec
 Beyond general standing areas, this feature can also be used to designate specific sections for specialized needs. For example, stadiums may allocate certain sectors for \textbf{wheelchair-accessible areas} or \textbf{priority seating for individuals with mobility impairments}. This flexibility ensures that accessibility requirements can be met while maintaining a clear and organized seating plan.
 
 \subsubsection{Summary}
-\textbf{DetailEditor.tsx} is a key component within SeatGen, offering intuitive tools for modifying stadium layouts. It enables:
+\textbf{Detail Editor} is a key component within SeatGen, offering intuitive tools for modifying stadium layouts. It enables:
 \begin{itemize}
     \item \textbf{Seat Editing:} Real-time adjustments to tooltips, positions, and assignments.
     \item \textbf{Group Management:} Merging, splitting, and deleting seat groups efficiently.
     \item \textbf{Category Assignment:} Bulk updates with intuitive color-coded visualization.
     \item \textbf{Standing Area Modifications:} Easy editing of boundaries and capacities.
-    \item \textbf{Seamless Integration:} Ensures consistent updates via \texttt{MapContext.tsx}.
+    \item \textbf{Seamless Integration:} Ensures consistent updates via \texttt{Map Context}.
 \end{itemize}
 
-With its structured approach and live updates, \textbf{DetailEditor.tsx} ensures flexible and efficient stadium configuration.
+With its structured approach and live updates, \textbf{Detail Editor} ensures flexible and efficient stadium configuration.

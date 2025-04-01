@@ -1,23 +1,23 @@
 During the development of the application, various design patterns were incorporated to efficiently address specific challenges. Different sectors of the application required distinct patterns, particularly in the interactive editor and tool functionalities. Given the complexity of these components, tailored solutions were necessary. For instance, implementing an undo functionality—a widely expected usability feature in modern editors, both text-based and visual—required careful design considerations. This feature is commonly applied across software products, with multiple solutions available. Specialized implementations of design patterns were employed in the following aspects of the application:
 \begin{compactitem}
-\item Undo/Redo functionality of Actions
+\item Undo and Redo functionality of Actions
 \item Tool System
 \item Backend services
 \end{compactitem}
 
-\subsection{Undo/Redo}
+\subsection{Undo and Redo}
 \label{sec:undo-redo}
 
-The undo/redo mechanism is essential for usability, providing users with the flexibility to revert and reapply actions efficiently. Multiple approaches exist for implementing this feature:
+The undo and redo mechanism is essential for usability, providing users with the flexibility to revert and reapply actions efficiently. Multiple approaches exist for implementing this feature:
 
 \begin{compactenum}
 \item \textbf{State Snapshot Approach}: This method involves saving the entire application state at each change and reverting to the previous state when undoing. While simple to implement, this approach is inefficient due to excessive memory consumption and redundant data storage. An advantage is that old states can easily be restored without any additional logic and calculations. This makes it less prone to bugs and errors.
 \item \textbf{Differential State Storage}: Instead of storing complete states, this approach records only the differences between successive states, similar to version control systems such as Git. While more efficient, this method becomes complex as the number and types of objects increase (in this case it would be Seats and Standing-Areas).
-\item \textbf{Command Pattern}: Actions are encapsulated as objects that implement a common interface, containing methods for execution and reversal. This approach allows flexible and scalable undo/redo functionality, making it ideal for complex interactive applications. It also allows executing additional business logic when undoing an action, like deleting additional data that was created by the action, or sending requests to a backend. This makes it an excellent choice when states are distributed.
+\item \textbf{Command Pattern}: Actions are encapsulated as objects that implement a common interface, containing methods for execution and reversal. This approach allows flexible and scalable undo and redo functionality, making it ideal for complex interactive applications. It also allows executing additional business logic when undoing an action, like deleting additional data that was created by the action, or sending requests to a backend. This makes it an excellent choice when states are distributed.
 \item \textbf{Memento Pattern}: This pattern captures and externalizes an object's internal state so that it can be restored later without violating encapsulation. While useful for preserving an object's complete state, it can be memory-intensive when storing multiple versions.
 \end{compactenum}
 
-Given the application's complexity, a variation of the Command Pattern has been implemented for the undo/redo functionality. This approach ensures scalability, efficiency, and maintainability while minimizing redundancy of data and code.
+Given the application's complexity, a variation of the Command Pattern has been implemented for the undo and redo functionality. This approach ensures scalability, efficiency, and maintainability while minimizing redundancy of data and code.
 
 
 \begin{figure}

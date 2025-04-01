@@ -1,18 +1,18 @@
 @startuml
 title Frontend Component Architecture
 
-node "App.tsx" {
-    "MapComponent.tsx"
-    "DetailEditor.tsx"
-    "ToolBar.tsx"
+node "App" {
+    "Map Component"
+    "Detail Editor"
+    "Toolbar"
 }
 
-component "MapComponent.tsx" {
+component "Map Component" {
     [Leaflet Map]
     [Seat Markers]
 }
 
-component "ToolBar.tsx" {
+component "Toolbar" {
     [Selection Tool]
     [Grid Tool]
     [Add Tool]
@@ -20,17 +20,17 @@ component "ToolBar.tsx" {
     [Standing-Area Tool]
 }
 
-component "DetailEditor.tsx" {
+component "Detail Editor" {
     [Seat Details]
     [Group Editor]
     [Category Editor]
 }
 
-node "MapContext.tsx" {
+node "Map Context" {
     [Global State Management]
 }
 
-"MapContext.tsx" --> "MapComponent.tsx"
-"MapContext.tsx" --> "ToolBar.tsx"
-"MapContext.tsx" --> "DetailEditor.tsx"
+"Map Context" --> "Map Component"
+"Map Context" --> "Toolbar"
+"Map Context" --> "Detail Editor"
 @enduml
