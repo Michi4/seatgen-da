@@ -14,7 +14,7 @@ A significant milestone in the project was the development of the map generation
     \item The name of the map 
     \item The size of each tile (default is 256x256px for most use cases) 
     \item The number of zoom levels 
-    \item The image compression algorithm, which is a dropdown menu with the options: No Compression, Default Algorithm and Zopfli \end{itemize}
+    \item The image compression algorithm, which is a dropdown menu with the options: No Compression, Default Algorithm, and Zopfli \end{itemize}
 
 These configuration options are accessible under the "New Map" button, as depicted in Figure \ref{fig:impl:mapgen}.
 
@@ -36,7 +36,7 @@ The total number of tiles is given by the sum:
 \[
 S(z) = \sum_{k=1}^{z} 4^{(k-1)} = \frac{4^z - 1}{3}
 \]
-As the number of zoom levels grows, the number of tiles that need to be processed rises exponentially, resulting in a significant increase in the total number of tiles very quickly. For example, there are 4095 256x256px images with 6 zoom levels.
+As the number of zoom levels grows, the number of tiles that need to be processed rises exponentially, resulting in a significant increase in the total number of tiles. For example, there are 4095 256x256px images with 6 zoom levels.
 
 \subsection{Step 1: Convert SVG to PNG}
 
@@ -197,7 +197,7 @@ Another significant decision during development was whether to compress the imag
 
 Compressing the entire image as a whole is generally more efficient than compressing individual tiles. Compression algorithms benefit from analyzing the entire dataset, allowing them to identify and eliminate redundancies more effectively. When an image is compressed in its entirety, the algorithm can exploit correlations and patterns that might not be as apparent when processing smaller segments. This leads to a better overall compression ratio, resulting in reduced file sizes without sacrificing quality.
 
-Had the choice been made to first slice the images and then compress the individual tiles in parallel, potential issues with resource contention would have arisen. In such a scenario, multiple instances of the Zopfli compression algorithm could run simultaneously, each consuming considerable CPU cycles and memory. Given Zopfli’s high computational demands, this could overwhelm the heap space, leading to memory exhaustion or, at the very least, severely impacting overall system performance. In extreme cases, excessive resource usage could degrade the performance of the entire operating system, causing bottlenecks and slowdowns.
+Had the choice been made to first slice the images and then compress the individual tiles in parallel, potential issues with resource contention would have arisen. In such a scenario, multiple instances of the Zopfli compression algorithm could run simultaneously, each consuming considerable CPU time and memory. Given Zopfli’s high computational demands, this could overwhelm the heap space, leading to memory exhaustion or, at the very least, severely impacting overall system performance. In extreme cases, excessive resource usage could degrade the performance of the entire operating system, causing bottlenecks and slowdowns.
 
 \subsection{Step 4: Uploading Tiles to S3}
 
@@ -226,10 +226,11 @@ data class S3Config @ConstructorBinding constructor(
                 )
             )
             .build()
+    }
 }
 \end{lstlisting}
 
-The configuration is managed using the @ConfigurationProperties(prefix = ``aws'') annotation, which enables automatic injection of required properties. These values—defined in the primary constructor with @ConstructorBinding—are retrieved from an external properties file under the aws prefix. This approach ensures that configuration values remain externalized rather than hardcoded, making it easier to switch between environments such as development, testing, and production. The relevant configuration in application.yml is illustrated in Listing \ref{lst:yaml:aws}.
+The configuration is managed using the @ConfigurationProperties(prefix = ``aws'') annotation, which enables automatic injection of required properties. These values—defined in the primary constructor with @ConstructorBinding—are retrieved from an external properties file under the AWS prefix. This approach ensures that configuration values remain externalized rather than hardcoded, making it easier to switch between environments such as development, testing, and production. The relevant configuration in application.yml is illustrated in Listing \ref{lst:yaml:aws}.
 \begin{lstlisting}[language=Yaml, caption=AWS Configuration in application.yml, label=lst:yaml:aws]
 aws:
     awsRegion: ${AWS_REGION:eu-central-1}
@@ -273,6 +274,6 @@ For example, during the slicing and compression phases, coroutines were used to 
 
 The limitation logic for the number of threads for parallelization is based on the algorithm used for compression, because for Zopfli, this is the most memory-critical part. When using Zopfli, which is particularly memory-intensive, parallelism is limited to a single thread during the compression phase. This approach ensures that the system's memory is not overwhelmed, allowing for more efficient processing. However, the slicing of image rows can still be executed with a maximum of four coroutines running concurrently, striking a balance between performance and resource usage. For the DEFAULT compression algorithm, a more aggressive approach is adopted, utilizing half of the available threads. This strikes a balance between efficient processing and maintaining manageable memory consumption. In scenarios where no compression methods are applied, the full use of the available processor threads is permitted. By limiting the number of concurrent coroutines when using Zopfli or the default algorithm, the risk of exceeding heap space during high-demand processes like compression and slicing is mitigated.
 
-After each complete calculated zoom level, a garbage collection is triggered to free up memory that is no longer needed. This is done by calling the \texttt{System.gc()} method, which is a hint to the JVM to run the garbage collector. While this is not a guarantee that the garbage collector will run, it provides a good hint for the JVM to do so.
+After each complete calculated zoom level, a garbage collection is triggered to free up memory that is no longer needed. This is done by calling the \texttt{System.gc()} method, which is a hint to the JVM to run the garbage collector. While this is not a guarantee that the garbage collector will run, it provides a hint for the JVM.
 
-Because of memory problems, it was also decided not to upload all the data of the images when everything is finished. Instead, the data for each row of tiles is uploaded as soon as it is completed. This approach provides a good balance between memory usage and efficiency, as storing all the data in memory while waiting for other rows to be computed is avoided. Uploading the tiles in the form of rows is also more efficient than uploading every tile individually to the S3 bucket, as it significantly reduces the overhead. For example, on zoom level 6, only 63 requests need to be made instead of 1365 requests.
+Due to memory problems, it was also decided not to upload all the images at once when everything is finished. Instead, the data for each row of tiles is uploaded as soon as it is completed. This approach provides a good balance between memory usage and efficiency, as storing all the data in memory while waiting for other rows to be computed is avoided. Uploading the tiles in the form of rows is also more efficient than uploading every tile individually to the S3 bucket, as it significantly reduces the overhead. For example, on zoom level 6, only 63 requests need to be made instead of 1365 requests.
