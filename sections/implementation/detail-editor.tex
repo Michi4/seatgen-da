@@ -302,7 +302,7 @@ const handleStandingCapacityChange = (capacity: string) => {
 \end{itemize}
 
 \subsubsection{Deleting a Standing Area}
-Standing areas can be removed using \texttt{DeleteStandingAreaAction} when no longer needed which is also undoable for user convenience.
+Standing areas can be removed using \texttt{DeleteStandingAreaAction} when no longer needed, which is also undoable for user convenience.
 
 \begin{lstlisting}[language=TypeScript, caption=Deleting Standing Areas, label=lst:delete-standingarea]
 context.doAction(new DeleteStandingAreaAction(selectedStandingAreas, context))
