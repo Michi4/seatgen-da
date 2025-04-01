@@ -1,6 +1,6 @@
 \section{Overview}
 \setauthor{Michael Ruep}
-Stadiums are typically operated by sports clubs, concert organizers, or third-party management companies. These actors want to sell their tickets efficiently and accurately for a large amount of offers. The environment is therefore characterized by:
+Stadiums are typically operated by sports clubs, concert organizers, or third-party management companies. These actors want to sell their tickets efficiently and accurately for a large number of offers. The environment is therefore characterized by:
 \begin{itemize}
     \item \textbf{Varied Layouts:} Modern stadiums feature a curved layout, irregular seat patterns, and different pricing tiers. Managing the seat data in plain text is error-prone and time-intensive.
     \item \textbf{Frequent Configuration Changes:} Stadium layouts frequently change based on events and seasons, requiring continuous updates.
@@ -14,7 +14,7 @@ From a user-experience standpoint, these challenges make it clear that an intuit
 Several parties interact with the SeatGen tool:
 \begin{itemize}
     \item \textbf{Developers:} Historically, Solvistas' developers modified the seat layout text files. The new approach aims to minimize their involvement in the long term, except for initial and advanced configurations.
-    \item \textbf{Event Organizers and Stadium Managers:} These stakeholders need the intuitive tools to make update to the seat maps without dealing with complex raw data formats.
+    \item \textbf{Event Organizers and Stadium Managers:} These stakeholders need the intuitive tools to make updates to the seat maps without dealing with complex raw data formats.
     \item \textbf{Ticketing Platform Users:} The final seat layouts are used in Solvistas' ticketing service. Although these end-users do not edit the data themselves, the accuracy and clarity of seat layouts crucially impact their experience at the stadium.
 \end{itemize}
 
@@ -30,20 +30,20 @@ On the technical side, the SeatGen application integrates with:
     \item \textbf{PostgreSQL Database:} Stores seat configurations, categories, groups, sectors, and map data.  
 \end{itemize}
 
-In practice, large or complex venues may have thousands of individual seat entities, potentially impacting performance if the data management is not optimized. Additionally, the zoom levels demand loads of memory- and compute-efficient image slicing and compression, to avoid excessive storage usage on Amazon Web Services. The design choices reflect these constraints and requirements in multiple areas.
+In practice, large or complex venues may have thousands of individual seat entities, potentially impacting performance if the data management is not optimized. Additionally, the zoom levels demand loads of memory- and compute-efficient image slicing and compression, to avoid excessive storage usage on AWS. The design choices reflect these constraints and requirements in multiple areas.
 
 \section{Requirements and Challenges}
 \setauthor{Michael Ruep}
-A core requirement of SeatGen is “direct manipulation” \cite{Hutchins01121985}, which states that users interact more effectively when objects can be selected, dragged, and dropped in a way that mimics the real-world arrangement of physical seats or standing areas. Therefore the usability and user experience is a key Challenge. The following elements are particularly relevant:
+A core requirement of SeatGen is “direct manipulation” \cite{Hutchins01121985}, which states that users interact more effectively when objects can be selected, dragged, and dropped in a way that mimics the real-world arrangement of physical seats or standing areas. Therefore, usability and user experience are key challenges. The following elements are particularly relevant:
 
 \begin{itemize}
-    \item \textbf{Immediate Feedback:} When a user modifies a seat position, the update is reflected instantly on the map. Dragging seats should feel instant and follow the user, mimicking real-life interactions
+    \item \textbf{Immediate Feedback:} When a user modifies a seat position, the update is reflected instantly on the map. Dragging seats should feel instant and follow the user, mimicking real-life interactions.
     \item \textbf{Simplicity and Learnability:} Familiar mouse-based interactions should allow users to perform specific and complex tasks—such as grouping seats, creating standing areas, or categorizing—without requiring specialized training or an understanding of coordinate systems.
-    \item \textbf{Cognitive Offloading:} By representing seats visually, the mental effort to interpret raw text-based seat coordinates or stadium layouts is reduced significantly. Which improves efficiency and accuracy by a huge margin.
+    \item \textbf{Cognitive Offloading:} By representing seats visually, the mental effort to interpret raw text-based seat coordinates or stadium layouts is reduced significantly. This significantly improves efficiency and accuracy.
 \end{itemize}
 
 Leaflet, used within React, handles dynamic rendering and live interaction for the stadium seat map. Additionally, quick actions in the form of hotkeys further improve efficiency.
 
 \section{Summary}
 \setauthor{Michael Ruep}
-In summary, the environment for SeatGen includes a mix of business and technical constraints, demanding a straightforward, user-friendly and yet powerful visual editor. In the following chapters, the technical and logical aspects of how the set requirements are met will be further described.
+In summary, the environment for SeatGen includes a mix of business and technical constraints, demanding a straightforward and user-friendly, yet powerful visual editor. In the following chapters, the technical and logical aspects of how the set requirements are met will be further described.
