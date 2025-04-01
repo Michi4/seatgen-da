@@ -317,7 +317,7 @@ const updateSelectedSeatsPosition = useCallback((draggedSeatId: number, newLatLn
 \begin{itemize}
     \item Used \texttt{useRef} to store initial positions instead of state (prevents extra re-renders).
     \item Applied batch updates for all selected seats instead of updating them individually.
-    \item Optimized Leaflet latLng to pixel conversion for to be able to drag the seats naturally (direct manipulation~\cite{Hutchins01121985}).
+    \item Optimized Leaflet latLng to pixel conversion for to be able to drag the seats naturally (direct manipulation \cite{Hutchins01121985}).
 \end{itemize}
 
 \subsubsection{Conclusion}
