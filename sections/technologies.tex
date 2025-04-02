@@ -21,13 +21,7 @@ React’s Virtual DOM architecture is particularly advantageous for applications
 
 \subsection{Component-based Architecture}
 \setauthor{Michael Ruep}
-React’s component-based architecture keeps each feature modular to make the project easier to maintain as it grows. Instead of bundling all functionality into a single monolithic view, UI features are developed as self-contained components. In our case for example:
-\begin{compactitem}
-    \item Seat Map Component
-    \item Toolbar Component
-    \item Detail Component
-\end{compactitem}
-Each of these elements has its own component, allowing developers to modify or expand individual features without affecting unrelated parts of the application. This approach simplifies debugging, since issues can often be traced to a specific component rather than across the entire codebase. It is also suitable for collaborative development by letting team members work on separate components in parallel, which significantly accelerated our development process. Overall, React’s modular design reduces complexity, which assists a more organized and maintainable codebase \cite{ReactCBA01, ReactCBA02, ReactCBA03}.
+React’s component-based architecture keeps each feature modular to make the project easier to maintain as it grows. Instead of bundling all functionality into a single monolithic view, UI features are developed as self-contained components this allows developers to modify or expand them individually without affecting unrelated parts of the application. This approach simplifies debugging, since issues can often be traced to a specific component rather than across the entire codebase. It is also suitable for collaborative development by letting team members work on separate components in parallel, which significantly accelerated our development process. Overall, React’s modular design reduces complexity, which assists a more organized and maintainable codebase \cite{ReactCBA01, ReactCBA02, ReactCBA03}.
 
 \subsection{Integration of Libraries}
 \setauthor{Michael Ruep}
@@ -69,7 +63,7 @@ Kotlin’s seamless integration with Spring Boot also allows for idiomatic DSLs 
 In the end, Spring Boot with Kotlin was chosen due to the team's expertise with the language and the fact that all other components of the Ticketing software were already written in Spring Boot.
 
 \subsection{API Documentation with Swagger}
-SeatGen also utilizes SwaggerUi and Swagger Codegen to generate REST API documentation and client code for the frontend. This allows for easy integration of the backend with the frontend and ensures that the frontend developers always have the most up-to-date API documentation. This is done via the OpenAPI Gradlew plugin, which generates the SwaggerUi documentation and client code for all the API endpoints and required models. The generated docs can be fetched by the frontend developers with a script within the \texttt{package.json} file, under the name \texttt{fetch-openapi-docs}. This script fetches the api-docs.yaml file from the backend and saves it in the frontend project. When starting or building the frontend, the \texttt{swagger-typescript-api} plugin generates the client code from this file. The frontend developer can now use the generated client code to interact with the backend API through the generated functions and models without having to manually maintain the API client code.
+SeatGen also utilizes SwaggerUi and Swagger Codegen to generate REST API documentation and client code for the frontend. This allows for easy integration of the backend with the frontend and ensures that the frontend developers always have the most up-to-date API documentation. This is done via the OpenAPI Gradlew plugin, which generates the SwaggerUi documentation and client code for all the API endpoints and required models. The generated docs can be fetched by the frontend developers with a script within the \texttt{package.json} file, under the name \texttt{fetch-openapi-docs}. This script fetches the \texttt{api-docs.yaml} file from the backend and saves it in the frontend project. When starting or building the frontend, the \texttt{swagger-typescript-api} plugin generates the client code from this file. The frontend developer can now use the generated client code to interact with the backend API through the generated functions and models without having to manually maintain the API client code.
 
 
 \section{Database}
@@ -93,7 +87,7 @@ When selecting a migration tool, both Liquibase \cite{LiquibaseDocs} and Flyway 
 
 Flyway also offers a cleaner versioning system by requiring migration filenames to follow a structured naming convention: \texttt{VX.X.X\_\_migration\_name.sql} (where X.X.X is the version of the migration). In contrast, Liquibase utilizes changelog files, which provide additional features but introduce unnecessary complexity for the use case. These changelog files can be written in SQL, XML, YAML, or JSON, but they require extensive Liquibase-specific formatting. The following example in Listing \ref{lst:liquibase:example} illustrates a Liquibase-formatted SQL changelog file. Flyway's approach, which relies on plain SQL migration files, enhances readability and maintainability.
 
-\begin{lstlisting}[language=Sql,caption=Liquibase example changelog,label=lst:liquibase:example]
+\begin{lstlisting}[language=Sql,caption=Liquibase Example Changelog,label=lst:liquibase:example]
     --liquibase formatted sql
     
     --changeset nvoxland:1

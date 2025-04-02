@@ -1,4 +1,12 @@
-The \textbf{Detail Editor} component provides an interface for modifying selected seats, managing seat groups, categories, and configuring standing areas. It plays a huge role in SeatGen’s user interaction system by allowing users to efficiently modify stadium layouts in a structured and intuitive manner.
+The detail editor component provides an interface for modifying selected seats, managing seat groups, categories, and configuring standing areas. It plays a huge role in SeatGen’s user interaction system by allowing users to efficiently modify stadium layouts in a structured and intuitive manner.
+
+\begin{wrapfigure}{r}{0.4\textwidth}
+    \begin{center}
+    \includegraphics[width=0.4\textwidth]{pics/DetailEditorSeat.png}
+    \caption{Seat Editing Panel in Detail Editor}
+    \label{fig:detail-editor-seat}
+    \end{center}
+\end{wrapfigure}
 
 \textbf{Key Responsibilities:}
 \begin{itemize}
@@ -9,20 +17,14 @@ The \textbf{Detail Editor} component provides an interface for modifying selecte
 \end{itemize}
 
 \subsection{Component Structure}
-The \textbf{Detail Editor} has the following core sections:
+The detail editor has the following core sections:
+
 \begin{itemize}
     \item \textbf{Seat Editing Panel:} Displays detailed information for selected seats and allows modifications.
     \item \textbf{Group Management Panel:} Handles seat grouping and bulk operations.
     \item \textbf{Standing Area Editing Panel:} Enables editing of standing areas, including their name and capacity.
     \item \textbf{Deletion and Bulk Actions:} Supports removing selected seats, groups, or selected standing areas.
 \end{itemize}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.6\textwidth]{pics/DetailEditorSeat.png}
-    \caption{Seat Editing Panel in Detail Editor}
-    \label{fig:detail-editor-seat}
-\end{figure}
 
 Figure \ref{fig:detail-editor-seat} illustrates the seat editing panel, where users can adjust tooltips, assign categories, and delete seats.
 
@@ -90,7 +92,7 @@ const createGroup = useCallback(() => {
 \begin{itemize}
     \item The function retrieves all currently selected seats.
     \item The CreateGroupAction is executed, registering the selected seats as a group.
-    \item The group ID is assigned, and the group is stored in the global state.
+    \item The group id is assigned, and the group is stored in the global state.
 \end{itemize}
 
 \textbf{Deleting a Seat Group:}
@@ -116,7 +118,7 @@ Seat categories allow users to classify seating arrangements based on (pricing) 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\textwidth]{pics/DetailEditorCategory.png}
+    \includegraphics[width=0.5\textwidth]{pics/DetailEditorCategory.png}
     \caption{Category Selection in Detail Editor}
     \label{fig:detail-editor-category}
 \end{figure}
@@ -135,7 +137,7 @@ Each seat category is stored as an object that holds classification data:
 
 \begin{lstlisting}[language=TypeScript, caption=Seat Category Data Model, label=lst:seat-category-model]
 interface Category {
-    id?: number;
+    id: number;
     name: string; // Example: "VIP", "General Admission"
     color: string; // Hex code for UI representation
     price: number; // Ticket price associated with this category
@@ -144,16 +146,16 @@ interface Category {
 
 \subsubsection{Assigning Categories to Seats}
 
-When a user selects a seat, they can assign or change its category using the \textbf{Detail Editor}.
+When a user selects a seat, they can assign or change its category using the detail editor.
 
-\begin{lstlisting}[language=TypeScript, caption=Assigning Categories to Selected Seats onChange, label=lst:assign-category]
+\begin{lstlisting}[language=TypeScript, caption=Update Category Action Call, label=lst:assign-category]
 onChange={(newVal) => {
     context.doAction(new UpdateCategoryAction(selectedSeats, newVal ? newVal.value : null))
     setCurrentSelectedCategory(newVal ? newVal.value : null);
 }}
 \end{lstlisting}
 
-\begin{lstlisting}[language=TypeScript, caption=Assigning Categories to Selected Seats, label=lst:assign-category]
+\begin{lstlisting}[language=TypeScript, caption=Update Category Action, label=lst:assign-category]
 execute = () => {
     this._oldCategories = this._selectedSeats.map(seat => seat.category)
     this._selectedSeats.forEach((seat) => {
@@ -179,8 +181,8 @@ Users can manage categories by:
 \end{itemize}
 
 \begin{lstlisting}[language=TypeScript, caption=Managing Categories, label=lst:manage-categories]
-onCreateOption={(inputValue) =>
-    seatgenApiClient.api.createCategory({name: inputValue, color: "#3768db"}).then((r) => {
+onCreateOption={(inputValue, inputColor) =>
+    seatgenApiClient.api.createCategory({name: inputValue, color: inputColor}).then((r) => {
         if (r.ok) {
             enqueueSnackbar("Successfully created category", {variant: 'success'})
             selectedSeats.forEach((seat) => {
@@ -200,7 +202,7 @@ onCreateOption={(inputValue) =>
 \begin{lstlisting}[language=TypeScript, caption=Managing Category Color, label=lst:manage-categories]
 <input 
     type="color"
-    value={currentSelectedCategory.color ?? "#3768db"}
+    value={currentSelectedCategory.color}
     onChange={(newColor) => {
         selectedSeats[0].category!.color = newColor.target.value
         setCurrentSelectedCategory({...currentSelectedCategory, color: newColor.target.value})
@@ -210,7 +212,7 @@ onCreateOption={(inputValue) =>
 
 \subsubsection{Category Visualization on the Map}
 
-Seat categories are visually represented by color-coded markers in \textbf{Map Component}. Each seat marker dynamically updates based on its assigned category.
+Seat categories are visually represented by color-coded markers in the map component. Each seat marker dynamically updates based on its assigned category.
 
 \begin{lstlisting}[language=TypeScript, caption=Rendering Seat Markers with Categories, label=lst:render-seat-category]
 const renderedSeats = seats.map(seat => (
@@ -259,10 +261,10 @@ interface StandingArea {
 \end{lstlisting}
 
 \subsubsection{Creating and Selecting Standing Areas}
-Standing areas are created by defining polygonal boundary coordinates on the map. Once an area is selected, it becomes editable in the \texttt{Detail Editor}.
+Standing areas are created by defining polygonal boundary coordinates on the map. Once an area is selected, it becomes editable in the detail editor.
 
 \subsubsection{Renaming a Standing Area}
-Users can rename standing areas directly in the \texttt{Detail Editor} panel.
+Users can rename standing areas directly in the detail editor panel.
 
 \begin{lstlisting}[language=TypeScript, caption=Renaming Standing Areas, label=lst:rename-standingarea]
 const handleStandingNameChange = (name: string) => {
@@ -311,7 +313,7 @@ context.doAction(new DeleteStandingAreaAction(selectedStandingAreas, context))
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\textwidth]{pics/DetailEditorStandingArea.png}
+    \includegraphics[width=0.4\textwidth]{pics/DetailEditorStandingArea.png}
     \caption{Editing Standing Areas in Detail Editor}
     \label{fig:detail-editor-standingarea}
 \end{figure}
@@ -323,7 +325,7 @@ Standing areas in SeatGen offer a structured approach to handling non-seated sec
 Beyond general standing areas, this feature can also be used to designate specific sections for specialized needs. For example, stadiums may allocate certain sectors for \textbf{wheelchair-accessible areas} or \textbf{priority seating for individuals with mobility impairments}. This flexibility ensures that accessibility requirements can be met while maintaining a clear and organized seating plan.
 
 \subsubsection{Summary}
-\textbf{Detail Editor} is a key component within SeatGen, offering intuitive tools for modifying stadium layouts. It enables:
+The detail editor is a key component within SeatGen, offering intuitive tools for modifying stadium layouts. It enables:
 \begin{itemize}
     \item \textbf{Seat Editing:} Real-time adjustments to tooltips, positions, and assignments.
     \item \textbf{Group Management:} Merging, splitting, and deleting seat groups efficiently.
@@ -332,4 +334,4 @@ Beyond general standing areas, this feature can also be used to designate specif
     \item \textbf{Seamless Integration:} Ensures consistent updates via \texttt{Map Context}.
 \end{itemize}
 
-With its structured approach and live updates, \textbf{Detail Editor} ensures flexible and efficient stadium configuration.
+With its structured approach and live updates, the detail editor ensures flexible and efficient stadium configuration.

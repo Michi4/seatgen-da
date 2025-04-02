@@ -1,12 +1,12 @@
-The \textbf{Map Component} is one of the most critical components in SeatGen, responsible for rendering and managing the stadium seating map. It integrates with \textbf{Leaflet.js} to provide interactive seat visualization, selection, and manipulation.
+The map is one of the most important components in SeatGen, responsible for rendering and managing the stadium seating map. It integrates with Leaflet library to provide interactive seat visualization, selection, and manipulation.
 
-\textbf{Key Responsibilities:}
+\subsubsection{Key Responsibilities:}
 \begin{itemize}
     \item Initializes and manages the \textbf{Leaflet map instance}.
     \item Loads seat and standing area data dynamically from the backend.
     \item Renders seats and standing areas as \textbf{interactive markers and polygons}.
     \item Handles user interactions such as \textbf{clicking, selecting, and dragging seats}.
-    \item Implements \textbf{state synchronization} with the global context (\textbf{Map Context}).
+    \item Implements \textbf{state synchronization} with the global context (map context).
     \item Provides support for \textbf{tool-based seat editing} (e.g., adding, deleting, moving).
 \end{itemize}
 
@@ -19,11 +19,11 @@ The \textbf{Map Component} is one of the most critical components in SeatGen, re
 
 \subsubsection{Map Initialization and Leaflet Integration}
 
-The \textbf{Map Component} initializes the Leaflet map using the react-leaflet \texttt{MapContainer} component.
+The map component initializes the Leaflet map using the react-leaflet \texttt{MapContainer} component.
 
 \begin{lstlisting}[language=TypeScript, caption=Initializing Leaflet Map in React, label=lst:react-leaflet]
 const MapComponent: FC<MapProps> = ({ editable: initialEditable }) => {
-    const context = useMapContext(); // Access global state (Map Context)
+    const context = useMapContext(); // Access global state (MapContext)
     const { bucketName, mapName } = useParams(); // Retrieve map identifiers from URL params
 
     const [editable, setEditable] = useState(initialEditable ?? true);
@@ -76,7 +76,7 @@ const MapComponent: FC<MapProps> = ({ editable: initialEditable }) => {
 \subsubsection{Fetching Seat and Standing Area Data}
 \setauthor{Michael Ruep}
 
-The Map Component fetches seat and standing area data from the backend when the component mounts. This is done using the api client in the useEffect hook.
+The map component fetches seat and standing area data from the backend when the component mounts. This is done using the API client in the \texttt{useEffect} hook.
 
 \begin{lstlisting}[language=TypeScript, caption=Fetching Seat and Category Data, label=lst:fetch-seats]
 useEffect(() => {
@@ -158,7 +158,7 @@ seatgenApiClient.api.getSectorByMap(bucketName, mapName).then((r) => {
 \textbf{Explanation:}
 \begin{itemize}
     \item The API returns a list of sector polygons.
-    \item Each area consists of a unique ID, name, capacity, and a list of coordinates.
+    \item Each area consists of a unique id, name, capacity, and a list of coordinates.
     \item Coordinates are transformed into Leaflet’s LatLng format to be rendered as a polygon.
 \end{itemize}
 
@@ -188,7 +188,7 @@ seatgenApiClient.api.getSectorByMap(bucketName, mapName).then((r) => {
     \item Efficient State Updates:
     \begin{itemize}
         \item Avoids unnecessary re-renders by batching state updates for seats and standing areas.
-        \item No prop-drilling by storing fetched data needed globally in the \texttt{Map Context}.
+        \item No prop-drilling by storing fetched data needed globally in the map context.
     \end{itemize}
 
     \item Error Handling:
@@ -223,8 +223,8 @@ const handleSeatClick = useCallback((id: number, event: L.LeafletMouseEvent) => 
 \textbf{How This Works:}
 \begin{itemize}
     \item Clicking a seat toggles its selected state.
-    \item Holding \textbf{Ctrl} allows multi-selection, useful for bulk actions.
-    \item Clicking a seat opens the \textbf{DetailEditor sidebar} for further modifications.
+    \item Holding \texttt{Ctrl} allows multi-selection, useful for bulk actions.
+    \item Clicking a seat opens the detail editor sidebar for further modifications.
 \end{itemize}
 
 
@@ -362,7 +362,7 @@ const handlePolygonClick = useCallback((id: number, event: L.LeafletMouseEvent) 
             return area;
         });
     });
-    // Update the selected standing area IDs in context
+    // Update the selected standing area ids in the context
     context.setSelectedStandingAreaIds(selectedStandingAreaIds);
     setOpenSideBar(true);
 }, [context, setOpenSideBar]);
@@ -371,13 +371,13 @@ const handlePolygonClick = useCallback((id: number, event: L.LeafletMouseEvent) 
 \textbf{Selection and Editing Process:}
 \begin{itemize}
     \item Clicking a standing area toggles its selected state.
-    \item In the Detail Editor panel, renaming, capacity adjustments, and category (including color coding) updates are possible.
+    \item In the detail editor panel, renaming, capacity adjustments, and category (including color coding) updates are possible.
 \end{itemize}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{pics/MapComponentCategoryAndSelectedSeat.png}
-    \caption{Map, Seats with Category Color, and Selected Seat in Map Component}
+    \caption{Seats with Category Color, and Selected Seat}
     \label{fig:map-component-category}
 \end{figure}
 
@@ -430,46 +430,7 @@ const renderedSeats = useMemo(() => {
 \setauthor{Michael Ruep}
 SeatGen implements an asynchronous saving mechanism that synchronizes data with the backend.
 
-\textbf{Warning Users Before Leaving Without Saving:}
-
-The \texttt{Leave Page Popup} component ensures that users are warned before navigating away from the application when they have unsaved changes. This prevents accidental data loss and provides an opportunity to save progress before exiting.
-
-\begin{itemize}
-    \item Detects unsaved changes via the \texttt{hasUnsavedChanges} prop.
-    \item Attaches a \texttt{beforeunload} event listener to prevent accidental exits.
-    \item Displays a native browser warning when users try to leave.
-    \item Removes the event listener when no longer needed to optimize performance.
-\end{itemize}
-
-\begin{lstlisting}[language=TypeScript, caption=Auto-Saving on Unload, label=lst:auto-save-seats]
-    interface FormPromptProps {
-        hasUnsavedChanges: boolean;
-    }
-    
-    export const LeavePagePopup: FC<FormPromptProps> = ({ hasUnsavedChanges }) => {
-        useEffect(() => {
-            const onBeforeUnload = (e: BeforeUnloadEvent) => {
-                if (hasUnsavedChanges) {
-                    e.preventDefault();
-                    e.returnValue = "";
-                }
-            };
-            window.addEventListener("beforeunload", onBeforeUnload);
-            return () => {
-                window.removeEventListener("beforeunload", onBeforeUnload);
-            };
-        }, [hasUnsavedChanges]);
-    };
-\end{lstlisting}
-
-
-\textbf{How It Works:}
-\begin{itemize}
-    \item The \texttt{hasUnsavedChanges} prop determines whether to enable the warning.
-    \item When unsaved changes are detected, a \texttt{beforeunload} event listener is added.
-    \item If the user attempts to leave the page, the browser displays a warning.
-    \item The event listener is removed when the component unmounts to prevent memory leaks.
-\end{itemize}
+TODO: Batch save name, Flow
 
 \textbf{Batch Save:}
 \begin{lstlisting}[language=TypeScript, caption=Batch Save Mechanism, label=lst:batch-save-seats]
@@ -488,7 +449,7 @@ const saveChanges = useCallback(() => {
 \begin{itemize}
     \item Instead of saving each individual seat change separately, SeatGen groups multiple seat updates into a single API request to reduce network overhead and improve efficiency.
     \item The \texttt{useCallback} hook ensures that changes get only saved when \texttt{context.seats} changes, preventing redundant function executions.
-    \item \texttt{seatgenApiClient.api.saveSeats} sends the updated seat data to the backend, including the seat ID, coordinates, and category ID.
+    \item \texttt{seatgenApiClient.api.saveSeats} sends the updated seat data to the backend, including the seat id, coordinates, and category id.
     \item Upon a successful save, a snackbar notification is displayed to confirm the operation.
     \item SeatGen maintains the action history so users can revert unintended changes before saving.
 \end{itemize}
@@ -496,14 +457,14 @@ const saveChanges = useCallback(() => {
 This saving mechanism ensures that the application remains responsive while keeping data integrity intact, even in scenarios where users forget to manually save their progress, they will be reminded.
 
 \subsubsection{Summary}
-The \textbf{Map Component} is the core of SeatGen’s interactive seating system. It efficiently manages:
+The map is the core of SeatGen’s interactive seating system. It efficiently manages:
 \begin{itemize}
     \item Interactive Leaflet-based Map Rendering
     \item Seat and Standing Area Rendering
     \item Group Selection and Bulk Editing
     \item Drag-and-Drop Seat Repositioning
     \item Event Handling for User Interaction
-    \item Synchronizing data with global state (\texttt{Map Context})
+    \item Synchronizing data with global state (map context)
     \item Asynchronous Backend Synchronization
 \end{itemize}
 

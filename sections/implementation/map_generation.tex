@@ -46,7 +46,7 @@ The first step in generating this map structure is to convert the SVG file into 
 
 The size of the image is determined by the current zoom level. The width and height are calculated based on the logic described earlier and implemented in the Kotlin code snippet in Listing \ref{lst:kotlin:dimensions}.
 
-\begin{lstlisting}[language=Kotlin,caption=Image dimensions calculation,label=lst:kotlin:dimensions] 
+\begin{lstlisting}[language=Kotlin,caption=Image Dimensions Calculation,label=lst:kotlin:dimensions] 
 Dimension(frameSize * 2.0.pow(zoomLevel).toInt(), frameSize * 2.0.pow(zoomLevel).toInt()) 
 \end{lstlisting}
 
@@ -101,7 +101,7 @@ Together, these methods enable PNG files to achieve significant compression whil
 
 The Zopfli algorithm \cite{ZopfliGitHub}, developed by Google engineers Lode Vandevenne and Jyrki Alakuijala in 2013, offers an advanced, high-efficiency compression technique. While it still utilizes the Deflate algorithm, it applies exhaustive entropy modeling and shortest path search techniques to achieve a higher compression ratio than standard Deflate and zlib \cite{ZlibGitHub} implementations. Zopfli achieves superior data compression by extensively analyzing different possible representations of the input data and selecting the most efficient encoding. By default, Zopfli performs 15 iterations to refine compression, though this can be adjusted for higher or lower processing times. Under standard settings, Zopfli output is typically 3–8\% smaller than zlib’s maximum compression, but it is approximately 80 times slower due to its computational intensity.
 
-According to Google developers: \cite{ZopfliGoogleBlog}
+According to Google developers \cite{ZopfliGoogleBlog}:
 
 \begin{quote}
     ...we believe that Zopfli represents the state of the art in Deflate-compatible compression.
@@ -111,14 +111,14 @@ While Zopfli is significantly slower than standard Deflate or zlib, this is not 
 
 \subsubsection{Analysis of Compression Algorithms}
 
-\begin{figure}
+By testing the compression algorithms within this application with different parameters, which range from the three algorithms, different maps, and different numbers of zoom levels, it can be observed that Zopfli is the best option for the compression of the images, provided that time is allocated for compressing the data. All the test results are visualized in the following table, and the image used for testing is the BW-Linz stadium (seen in Figure \ref{fig:impl:bw-stadium}), which is an example taken from production.
+
+\begin{figure}[H]
     \centering
     \includegraphics[scale=0.8]{pics/test_stadium.png}
     \caption{BW-Linz Stadium}
     \label{fig:impl:bw-stadium}
 \end{figure}
-
-By testing the compression algorithms within this application with different parameters, which range from the three algorithms, different maps, and different numbers of zoom levels, it can be observed that Zopfli is the best option for the compression of the images, provided that time is allocated for compressing the data. All the test results are visualized in the following table, and the image used for testing is the BW-Linz stadium (seen in Figure \ref{fig:impl:bw-stadium}), which is an example taken from production.
 
 \begin{table}[H]
     \centering
@@ -149,7 +149,7 @@ By testing the compression algorithms within this application with different par
         4 & 289606 & 289134 & 51388 & 0.16\% \\ \hline
         5 & 700382 & 699310 & 180054 & 0.15\% \\ \hline
     \end{tabularx}
-    \caption{Conversion Results for DEFAULT Compression Method}
+    \caption{Compression Results for DEFAULT Compression Method}
     \label{tab:compression_default}
 \end{table}
 
@@ -166,7 +166,7 @@ By testing the compression algorithms within this application with different par
         4 & 289606 & 266976 & 1166758 & 7.82\% \\ \hline
         5 & 700382 & 658512 & 3004721 & 5.98\% \\ \hline
     \end{tabularx}
-    \caption{Conversion Results for ZOPFLI Compression Method}
+    \caption{Compression Results for ZOPFLI Compression Method}
     \label{tab:compression_zopfli}
 \end{table}
 
@@ -183,7 +183,7 @@ By testing the compression algorithms within this application with different par
         \textbf{Total Time Taken (ms)} & 7519 & 195929 & 4696028 \\ \hline
         \textbf{Total Time Taken (min)} & 0.13 & 3.27 & 78.27 \\ \hline
     \end{tabular}
-    \caption{Summary of Conversion Results}
+    \caption{Summary of Compression Results}
     \label{tab:summary_compression}
 \end{table}
 
@@ -191,7 +191,7 @@ To ensure that this test data is viable, the calculation has been computed with 
 
 \texttt{-XX:ActiveProcessorCount=4}
 
-As observed in the summary table \ref{tab:summary_compression}, Zopfli has amazing compression but is a very time-intensive process, as expected. In the end, it saves 6.6\% more than the default algorithm, but it takes approximately 24 times longer, and waiting times of over an hour should be anticipated when using the algorithm. This trade-off must be considered. Although this would only be a one-time process, the decision could favor Zopfli; however, in comparison to the total 90,964 bytes (88.83 KiB) saved, this is still not a significant amount of data saved when considering the time taken. Ultimately, all the data produced is not very large, so the operator must decide whether the time is worth the saved data. If the time and resources are not desired to be spent for such a low storage and performance improvement, the default algorithm remains a good choice, as a waiting period of 3 minutes and 16 seconds is still acceptable for a small optimization. As mentioned previously, it is crucial that the user can decide which algorithm should be used due to various factors. When the program is hosted on an external cloud provider with dynamic cost calculations, the user may not want to incur the extra costs associated with the Zopfli algorithm, as the expense for the additional time could exceed the savings from storage. If the program is executed locally or on servers with sufficient free resources, the Zopfli algorithm is an excellent choice.
+As observed in the summary Table \ref{tab:summary_compression}, Zopfli has amazing compression but is a very time-intensive process, as expected. In the end, it saves 6.6\% more than the default algorithm, but it takes approximately 24 times longer, and waiting times of over an hour should be anticipated when using the algorithm. This trade-off must be considered. Although this would only be a one-time process, the decision could favor Zopfli; however, in comparison to the total 90,964 bytes (88.83 KiB) saved, this is still not a significant amount of data saved when considering the time taken. Ultimately, all the data produced is not very large, so the operator must decide whether the time is worth the saved data. If the time and resources are not desired to be spent for such a low storage and performance improvement, the default algorithm remains a good choice, as a waiting period of 3 minutes and 16 seconds is still acceptable for a small optimization. As mentioned previously, it is crucial that the user can decide which algorithm should be used due to various factors. When the program is hosted on an external cloud provider with dynamic cost calculations, the user may not want to incur the extra costs associated with the Zopfli algorithm, as the expense for the additional time could exceed the savings from storage. If the program is executed locally or on servers with sufficient free resources, the Zopfli algorithm is an excellent choice.
 
 Another significant decision during development was whether to compress the images before or after the slicing process. Ultimately, the decision was made to compress the images before slicing them into tiles. This approach was favored for several reasons.
 

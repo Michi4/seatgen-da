@@ -1,4 +1,4 @@
-The \textbf{Grid-Tool} allows the user to generate a rectangular grid of seats based on a user-defined area on the map. It is ideal for efficiently placing large blocks of seats in structured stadium sections.
+The grid tool allows the user to generate a rectangular grid of seats based on a user-defined area on the map. It is ideal for efficiently placing large blocks of seats in structured stadium sections.
 
 \textbf{Key Responsibilities:}
 \begin{itemize}
@@ -8,7 +8,7 @@ The \textbf{Grid-Tool} allows the user to generate a rectangular grid of seats b
 \end{itemize}
 
 \subsection{User Interaction}
-Once the \texttt{Grid-Tool} is selected, users can draw a selection box on the map. This triggers the following method:
+Once the grid tool is selected, users can draw a selection box on the map. This triggers the following method:
 
 \begin{lstlisting}[language=TypeScript, caption=Handling Box Selection, label=lst:grid-handle-box]
 const handleAddSeatGridBox = useCallback((bounds: L.LatLngBounds) => {
@@ -68,10 +68,10 @@ The modal lets the user configure rows, columns, and padding interactively:
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\textwidth]{pics/grid-tool.png}
-    \caption{Toolbar with Grid-Tool Selected and Configuration Modal Open}
+    \includegraphics[width=0.4\textwidth]{pics/grid-tool.png}
+    \caption{Grid-Tool Settings Modal}
     \label{fig:grid-tool-toolbar}
 \end{figure}
 
 \subsection{Conclusion}
-The \textbf{Grid-Tool} is designed for speed and precision when placing large quantities of seats. Its modal-based configuration, combined with interactive box selection and undoable batch insertion, makes it a powerful tool for large-scale seat placement in structured layouts.
+The grid tool is designed for speed and precision when placing large quantities of seats. Its modal-based configuration, combined with interactive box selection and undoable batch insertion, makes it a powerful tool for large-scale seat placement in structured layouts.

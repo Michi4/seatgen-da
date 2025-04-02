@@ -6,7 +6,7 @@ Many different components utilize positions to display them on the map. Leaflet 
 
 Latitude and longitude are used for the representation of Earth's surface. Latitude specifies the north-south position and ranges from -90° (South Pole) to +90° (North Pole). Longitude specifies the east-west position and ranges from -180° to +180°. These coordinates are used in geographic coordinate systems, which are essential for positioning objects on a global scale, but not useful for the use case of SeatGen. If the coordinates are not transformed correctly, moving a marker in a straight line may result in a curved path. This is because of the aforementioned logic of the surface of the Earth. To avoid this, the \texttt{LatLng} coordinates can be converted to \texttt{Point} coordinates by providing the map reference. An example of such a conversion in the code of SeatGen is shown in Listing \ref{lst:latlng-point}.
 
-\begin{lstlisting}[language=TypeScript, caption={Latitude Longitude and Point conversion}, label={lst:latlng-point}]
+\begin{lstlisting}[language=TypeScript, caption={Latitude Longitude and Point Conversion}, label={lst:latlng-point}]
     //Point to LatLng
     const latLngPosition = map.layerPointToLatLng(new L.Point(x, y));
 
@@ -64,7 +64,7 @@ L.Map.mergeOptions({boxZoom: false});
 \end{lstlisting}
 
 
-In the provided Leaflet extension code, mergeOptions is used to introduce and modify configuration options for the Leaflet Map class. This method allows developers to add custom options to existing Leaflet classes without modifying the core library. By merging options and using addInitHook, the new feature seamlessly integrates with Leaflet maps. The result is that whenever a map instance is created, the new feature replaces the default BoxZoom functionality if \texttt{boxDemo} is enabled.
+In the provided Leaflet extension code, mergeOptions is used to introduce and modify configuration options for the Leaflet Map class. This method allows developers to add custom options to existing Leaflet classes without modifying the core library. By merging options and using addInitHook, the new feature seamlessly integrates with Leaflet maps. The result is that whenever a map instance is created, the new feature replaces the default \texttt{BoxZoom} functionality if \texttt{boxDemo} is enabled.
 
 \subsection{Event Handling}
 \setauthor{Michael Stenz}
@@ -72,9 +72,9 @@ Leaflet provides an extensive event system that allows developers to listen for 
 
 Commonly used events in SeatGen include:
 \begin{compactitem}
-\item \texttt{click}: Triggered when a user clicks on the map or an element.
-\item \texttt{mousemove}: Fires whenever the mouse moves over the map, useful for hover effects.
-\item \texttt{drag}: Used to detect when a user drags an element like a marker.
+\item \texttt{\textbf{click}}: Triggered when a user clicks on the map or an element.
+\item \texttt{\textbf{mousemove}}: Fires whenever the mouse moves over the map, useful for hover effects.
+\item \texttt{\textbf{drag}}: Used to detect when a user drags an element like a marker.
 \end{compactitem}
 
 Handling events in Leaflet is straightforward using \texttt{useMapEvents}. When using this hook and adding it to the Map, many events can be caught and handled. An example of using this hook with the \texttt{click} event is shown in Listing \ref{lst:useMapEvents}.
@@ -83,10 +83,7 @@ Handling events in Leaflet is straightforward using \texttt{useMapEvents}. When 
 const MapEvents = () => {
     useMapEvents({
         click(e) {
-            console.log("clicked")
-
             if (context.selectedToolId === "addTool" && mapClickCallBack) {
-                console.log("Map clicked for add tool");
                 mapClickCallBack(e);
             }
 

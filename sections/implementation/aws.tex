@@ -2,9 +2,9 @@ As already mentioned in the technology section, integrating AWS services into th
 
 For administrators and developers, AWS provides multiple ways to interact with its services, each suited for different use cases:
 \begin{compactitem}
-\item \textbf{AWS Management Console (Web UI)} – A user-friendly graphical interface for managing AWS services, ideal for beginners or when making quick changes.
-\item \textbf{AWS Command Line Interface (CLI)} – A powerful command-line tool that allows users to manage AWS resources via scripts and commands, enabling automation and repeatability.
-\item \textbf{AWS SDKs – Language-specific libraries} (such as those for Python, Java, and JavaScript) that facilitate programmatic interaction with AWS services, making integration into applications seamless.
+\item \textbf{AWS Management Console (Web UI)} : A user-friendly graphical interface for managing AWS services, ideal for beginners or when making quick changes.
+\item \textbf{AWS Command Line Interface (CLI)}: A powerful command-line tool that allows users to manage AWS resources via scripts and commands, enabling automation and repeatability.
+\item \textbf{AWS SDK}: Language-specific libraries (such as those for Python, Java, and JavaScript) that facilitate programmatic interaction with AWS services, making integration into applications seamless.
 \item Others can be found in the AWS documentation.
 \end{compactitem}
 
@@ -21,16 +21,21 @@ Some useful utility commands used during the development process are listed in L
 aws s3 ls --profile myprofile
 
 # Command to recursively delete every item inside a directory
-aws s3 rm --profile --recursive s3://ticketing-stadium-creator-dev/my-bucket/
+aws s3 rm --profile --recursive s3://bucket-name/my-directory/
 
-# List all the data inside a directory and provide statistics, such as file size, object count, and total file size
-s3 ls --profile solvistas --summarize --human-readable --recursive s3://ticketing-stadium-creator-dev/my-bucket
+# List all the data inside a directory and provide statistics,
+# such as file size, object count, and total file size
+s3 ls --profile solvistas \
+    --summarize \
+    --human-readable \
+    --recursive s3://bucket-name/my-directory
 
-# Count the number of objects in a bucket (similar but more compact results than in the previous command)
-aws s3 ls --profile solvistas --recursive s3://ticketing-stadium-creator-dev/ | wc -l
+# Count the number of objects in a bucket
+# (similar but more compact results than in the previous command)
+aws s3 ls --profile solvistas --recursive s3://bucket-name/ | wc -l
 
 # Listing all the applied bucket policies
-aws s3api get-bucket-policy --profile solvistas --bucket ticketing-stadium-creator-dev
+aws s3api get-bucket-policy --profile solvistas --bucket bucket-name
 
 \end{lstlisting}
 
@@ -39,11 +44,13 @@ The configuration of an S3 bucket is crucial for the setup, as it determines acc
 
 To enable access to the S3 bucket for all users, the \texttt{aws s3api put-bucket-policy} command was used. This command applies a bucket policy that defines specific permissions for the bucket. In this case, public read access to the objects in the bucket was required. The following command, seen in Listing \ref{lst:aws-cli-bucket-policy}, was executed with the \texttt{bucket-policy.json} configuration shown in Listing \ref{lst:bucket-policy}.
 
-\begin{lstlisting}[language=bash, caption={AWS CLI command to set a bucket policy}, label={lst:aws-cli-bucket-policy}]
-aws s3api put-bucket-policy --bucket ticketing-stadium-creator-dev --policy file://bucket-policy.json
+\begin{lstlisting}[language=bash, caption={AWS CLI Command to Set a Bucket Policy}, label={lst:aws-cli-bucket-policy}]
+aws s3api put-bucket-policy \
+    --bucket ticketing-stadium-creator-dev \
+    --policy file://bucket-policy.json
 \end{lstlisting}
 
-\begin{lstlisting}[language=json,caption=Bucket policy JSON configuration, label=lst:bucket-policy]
+\begin{lstlisting}[language=json,caption=Bucket Policy JSON Configuration, label=lst:bucket-policy]
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -57,7 +64,7 @@ aws s3api put-bucket-policy --bucket ticketing-stadium-creator-dev --policy file
 }
 \end{lstlisting}
 
-This policy allows any user (\texttt{Principal: ``*"}) to perform the \texttt{s3:GetObject} action on all objects (\texttt{Resource: ``arn:aws:s3:::ticketing-stadium-creator-dev/*"}) within the bucket.
+This policy allows any user (\texttt{``Principal": ``*"}) to perform the \texttt{s3:GetObject} action on all objects (\texttt{``Resource": ``arn:aws:s3:::ticketing-stadium-creator-dev/*"}) within the bucket.
 
 Amazon S3 provides \textbf{Access Control Lists (ACLs)} to manage access to buckets and objects. ACLs are a legacy access control mechanism, but they are still useful for simple use cases. Here are some important ACLs:
 

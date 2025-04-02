@@ -21,12 +21,17 @@ WITH RECURSIVE cte AS (
     -- select first node with level 1
     SELECT , 1 AS level
     FROM   sector_node
-    WHERE  (select id from sector_node where map_id = 1 and sector_id = 1 LIMIT 1) = id
+    WHERE  (SELECT id FROM sector_node 
+                WHERE map_id = 1 AND sector_id = 1 LIMIT 1
+            ) = id
 
     UNION  ALL
-    SELECT  sn., c.level + 1 as level
+    SELECT  sn., c.level + 1 AS level
     FROM cte c
-        JOIN sector_node sn ON  c.next_sector_node_id = sn.id where (select id from sector_node where map_id = 1 and sector_id = 1 LIMIT 1) != sn.id
+        JOIN sector_node sn ON c.next_sector_node_id = sn.id 
+        WHERE (SELECT id FROM sector_node 
+                   WHERE map_id = 1 AND sector_id = 1 LIMIT 1
+              ) != sn.id
 )
 SELECT id, x, y
 FROM   cte

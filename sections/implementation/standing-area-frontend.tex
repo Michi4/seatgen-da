@@ -1,10 +1,10 @@
-The \textbf{Standing-Area-Tool} enables users to define polygonal sectors directly on the map by selecting a series of points. These sectors, referred to as standing areas, are used to represent sections of a stadium that are not associated with fixed seating.
+The standing area tool enables users to define polygonal sectors directly on the map by selecting a series of points. These sectors, referred to as standing areas, are used to represent sections of a stadium that are not associated with fixed seating.
 
 \textbf{Key Responsibilities:}
 \begin{itemize}
     \item Allows users to draw a polygon on the map by clicking multiple points.
     \item Once finalized, dispatches an \texttt{AddStandingAreaAction} to insert the area into global state.
-    \item Automatically assigns an ID, empty name, and zero capacity by default.
+    \item Automatically assigns an id, empty name, and zero capacity by default.
     \item Supports full undo and redo through the action system.
 \end{itemize}
 
@@ -48,7 +48,7 @@ const handleDone = () => {
 \end{itemize}
 
 \subsubsection{Integration with the Action System}
-The tool leverages the action-based architecture of SeatGen to ensure consistency and undoability.
+The tool leverages the action-based architecture of SeatGen to ensure consistency and undoability. The actions are closer described in section \ref{sec:design-patterns}.
 
 \begin{lstlisting}[language=TypeScript, caption=AddStandingAreaAction, label=lst:add-standingarea-action]
 export default class AddStandingAreaAction extends Action {
@@ -66,11 +66,13 @@ export default class AddStandingAreaAction extends Action {
 }
 \end{lstlisting}
 
+TODO: Satz
+
 \textbf{Highlights:}
 \begin{itemize}
     \item \texttt{execute()} appends the new area to the list.
-    \item \texttt{undo()} removes the inserted area by filtering it out by ID.
+    \item \texttt{undo()} removes the inserted area by filtering it out by id.
 \end{itemize}
 
 \subsubsection{Summary}
-The \textbf{Standing-Area-Tool} provides an intuitive polygon-drawing interface for defining sectors that are not associated with individual seats. Through real-time polygon tracking and integration with the action system, it supports flexible and reversible sector creation tailored to the needs of modern stadium planning.
+The standing area tool provides an intuitive polygon-drawing interface for defining sectors that are not associated with individual seats. Through real-time polygon tracking and integration with the action system, it supports flexible and reversible sector creation tailored to the needs of modern stadium planning.

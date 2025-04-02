@@ -2,35 +2,35 @@
 title Frontend Component Architecture
 
 node "App" {
-    "Map Component"
-    "Detail Editor"
+    "MapComponent"
+    "DetailEditor"
     "Toolbar"
 }
 
-component "Map Component" {
-    [Leaflet Map]
-    [Seat Markers]
+component "MapComponent" {
+    [LeafletMap]
+    [SeatMarkers]
 }
 
 component "Toolbar" {
-    [Selection Tool]
-    [Grid Tool]
-    [Add Tool]
-    [Multi-Select Tool]
-    [Standing-Area Tool]
+    [SelectionTool]
+    [GridTool]
+    [AddTool]
+    [MultiSelectTool]
+    [StandingAreaTool]
 }
 
-component "Detail Editor" {
-    [Seat Details]
-    [Group Editor]
-    [Category Editor]
+component "DetailEditor" {
+    [SeatDetails]
+    [GroupEditor]
+    [CategoryEditor]
 }
 
-node "Map Context" {
-    [Global State Management]
+node "MapContext" {
+    [GlobalStateManagement]
 }
 
-"Map Context" --> "Map Component"
-"Map Context" --> "Toolbar"
-"Map Context" --> "Detail Editor"
+"MapContext" --> "MapComponent"
+"MapContext" --> "Toolbar"
+"MapContext" --> "DetailEditor"
 @enduml

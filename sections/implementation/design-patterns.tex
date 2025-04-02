@@ -29,7 +29,7 @@ Given the application's complexity, a variation of the Command Pattern has been 
 
 The implementation defines an abstract \texttt{Action} class that all actions must implement. An overview of this structure is shown in Figure \ref{fig:command-pattern}. This class enforces the inclusion of \texttt{execute} and \texttt{undo} methods, ensuring a standardized approach to action management.
 
-\begin{lstlisting}[language=TypeScript,caption={Action class},label={lst:action-class}]
+\begin{lstlisting}[language=TypeScript,caption={Action Class},label={lst:action-class}]
 export abstract class Action {
     execute: (() => void) | undefined;
     undo: (() => void) | undefined;
@@ -42,9 +42,9 @@ Another important aspect of this application was to allow the execution of busin
 
 While this seems like a lot more logic is required than in the other design patterns, the logic demanded by this is actually important for usability reasons, and lots of it is reusable. Because the undo function should be able to be executed manually by the user, calling the \texttt{undo()} shouldn't be the only way to reverse an action, for example when creating a new seat, you should be able to delete it again by calling the \texttt{undo()} function as well as a separate way like a delete button. So the developer should always provide both ways for usability reasons. This approach incentivizes developers to implement it as the logic for reverting actions must be implemented regardless.
 
-Here is an implementation of an action that creates a Standing-Area with its counterpart action that deletes the standing area. Both actions can reference each other for the undoing part to reduce code redundancy, because the opposite of creating a standing area is deleting it. That's why deleting it is the undo action of creating it and the other way around.
+Here is an implementation of an action that creates a Standing Area with its counterpart action that deletes the standing area. Both actions can reference each other for the undoing part to reduce code redundancy, because the opposite of creating a standing area is deleting it. That's why deleting it is the undo action of creating it and the other way around.
 
-\begin{lstlisting}[language=TypeScript,caption={Add standing-area action implementation},label={lst:add-standing-area-action-implementation}]
+\begin{lstlisting}[language=TypeScript,caption={Add Standing Area Action Implementation},label={lst:add-standing-area-action-implementation}]
 export class AddStandingAreaAction implements Action {
     private readonly _newArea: StandingArea;
     private readonly _context: MapContextValue;
@@ -77,7 +77,7 @@ export class AddStandingAreaAction implements Action {
 }
 \end{lstlisting}
 
-\begin{lstlisting}[language=TypeScript,caption={Delete standing-area action implementation},label={lst:delete-standing-area-action-implementation}]
+\begin{lstlisting}[language=TypeScript,caption={Delete Standing Area Action Implementation},label={lst:delete-standing-area-action-implementation}]
 export class DeleteStandingAreaAction implements Action {
     private readonly _deletedAreas: StandingArea[];
     private _undoAreas: StandingArea[] | undefined;
@@ -125,7 +125,7 @@ The actual undoing logic is defined by a controller. When an action should be un
 
 The implementation of the controller is as shown in Listing \ref{lst:action-controller}.
 
-\begin{lstlisting}[language=TypeScript,caption={Action controller implementation},label={lst:action-controller}]
+\begin{lstlisting}[language=TypeScript,caption={Action Controller Implementation},label={lst:action-controller}]
 const loopSize = 50;
 const actionHistory: (Action | undefined)[] = new Array(loopSize).fill(undefined);
 
@@ -185,7 +185,7 @@ const getCurrentAction = (): Action | null => actionHistory[historyIndex] ?? nul
 
 To register a new Action in the controller, the \texttt{doAction} function must be called with the action as a parameter like in this Listing \ref{lst:register-action}. The context referenced here contains the business logic for the map as well as the logic for the undo and redo controller.
 
-\begin{lstlisting}[language=TypeScript,caption={Registering a new action in the controller},label={lst:register-action}]
+\begin{lstlisting}[language=TypeScript,caption={Registering a New Action in the Controller},label={lst:register-action}]
 context.doAction(new AddSeatAction(context.setSeats, lat, lng))
 \end{lstlisting}
 
@@ -196,7 +196,7 @@ The \texttt{increase()} and \texttt{decrease()} functions are used to increase a
 \subsection{Tools}
 Tools played a significant role during development, making it essential to ensure that the implementation of new tools was as easy and fast as possible. To achieve this, a Tool interface was designed, where instances only need to be added to an existing array containing the tools. The final version of this interface is presented in Listing \ref{lst:tool-interface}.
 
-\begin{lstlisting}[language=TypeScript,caption={Tool interface},label={lst:tool-interface}]
+\begin{lstlisting}[language=TypeScript,caption={Tool Interface},label={lst:tool-interface}]
 export interface Tool {
     id: string
     icon: ReactNode,
@@ -207,59 +207,13 @@ export interface Tool {
 
 The attributes of the interface are the following:
 \begin{compactitem}
-\item \textbf{id}: The id is a string with the name of the tool.
-\item \textbf{icon}: The icon of the tool, which is displayed in the toolbar. This has the type \texttt{ReactNode} because first a simple string was used to pass it to an icon component, but then it was decided to use the \texttt{ReactNode} type, because it's more flexible and the icons are not only limited to the icons of one UI library, but any icon can be used, including SVG icons.
-\item \textbf{onSelect}: The function that is called when the tool is selected. This is optional because not every tool needs a function to be called when it's selected. Some tools are handled externally.
-\item \textbf{hotkey}: The hotkey is a string that defines the hotkey for the tool. This is optional because not every tool needs a hotkey.
+\item \texttt{\textbf{id}}: The id is a string with the name of the tool.
+\item \texttt{\textbf{icon}}: The icon of the tool, which is displayed in the toolbar. This has the type \texttt{ReactNode} because first a simple string was used to pass it to an icon component, but then it was decided to use the \texttt{ReactNode} type, because it's more flexible and the icons are not only limited to the icons of one UI library, but any icon can be used, including SVG icons.
+\item \texttt{\textbf{onSelect}}: The function that is called when the tool is selected. This is optional because not every tool needs a function to be called when it's selected. Some tools are handled externally.
+\item \texttt{\textbf{hotkey}}: The hotkey is a string that defines the hotkey for the tool. This is optional because not every tool needs a hotkey.
 \end{compactitem}
 
-Listing \ref{lst:implemented-tools} shows all the implemented tools, and Figure \ref{fig:tools} illustrates how they are rendered.
-
-\begin{lstlisting}[language=TypeScript,caption={Implemented Tools},label={lst:implemented-tools}]
-const tools: Tool[] = [
-    {
-        id: "mouseTool",
-        icon: <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path
-                d="..."
-            />
-        </svg>,
-        onSelect: () => handleToolSelect(() => {
-        }, "mouseTool", "default"),
-        hotkey: "v"
-    },
-    {
-        id: "addTool",
-        icon: <PlusIcon></PlusIcon>,
-        onSelect: () => handleToolSelect((e) => {
-            props.addSeat(e.latlng.lat, e.latlng.lng)
-        }, "addTool", "cell"),
-        hotkey: "c"
-    },
-    {
-        id: "addGridTool",
-        icon: <TableCellsIcon></TableCellsIcon>,
-        onSelect: () => handleToolSelect(() => {
-        }, "addGridTool", "cell"),
-        hotkey: "g"
-    },
-    {
-        id: "squareSelectTool",
-        icon: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
-            <path
-                d="..."/>
-        </svg>,
-        onSelect: () => handleToolSelect(() => console.log("Clicked"), "squareSelectTool", "crosshair"),
-        hotkey: "a"
-    },
-    {
-        id: "standingAreaTool",
-        icon: <UserGroupIcon />,
-        onSelect: () => handleToolSelect(() =>console.log("standingtool"), "standingAreaTool", "crosshair"),
-        hotkey: "s"
-    }
-];
-\end{lstlisting}
+The toolbar section \ref{sec:toolbar} shows all the implemented tools, and Figure \ref{fig:tools} illustrates how they are rendered and how tooltips are shown.
 
 \begin{figure}
     \centering
@@ -271,7 +225,7 @@ const tools: Tool[] = [
 
 The \texttt{handleToolSelect} function is a function that is called when a tool is selected. It's responsible for setting the current tool and the cursor as shown in Listing \ref{lst:handle-tool-select}. All the cursor icons supported by the browser can be utilized by passing their respective names to the function. The cursor names can be viewed on the Mozilla developer documentation \cite{MDNCursor}.
 
-\begin{lstlisting}[language=TypeScript,caption={Handle tool select function},label={lst:handle-tool-select}]
+\begin{lstlisting}[language=TypeScript,caption={Handle Tool Select Function},label={lst:handle-tool-select}]
 const handleToolSelect = useCallback((toolFunction: (e: LeafletMouseEvent) => void, toolId: string, cursorIcon?: string) => {
     const cursorName = L.DomUtil.getClass(props.map.current!.getContainer()).split(" ").find((it) => it.startsWith("cursor-"));
     if (cursorName) {
