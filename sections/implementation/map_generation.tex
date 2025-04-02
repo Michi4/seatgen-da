@@ -230,8 +230,8 @@ data class S3Config @ConstructorBinding constructor(
 }
 \end{lstlisting}
 
-The configuration is managed using the @ConfigurationProperties(prefix = ``aws'') annotation, which enables automatic injection of required properties. These values—defined in the primary constructor with @ConstructorBinding—are retrieved from an external properties file under the AWS prefix. This approach ensures that configuration values remain externalized rather than hardcoded, making it easier to switch between environments such as development, testing, and production. The relevant configuration in application.yml is illustrated in Listing \ref{lst:yaml:aws}.
-\begin{lstlisting}[language=Yaml, caption=AWS Configuration in application.yml, label=lst:yaml:aws]
+The configuration is managed using the @ConfigurationProperties(prefix = ``aws'') annotation, which enables automatic injection of required properties. These values—defined in the primary constructor with @ConstructorBinding—are retrieved from an external properties file under the AWS prefix. This approach ensures that configuration values remain externalized rather than hardcoded, making it easier to switch between environments such as development, testing, and production. The relevant configuration in application.yaml is illustrated in Listing \ref{lst:yaml:aws}.
+\begin{lstlisting}[language=Yaml, caption=AWS Configuration in the application.yaml, label=lst:yaml:aws]
 aws:
     awsRegion: ${AWS_REGION:eu-central-1}
     access-key: ${AWS_ACCESS_KEY}
