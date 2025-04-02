@@ -25,7 +25,7 @@ SeatGen has a lot more of Leaflet's features implemented, but they are heavily m
 
 \subsection{Writing Extensions}
 \setauthor{Michael Stenz}
-For the bigger changes inside Leaflet itself, SeatGen uses extensions to modify existing features or even overwrite them. Leaflet provides an easy way for developers to modify its functionalities. This can be done with the \texttt{extend} method that is provided by some Leaflet classes. When overwriting functions, knowledge of the internal Leaflet functionality is required. It's recommended to look into Leaflet's source code and study the class before overwriting it. When doing so, it is possible to create new subclasses of the existing class and integrate these new modified subclasses into the map. An example of this in SeatGen is in listing \ref{lst:leaflet-modification}.
+For the bigger changes inside Leaflet itself, SeatGen uses extensions to modify existing features or even overwrite them. Leaflet provides an easy way for developers to modify its functionalities. This can be done with the \texttt{extend} method that is provided by some Leaflet classes. When overwriting functions, knowledge of the internal Leaflet functionality is required. It's recommended to look into Leaflet's source code and study the class before overwriting it. When doing so, it is possible to create new subclasses of the existing class and integrate these new modified subclasses into the map. An example of this in SeatGen is in Listing \ref{lst:leaflet-modification}.
 
 \begin{lstlisting}[language=Typescript, caption={Modifying Leaflet Features},label={lst:leaflet-modification}]
 L.Map.Multiselect = L.Map.BoxZoom.extend({
@@ -77,7 +77,7 @@ Commonly used events in SeatGen include:
 \item \texttt{drag}: Used to detect when a user drags an element like a marker.
 \end{compactitem}
 
-Handling events in Leaflet is straightforward using \texttt{useMapEvents}. When using this hook and adding it to the Map, many events can be caught and handled. An example of using this hook with the \texttt{click} event is shown in listing \ref{lst:useMapEvents}.
+Handling events in Leaflet is straightforward using \texttt{useMapEvents}. When using this hook and adding it to the Map, many events can be caught and handled. An example of using this hook with the \texttt{click} event is shown in Listing \ref{lst:useMapEvents}.
 
 \begin{lstlisting}[language=Typescript, caption={Handling Events in Leaflet},label={lst:useMapEvents}]
 const MapEvents = () => {

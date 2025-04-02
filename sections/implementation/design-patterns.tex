@@ -123,7 +123,7 @@ In the code in Listing \ref{lst:add-standing-area-action-implementation} and \re
 
 The actual undoing logic is defined by a controller. When an action should be undoable and redoable it has to be passed to the controller. The controller manages the function and can be called to undo or redo the last action. It also manages the stack of actions, so that all the actions can be undone and then redone again, until a new action is executed. When this happens the controller ignores all the ``future'' actions that would have come after the current action. For example: Action1, Action2, Action3 and Action4 have been executed. The latest action saved by the controller is currently Action4. Currently, all the actions can be undone and then redone in a stack-like way. This means Action4 is undone, then Action3, then Action2 and so on. Then they can all be reapplied in the same reversed order. When actions have been undone, to Action2 for example, and then a new Action5 is executed, Action3 and Action4 will be scrapped, because a new ``future'' has been created. This is a common behavior in undo and redo functionalities.
 
-The implementation of the controller is as shown in listing \ref{lst:action-controller}.
+The implementation of the controller is as shown in Listing \ref{lst:action-controller}.
 
 \begin{lstlisting}[language=TypeScript,caption={Action controller implementation},label={lst:action-controller}]
 const loopSize = 50;
@@ -269,7 +269,7 @@ const tools: Tool[] = [
 \end{figure}
 
 
-The \texttt{handleToolSelect} function is a function that is called when a tool is selected. It's responsible for setting the current tool and the cursor as shown in listing \ref{lst:handle-tool-select}. All the cursor icons supported by the browser can be utilized by passing their respective names to the function. The cursor names can be viewed on the Mozilla developer documentation \cite{MDNCursor}.
+The \texttt{handleToolSelect} function is a function that is called when a tool is selected. It's responsible for setting the current tool and the cursor as shown in Listing \ref{lst:handle-tool-select}. All the cursor icons supported by the browser can be utilized by passing their respective names to the function. The cursor names can be viewed on the Mozilla developer documentation \cite{MDNCursor}.
 
 \begin{lstlisting}[language=TypeScript,caption={Handle tool select function},label={lst:handle-tool-select}]
 const handleToolSelect = useCallback((toolFunction: (e: LeafletMouseEvent) => void, toolId: string, cursorIcon?: string) => {

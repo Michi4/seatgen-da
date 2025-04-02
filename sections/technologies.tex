@@ -74,7 +74,7 @@ SeatGen also utilizes SwaggerUi and Swagger Codegen to generate REST API documen
 
 \section{Database}
 \setauthor{Michael Stenz}
-PostgreSQL was chosen as the database for several key reasons. A relational database is required since the data follows a structured design that is best represented through classical relational models. The structure of the database is visualized in the class diagram \ref{fig:db_model}. Additionally, utilizing a relational database simplifies the process of exporting generated data into the Ticketing database, which also adheres to a relational structure.
+PostgreSQL was chosen as the database for several key reasons. A relational database is required since the data follows a structured design that is best represented through classical relational models. The structure of the database is visualized in the class diagram seen in Figure \ref{fig:db_model}. Additionally, utilizing a relational database simplifies the process of exporting generated data into the Ticketing database, which also adheres to a relational structure.
 
 \begin{figure}
     \centering
@@ -91,7 +91,7 @@ To manage database migrations efficiently, the Flyway \cite{FlywayDocs} library 
 
 When selecting a migration tool, both Liquibase \cite{LiquibaseDocs} and Flyway were evaluated. While both are open-source and provide seamless integration with Spring Boot and other Java frameworks, the decision was ultimately made to opt for Flyway due to its simplicity and specific use case. Since the team is small with infrequent parallel database changes, Flyway’s linear migration approach suits the workflow without introducing complications. Although this approach might present challenges in larger teams with concurrent database modifications, it remains a practical choice for current needs.
 
-Flyway also offers a cleaner versioning system by requiring migration filenames to follow a structured naming convention: \texttt{VX.X.X\_\_migration\_name.sql} (where X.X.X is the version of the migration). In contrast, Liquibase utilizes changelog files, which provide additional features but introduce unnecessary complexity for the use case. These changelog files can be written in SQL, XML, YAML, or JSON, but they require extensive Liquibase-specific formatting. The following example illustrates a Liquibase-formatted SQL changelog file \ref{lst:liquibase:example}. Flyway's approach, which relies on plain SQL migration files, enhances readability and maintainability.
+Flyway also offers a cleaner versioning system by requiring migration filenames to follow a structured naming convention: \texttt{VX.X.X\_\_migration\_name.sql} (where X.X.X is the version of the migration). In contrast, Liquibase utilizes changelog files, which provide additional features but introduce unnecessary complexity for the use case. These changelog files can be written in SQL, XML, YAML, or JSON, but they require extensive Liquibase-specific formatting. The following example in Listing \ref{lst:liquibase:example} illustrates a Liquibase-formatted SQL changelog file. Flyway's approach, which relies on plain SQL migration files, enhances readability and maintainability.
 
 \begin{lstlisting}[language=Sql,caption=Liquibase example changelog,label=lst:liquibase:example]
     --liquibase formatted sql

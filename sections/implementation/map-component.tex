@@ -336,26 +336,6 @@ SeatGen allows the definition of standing areas / sectors, which differ from reg
     \item \textbf{Real-time Editing:} Areas can be renamed, and deleted dynamically.
 \end{itemize}
 
-\textbf{Fetching Standing Areas from the Backend:}
-\begin{lstlisting}[language=TypeScript, caption=Fetching Standing Areas, label=lst:fetch-standingareas]
-seatgenApiClient.api.getSectorByMap(bucketName, mapName).then((r) => {
-    if (r.ok) {
-        context.setStandingAreas(r.data.map((data) => {
-            const standingArea: StandingArea = {
-                id: data.id!,
-                name: data.name!,
-                capacity: data.capacity,
-                coordinates: data.coordinates?.map((c) => {
-                    return new LatLng(c.x!, c.y!);
-                })??[],
-                selected: false
-            }
-            return standingArea
-        }))
-    }
-});
-\end{lstlisting}
-
 \textbf{Standing Area Selection:}
 \begin{lstlisting}[language=TypeScript, caption=Handling Standing Area Selection, label=lst:select-standingareas]
 const handlePolygonClick = useCallback((id: number, event: L.LeafletMouseEvent) => {
@@ -392,7 +372,6 @@ const handlePolygonClick = useCallback((id: number, event: L.LeafletMouseEvent) 
 \begin{itemize}
     \item Clicking a standing area toggles its selected state.
     \item In the Detail Editor panel renaming, capacity adjustments, and category (including color coding) updates are possible.
-    \item The user can resize the polygons on creation to modify the area covered.
 \end{itemize}
 
 \begin{figure}[H]
@@ -405,22 +384,9 @@ const handlePolygonClick = useCallback((id: number, event: L.LeafletMouseEvent) 
 \subsubsection{Event Handling in Leaflet}
 \setauthor{Michael Ruep}
 
-SeatGen relies heavily on Leaflet event handling to manage user interactions dynamically.
+SeatGen relies heavily on Leaflet event handling to manage user interactions dynamically. TODO Deselection
+TODO Drag Events for Seat Movement + reference
 
-\textbf{Global Click Handling:}
-\begin{lstlisting}[language=TypeScript, caption=Handling Global Click Events, label=lst:leaflet-global-click]
-const MapEvents = () => {
-    useMapEvents({
-        click(e) {
-            context.setSeats(prevSeats => prevSeats.map(seat => ({ ...seat, selected: false })));
-            context.setSelectedStandingAreaIds([]); //Deselects Standing Areas because Seats are selected
-        }
-    });
-    return null;
-};
-\end{lstlisting}
-
-\textbf{Drag Events for Seat Movement:}
 \begin{lstlisting}[language=TypeScript, caption=Handling Seat Drag Events, label=lst:leaflet-seat-drag]
 // Function definitions for handling drag events
 const handleDragStart = (seatId: number) => {
@@ -458,13 +424,6 @@ const renderedSeats = useMemo(() => {
     \item The handleDragEnd function finalizes the new seat positions when dragging stops.
     \item Event listeners (onDragStart and onDragEnd) are added to each Seat component to trigger these functions dynamically.
     \item The useMemo hook optimizes rendering performance by ensuring seat markers are not unnecessarily re-created during re-renders.
-\end{itemize}
-
-\textbf{Event Handling Summary:}
-\begin{itemize}
-    \item Click Events: Used for selecting seats and standing areas.
-    \item Drag Events: Applied to dynamically reposition seats.
-    \item Map Events: Ensure global deselection when clicking outside elements.
 \end{itemize}
 
 \subsubsection{Saving and Syncing with the Backend}
