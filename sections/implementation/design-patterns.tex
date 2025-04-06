@@ -126,15 +126,6 @@ The actual undoing logic is defined by a controller. When an action should be un
 The implementation of the controller is as shown in Listing \ref{lst:action-controller}.
 
 \begin{lstlisting}[language=TypeScript,caption={Action Controller Implementation},label={lst:action-controller}]
-const loopSize = 50;
-const actionHistory: (Action | undefined)[] = new Array(loopSize).fill(undefined);
-
-let historyIndex = 0;
-let maxIndex = 0;
-let minIndex = -1;
-let savedIndex = 0
-
-
 const doAction = (action: Action) => {
     historyIndex = increase(historyIndex);
 
@@ -154,21 +145,11 @@ const updateSaveIndex = () => {
     savedIndex = historyIndex
     checkForUnsavedChanges()
 }
-
-function increase(num: number): number {
-    return num !== loopSize - 1 ? num + 1 : 0;
-}
-
-function decrease(num: number): number {
-    return num !== 0 ? num - 1 : loopSize - 1;
-}
-
 const undo = () => {
     if (historyIndex !== minIndex && actionHistory[historyIndex] !== undefined) {
         actionHistory[historyIndex]!.undo!()
         historyIndex = decrease(historyIndex);
         checkForUnsavedChanges()
-        enqueueSnackbar("Undone", {variant: "info"})
     }
 };
 
@@ -180,7 +161,6 @@ const redo = () => {
     }
 };
 
-const getCurrentAction = (): Action | null => actionHistory[historyIndex] ?? null;
 \end{lstlisting}
 
 To register a new Action in the controller, the \texttt{doAction} function must be called with the action as a parameter like in this Listing \ref{lst:register-action}. The context referenced here contains the business logic for the map as well as the logic for the undo and redo controller.
