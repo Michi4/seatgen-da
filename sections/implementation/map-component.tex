@@ -1,6 +1,5 @@
-The map is one of the most important components in SeatGen, responsible for rendering and managing the stadium seating map. It integrates with Leaflet library to provide interactive seat visualization, selection, and manipulation.
+The map is one of the most important components in SeatGen, responsible for rendering and managing the stadium seating map. It integrates with Leaflet library to provide interactive seat visualization, selection, and manipulation. Its core responsibilities include:
 
-\subsubsection{Key Responsibilities:}
 \begin{itemize}
     \item Initializes and manages the \textbf{Leaflet map instance}.
     \item Loads seat and standing area data dynamically from the backend.
@@ -10,14 +9,14 @@ The map is one of the most important components in SeatGen, responsible for rend
     \item Provides support for \textbf{tool-based seat editing} (e.g., adding, deleting, moving).
 \end{itemize}
 
-\textbf{Component Structure:}
+The component is structured as follows:
+
 \begin{itemize}
     \item \textbf{State Management:} Uses \texttt{useState}, \texttt{useEffect}, and \texttt{useContext} to manage map data.
     \item \textbf{Leaflet Integration:} Utilizes \texttt{MapContainer} from \texttt{react-leaflet} for seamless map rendering.
     \item \textbf{Performance Enhancements:} Implements \texttt{useCallback} and \texttt{useRef} to optimize re-renders.
 \end{itemize}
 
-\subsubsection{Map Initialization and Leaflet Integration}
 
 The map component initializes the Leaflet map using the react-leaflet \texttt{MapContainer} component.
 
@@ -73,9 +72,6 @@ const MapComponent: FC<MapProps> = ({ editable: initialEditable }) => {
 \end{itemize}
 
 
-\subsubsection{Fetching Seat and Standing Area Data}
-\setauthor{Michael Ruep}
-
 The map component fetches seat and standing area data from the backend when the component mounts. This is done using the API client in the \texttt{useEffect} hook.
 
 \begin{lstlisting}[language=TypeScript, caption=Fetching Seat and Category Data, label=lst:fetch-seats]
@@ -121,7 +117,8 @@ useEffect(() => {
 }, [bucketName, mapName]);
 \end{lstlisting}
 
-\textbf{Breakdown of Logic:}
+The data fetching logic can be summarized as follows:
+
 \begin{itemize}
     \item Fetches stadium metadata (mapInfo) and sets it globally.
     \item Retrieves seat categories.
@@ -129,7 +126,9 @@ useEffect(() => {
     \item Ensures data consistency by linking seats to their corresponding categories.
 \end{itemize}
 
-\textbf{Example of Mapped Seat Object:}
+
+This object is an example of how a seat is represented in state:
+
 \begin{lstlisting}[language=TypeScript, caption=Seat Object in State, label=lst:seat-object]
 {
     id: 1234,
@@ -138,8 +137,7 @@ useEffect(() => {
 }
 \end{lstlisting}
 
-\subsubsection{Fetching Standing Area / Sector Data}
-In addition to seats, the component also retrieves standing areas, which are handled separately.
+In addition to seats, the component also retrieves standing areas from the backend, which are handled separately:
 
 \begin{lstlisting}[language=TypeScript, caption=Fetching Standing Areas, label=lst:fetch-standingareas]
 seatgenApiClient.api.getSectorByMap(bucketName, mapName).then((r) => {
@@ -155,14 +153,14 @@ seatgenApiClient.api.getSectorByMap(bucketName, mapName).then((r) => {
 });
 \end{lstlisting}
 
-\textbf{Explanation:}
+The API response for standing areas is processed as follows:
 \begin{itemize}
     \item The API returns a list of sector polygons.
     \item Each area consists of a unique id, name, capacity, and a list of coordinates.
     \item Coordinates are transformed into Leaflet’s LatLng format to be rendered as a polygon.
 \end{itemize}
 
-\textbf{Example of a Standing Area Object in State:}
+A standing area object in React state looks as follows:
 \begin{lstlisting}[language=TypeScript, caption=Standing Area Object in State, label=lst:standingarea-object]
 {
     id: 69420,
@@ -177,7 +175,7 @@ seatgenApiClient.api.getSectorByMap(bucketName, mapName).then((r) => {
 }
 \end{lstlisting}
 
-\subsubsection{State Management and Performance}
+SeatGen incorporates performance-conscious state management strategies:
 \begin{itemize}
     \item \texttt{useEffect} Dependency Array:
     \begin{itemize}
@@ -203,7 +201,7 @@ seatgenApiClient.api.getSectorByMap(bucketName, mapName).then((r) => {
 
 Each seat in the stadium is rendered as a Leaflet marker, allowing users to interact with them dynamically. The selection mechanism is designed to provide an intuitive experience while supporting multi-selection for bulk operations.
 
-\textbf{Rendering Seat Markers:}
+The Listing \autoref{lst:seat-rendering} shows how seat selection is handled on click:
 \begin{lstlisting}[language=TypeScript, caption=Rendering and Selecting Seats, label=lst:seat-rendering]
 const handleSeatClick = useCallback((id: number, event: L.LeafletMouseEvent) => {
     const isCtrlPressed = event.originalEvent?.ctrlKey;
@@ -220,7 +218,7 @@ const handleSeatClick = useCallback((id: number, event: L.LeafletMouseEvent) => 
 }, [context]);
 \end{lstlisting}
 
-\textbf{How This Works:}
+This logic operates as follows:
 \begin{itemize}
     \item Clicking a seat toggles its selected state.
     \item Holding \texttt{Ctrl} allows multi-selection, useful for bulk actions.
@@ -233,7 +231,6 @@ const handleSeatClick = useCallback((id: number, event: L.LeafletMouseEvent) => 
 
 In SeatGen, users can drag and reposition multiple selected seats dynamically. The challenge was ensuring that \textbf{all} selected seats move smoothly and live directly following the cursor while keeping their relative distances intact. To achieve this, a real-time position tracking mechanism was implemented using Leaflet events and React state updates.
 
-\subsubsection{Tracking Initial Positions}
 Before moving seats, their initial positions are stored so that relative offsets can be preserved:
 
 \begin{lstlisting}[language=TypeScript, caption=Storing Initial Positions Before Dragging, label=lst:seat-initial-pos]
@@ -253,15 +250,14 @@ const storeInitialPositions = useCallback(() => {
 }, [selectedSeats, context]);
 \end{lstlisting}
 
-\textbf{How This Works:}
+This mechanism works as follows:
 \begin{itemize}
     \item A reference (\texttt{initialPositionsRef}) is created to store the pixel positions of selected seats by converting the Latitude and Longitude into Layer Points which are x and y Cartesian System points.
     \item These positions are saved when the user starts dragging a seat.
     \item The relative distance between seats is maintained, preventing unwanted misalignment.
 \end{itemize}
 
-\subsubsection{Updating Seats in Real-Time During Dragging}
-While the user drags a seat, the drag distance is calculated and applied to all selected seats:
+To support live seat repositioning, SeatGen continuously updates seat positions during drag events. While the user drags a seat, the drag distance is calculated and applied to all selected seats simultaneously:
 
 \begin{lstlisting}[language=TypeScript, caption=Updating Seat Positions During Dragging, label=lst:seat-live-dragging]
 const updateSelectedSeatsPosition = useCallback((draggedSeatId: number, newLatLngPosition: { lat: number; lng: number }) => {
@@ -297,7 +293,7 @@ const updateSelectedSeatsPosition = useCallback((draggedSeatId: number, newLatLn
 }, [context.seats, context]);
 \end{lstlisting}
 
-\textbf{Breakdown of Logic:}
+The position update process involves the following steps:
 \begin{itemize}
     \item The drag delta (change in X/Y position) between the starting position and the new cursor position is calculated.
     \item The same delta is applied to all selected seats, ensuring they move together.
@@ -305,15 +301,14 @@ const updateSelectedSeatsPosition = useCallback((draggedSeatId: number, newLatLn
     \item Changes using \texttt{MoveAction} are tracked, allowing the operation to be undone if needed.
 \end{itemize}
 
-\subsubsection{Optimizations and Challenges}
-\textbf{Major Challenges Encountered:}
+Several key challenges came up during implementation, alongside specific optimizations:
 \begin{itemize}
     \item Preventing position drift when switching between zoom levels.
     \item Ensuring smooth movement with large seat selections.
     \item Avoiding excessive re-renders that slow down performance.
 \end{itemize}
 
-\textbf{Performance Optimizations:}
+To maintain responsiveness during interaction, the following strategies were implemented:
 \begin{itemize}
     \item Used \texttt{useRef} to store initial positions instead of state (prevents extra re-renders).
     \item Applied batch updates for all selected seats instead of updating them individually.
@@ -328,7 +323,7 @@ The live dragging implementation allows users to dynamically reposition multiple
 
 SeatGen allows the definition of standing areas / sectors, which differ from regular seats by not being assigned individual markers but instead represented as polygonal sectors. Each standing area has a defined capacity, ensuring ticketing restrictions.
 
-\textbf{Standing Area Features:}
+The standing area system supports the following functionality:
 \begin{itemize}
     \item \textbf{Custom Polygons:} Users define standing areas by selecting points on the map.
     \item \textbf{Capacity Control:} Limits the number of tickets available per standing area.
@@ -336,7 +331,7 @@ SeatGen allows the definition of standing areas / sectors, which differ from reg
     \item \textbf{Real-time Editing:} Areas can be renamed, and deleted dynamically.
 \end{itemize}
 
-\textbf{Standing Area Selection:}
+Standing area selection is implemented using the following logic:
 \begin{lstlisting}[language=TypeScript, caption=Handling Standing Area Selection, label=lst:select-standingareas]
 const handlePolygonClick = useCallback((id: number, event: L.LeafletMouseEvent) => {
     const isCtrlPressed = event.originalEvent?.ctrlKey;
@@ -368,7 +363,7 @@ const handlePolygonClick = useCallback((id: number, event: L.LeafletMouseEvent) 
 }, [context, setOpenSideBar]);
 \end{lstlisting}
 
-\textbf{Selection and Editing Process:}
+Once selected, standing areas can be modified as follows:
 \begin{itemize}
     \item Clicking a standing area toggles its selected state.
     \item In the detail editor panel, renaming, capacity adjustments, and category (including color coding) updates are possible.
@@ -384,8 +379,8 @@ const handlePolygonClick = useCallback((id: number, event: L.LeafletMouseEvent) 
 \subsubsection{Event Handling in Leaflet}
 \setauthor{Michael Ruep}
 
-SeatGen relies heavily on Leaflet event handling to manage user interactions dynamically. TODO Deselection
-TODO Drag Events for Seat Movement + reference
+SeatGen relies heavily on Leaflet event handling to manage user interactions dynamically. Deselection of seats is handled through global click listeners that clear selection when users click outside interactive elements. Drag events are used to support dynamic seat movement, where dragging triggers position tracking as shown in Listing \autoref{lst:leaflet-seat-drag}.
+
 
 \begin{lstlisting}[language=TypeScript, caption=Handling Seat Drag Events, label=lst:leaflet-seat-drag]
 // Function definitions for handling drag events
@@ -432,8 +427,8 @@ SeatGen implements an asynchronous saving mechanism that synchronizes data with 
 
 TODO: Batch save name, Flow
 
-\textbf{Batch Save:}
-\begin{lstlisting}[language=TypeScript, caption=Batch Save Mechanism, label=lst:batch-save-seats]
+The saving mechanism is implemented as follows:
+\begin{lstlisting}[language=TypeScript, caption=Save Mechanism, label=lst:batch-save-seats]
 const saveChanges = useCallback(() => {
     seatgenApiClient.api.saveSeats(bucketName, mapName, context.seats.map(seat => ({
         id: seat.id,
@@ -445,7 +440,7 @@ const saveChanges = useCallback(() => {
 }, [context.seats]);
 \end{lstlisting}
 
-\textbf{Batch Save Mechanism:}
+The saving process follows this logic:
 \begin{itemize}
     \item Instead of saving each individual seat change separately, SeatGen groups multiple seat updates into a single API request to reduce network overhead and improve efficiency.
     \item The \texttt{useCallback} hook ensures that changes get only saved when \texttt{context.seats} changes, preventing redundant function executions.

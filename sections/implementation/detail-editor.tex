@@ -8,7 +8,7 @@ The detail editor component provides an interface for modifying selected seats, 
     \end{center}
 \end{wrapfigure}
 
-\textbf{Key Responsibilities:}
+The core functionalities of the detail editor include:
 \begin{itemize}
     \item \textbf{Editing Individual Seats:} Users can update seat tooltips, positions, and categories.
     \item \textbf{Managing Seat Groups:} Enables users to create, merge, and delete groups of seats.
@@ -43,7 +43,7 @@ Users can edit tooltip descriptions for seats, making it easier to add position 
 />
 \end{lstlisting}
 
-\textbf{How It Works:}
+This behavior works as follows:
 \begin{itemize}
     \item The text input dynamically updates the tooltip for all selected seats by calling the \texttt{handleExternalTooltipChange} function.
     \item Changes are stored in the global state.
@@ -60,7 +60,7 @@ const updateSeatPosition = (x: number, y: number) => {
 };
 \end{lstlisting}
 
-\textbf{How It Works:}
+The following sequence describes how this interaction is handled internally:
 \begin{itemize}
     \item Converts user-inputted X/Y values into map coordinates.
     \item Updates seat position dynamically.
@@ -69,11 +69,11 @@ const updateSeatPosition = (x: number, y: number) => {
 
 \subsection{Group Management and Multi-Selection}
 Grouping seats allows users to efficiently manage large stadium sections.
-\subsubsection{Groups and Multi Selection and Deletion}
+\subsubsection{Seat Groups, Multi-Selection, and Deletion}
 
 SeatGen supports the concept of seat groups, allowing users to efficiently manipulate multiple seats at once. Grouping seats enables bulk operations such as movement, category assignment, and section-wide modifications, making it particularly useful for managing large stadium layouts.
 
-\textbf{Use Cases for Seat Groups:}
+The following scenarios demonstrate practical applications for seat grouping:
 \begin{itemize}
     \item \textbf{Bulk Editing:} Modify multiple seat attributes simultaneously.
     \item \textbf{Efficient Repositioning:} Move multiple seats while maintaining relative positioning.
@@ -81,30 +81,30 @@ SeatGen supports the concept of seat groups, allowing users to efficiently manip
     \item \textbf{Simplified Deletion:} Remove entire seat groups without manually selecting each seat.
 \end{itemize}
 
-\textbf{Creating a Seat Group:}
+The Listing \autoref{lst:create-seat-group} demonstrates how a new group is created from currently selected seats:
 \begin{lstlisting}[language=TypeScript, caption=Creating Seat Groups, label=lst:create-seat-group]
 const createGroup = useCallback(() => {
     context.doAction(new CreateGroupAction(setSeatGroups, selectedSeats));
 }, [selectedSeats, context]);
 \end{lstlisting}
 
-\textbf{How It Works:}
+This mechanism works through the following sequence:
 \begin{itemize}
     \item The function retrieves all currently selected seats.
     \item The CreateGroupAction is executed, registering the selected seats as a group.
     \item The group id is assigned, and the group is stored in the global state.
 \end{itemize}
 
-\textbf{Deleting a Seat Group:}
+To remove a previously created seat group, the logic shown in Listing \autoref{lst:delete-seat-group} is used:
 \begin{lstlisting}[language=TypeScript, caption=Deleting Seat Groups, label=lst:delete-seat-group]
 const deleteGroup = useCallback((groupId: number) => {
     context.doAction(new DeleteGroupAction(setSeatGroups, groupId));
 }, [context]);
 \end{lstlisting}
 
-\textbf{Group Deletion Process:}
+The group deletion logic is carried out as follows:
 \begin{itemize}
-    \item The DeleteGroupAction removes all seats within that group using the groupId.
+    \item The DeleteGroupAction removes that group using the groupId.
     \item The global context state updates accordingly.
     \item The operation is reversible via the undo stack.
 \end{itemize}
@@ -123,15 +123,13 @@ Seat categories allow users to classify seating arrangements based on (pricing) 
     \label{fig:detail-editor-category}
 \end{figure}
 
-\textbf{Features of Seat Categories:}
+The following list outlines the core features supported by seat categories:
 \begin{itemize}
     \item \textbf{Color-Coding:} Each category is assigned a color for clear visualization.
     \item \textbf{Pricing Information:} Categories define pricing tiers, ensuring correct ticket pricing.
     \item \textbf{Flexible Assignments:} Seats can be reassigned to different categories as needed.
     \item \textbf{Bulk Category Updates:} Multiple seats can be assigned a category simultaneously.
 \end{itemize}
-
-\subsubsection{Category Data Model}
 
 Each seat category is stored as an object that holds classification data:
 
@@ -143,8 +141,6 @@ interface Category {
     price: number; // Ticket price associated with this category
 }
 \end{lstlisting}
-
-\subsubsection{Assigning Categories to Seats}
 
 When a user selects a seat, they can assign or change its category using the detail editor.
 
@@ -164,16 +160,14 @@ execute = () => {
 }
 \end{lstlisting}
 
-\textbf{How It Works:}
+This assignment works by executing the following steps:
 \begin{itemize}
     \item The function in \texttt{UpdateCategoryAction} loops through all selected seats.
     \item The new category is assigned based on the provided \texttt{categoryId}.
     \item The UI updates instantly, applying the new color and classification.
 \end{itemize}
 
-\subsubsection{Category Management in the UI}
-
-Users can manage categories by:
+Users can also manage available categories directly within the interface:
 \begin{itemize}
     \item Creating new categories with custom colors and pricing.
     \item Editing existing categories, updating names, prices, or colors.
@@ -210,8 +204,6 @@ onCreateOption={(inputValue, inputColor) =>
 }}/>
 \end{lstlisting}
 
-\subsubsection{Category Visualization on the Map}
-
 Seat categories are visually represented by color-coded markers in the map component. Each seat marker dynamically updates based on its assigned category.
 
 \begin{lstlisting}[language=TypeScript, caption=Rendering Seat Markers with Categories, label=lst:render-seat-category]
@@ -225,21 +217,20 @@ const renderedSeats = seats.map(seat => (
 ));
 \end{lstlisting}
 
-\textbf{How It Works:}
+This visualization logic functions as follows:
 \begin{itemize}
     \item Each seat marker inherits the category's color.
     \item Unassigned seats default to a neutral color (gray).
     \item Selecting a seat allows users to change its category.
 \end{itemize}
 
-\subsubsection{Conclusion}
-Categories play a crucial role in SeatGen, providing a structured way to manage ticket pricing and seat classification. By integrating category assignment with group selection and bulk operations, users can efficiently update stadium layouts with minimal effort.
+In summary, categories play a crucial role in SeatGen, providing a structured way to manage ticket pricing and seat classification. By integrating category assignment with group selection and bulk operations, users can efficiently update stadium layouts with minimal effort.
 
 \subsection{Standing Area Editing}
 \setauthor{Michael Ruep}
 Standing areas in SeatGen are defined as polygonal sectors rather than individual seats. Unlike seats, which are represented as distinct markers, standing areas are implemented using a defined boundary of polygons. Each standing area has a name, and a maximum capacity.
 
-\textbf{Key Features of Standing Areas:}
+The following features define the functionality of standing areas:
 \begin{itemize}
     \item \textbf{Custom Polygonal Boundaries:} Users can define standing areas by selecting points on the map.
     \item \textbf{Capacity Control:} Each area has a maximum capacity limit.
@@ -247,7 +238,6 @@ Standing areas in SeatGen are defined as polygonal sectors rather than individua
     \item \textbf{Deletion and Reconfiguration:} Existing standing areas can be removed or modified at any time.
 \end{itemize}
 
-\subsubsection{Standing Area Data Model}
 Each standing area is stored as an object in the application state.
 
 \begin{lstlisting}[language=TypeScript, caption=Standing Area Data Model, label=lst:standingarea-model]
@@ -260,10 +250,8 @@ interface StandingArea {
 }
 \end{lstlisting}
 
-\subsubsection{Creating and Selecting Standing Areas}
 Standing areas are created by defining polygonal boundary coordinates on the map. Once an area is selected, it becomes editable in the detail editor.
 
-\subsubsection{Renaming a Standing Area}
 Users can rename standing areas directly in the detail editor panel.
 
 \begin{lstlisting}[language=TypeScript, caption=Renaming Standing Areas, label=lst:rename-standingarea]
@@ -276,14 +264,12 @@ const handleStandingNameChange = (name: string) => {
 };
 \end{lstlisting}
 
-\textbf{How It Works:}
+This renaming functionality shown in Listing \ref{lst:rename-standingarea} works as follows:
 \begin{itemize}
     \item The function updates the name of all selected standing areas.
     \item Changes are reflected instantly in the UI.
     \item The new name is stored persistently for future sessions.
 \end{itemize}
-
-\subsubsection{Updating Standing Area Capacity}
 To control attendee limits, each standing area has an adjustable capacity.
 
 \begin{lstlisting}[language=TypeScript, caption=Updating Standing Area Capacity, label=lst:update-standingarea-capacity]
@@ -296,20 +282,25 @@ const handleStandingCapacityChange = (capacity: string) => {
 };
 \end{lstlisting}
 
-\textbf{Capacity Adjustment Process:}
+This capacity adjustment functionality shown in Listing \ref{lst:update-standingarea-capacity} works as follows:
 \begin{itemize}
     \item The function modifies the capacity of all selected standing areas.
     \item Input validation ensures that only numeric values are accepted.
     \item The UI dynamically updates, reflecting the new ticketing constraints.
 \end{itemize}
 
-\subsubsection{Deleting a Standing Area}
-Standing areas can be removed using \texttt{DeleteStandingAreaAction} when no longer needed, which is also undoable for user convenience.
+Standing areas can also be removed using \texttt{DeleteStandingAreaAction}, which supports undo operations for user convenience.
 
 \begin{lstlisting}[language=TypeScript, caption=Deleting Standing Areas, label=lst:delete-standingarea]
 context.doAction(new DeleteStandingAreaAction(selectedStandingAreas, context))
-
 \end{lstlisting}
+
+This deletion mechanism shown in Listing \ref{lst:delete-standingarea} works as follows:
+\begin{itemize}
+    \item The action removes the selected standing areas from the context.
+    \item Changes are recorded in the action history, enabling undo functionality.
+    \item The user interface is updated immediately to reflect the deletion.
+\end{itemize}
 
 \begin{figure}[H]
     \centering
@@ -322,7 +313,7 @@ Figure \ref{fig:detail-editor-standingarea} illustrates the interface for editin
 
 Standing areas in SeatGen offer a structured approach to handling non-seated sections of a stadium. By allowing dynamic capacity control and easy renaming, the system ensures that standing areas remain flexible and adaptable. Users can efficiently create, edit, and remove standing areas based on event needs, making stadium layouts highly customizable.
 
-Beyond general standing areas, this feature can also be used to designate specific sections for specialized needs. For example, stadiums may allocate certain sectors for \textbf{wheelchair-accessible areas} or \textbf{priority seating for individuals with mobility impairments}. This flexibility ensures that accessibility requirements can be met while maintaining a clear and organized seating plan.
+Beyond general standing areas, this feature can also be used to designate specific sections for specialized needs. For example, stadiums may allocate certain sectors for wheelchair-accessible areas or priority seating for individuals with mobility impairments. This flexibility ensures that accessibility requirements can be met while maintaining a clear and organized seating plan.
 
 \subsubsection{Summary}
 The detail editor is a key component within SeatGen, offering intuitive tools for modifying stadium layouts. It enables:
