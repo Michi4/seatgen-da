@@ -201,7 +201,7 @@ SeatGen incorporates performance-conscious state management strategies:
 
 Each seat in the stadium is rendered as a Leaflet marker, allowing users to interact with them dynamically. The selection mechanism is designed to provide an intuitive experience while supporting multi-selection for bulk operations.
 
-The Listing \autoref{lst:seat-rendering} shows how seat selection is handled on click:
+The Listing \ref{lst:seat-rendering} shows how seat selection is handled on click:
 \begin{lstlisting}[language=TypeScript, caption=Rendering and Selecting Seats, label=lst:seat-rendering]
 const handleSeatClick = useCallback((id: number, event: L.LeafletMouseEvent) => {
     const isCtrlPressed = event.originalEvent?.ctrlKey;
@@ -379,7 +379,7 @@ Once selected, standing areas can be modified as follows:
 \subsubsection{Event Handling in Leaflet}
 \setauthor{Michael Ruep}
 
-SeatGen relies heavily on Leaflet event handling to manage user interactions dynamically. Deselection of seats is handled through global click listeners that clear selection when users click outside interactive elements. Drag events are used to support dynamic seat movement, where dragging triggers position tracking as shown in Listing \autoref{lst:leaflet-seat-drag}.
+SeatGen relies heavily on Leaflet event handling to manage user interactions dynamically. Deselection of seats is handled through global click listeners that clear selection when users click outside interactive elements. Drag events are used to support dynamic seat movement, where dragging triggers position tracking as shown in Listing \ref{lst:leaflet-seat-drag}.
 
 
 \begin{lstlisting}[language=TypeScript, caption=Handling Seat Drag Events, label=lst:leaflet-seat-drag]

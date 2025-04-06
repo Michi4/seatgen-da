@@ -81,7 +81,7 @@ The following scenarios demonstrate practical applications for seat grouping:
     \item \textbf{Simplified Deletion:} Remove entire seat groups without manually selecting each seat.
 \end{itemize}
 
-The Listing \autoref{lst:create-seat-group} demonstrates how a new group is created from currently selected seats:
+The Listing \ref{lst:create-seat-group} demonstrates how a new group is created from currently selected seats:
 \begin{lstlisting}[language=TypeScript, caption=Creating Seat Groups, label=lst:create-seat-group]
 const createGroup = useCallback(() => {
     context.doAction(new CreateGroupAction(setSeatGroups, selectedSeats));
@@ -95,7 +95,7 @@ This mechanism works through the following sequence:
     \item The group id is assigned, and the group is stored in the global state.
 \end{itemize}
 
-To remove a previously created seat group, the logic shown in Listing \autoref{lst:delete-seat-group} is used:
+To remove a previously created seat group, the logic shown in Listing \ref{lst:delete-seat-group} is used:
 \begin{lstlisting}[language=TypeScript, caption=Deleting Seat Groups, label=lst:delete-seat-group]
 const deleteGroup = useCallback((groupId: number) => {
     context.doAction(new DeleteGroupAction(setSeatGroups, groupId));
