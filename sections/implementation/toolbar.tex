@@ -1,13 +1,12 @@
 The toolbar component provides an intuitive interface for tool selection, map management, and saving operations within SeatGen. It enables users to interact efficiently with the stadium layout by providing structured controls for tool activation, map naming, and data persistence.
 
-\textbf{Key Responsibilities:}
+The toolbar’s key responsibilities include:
 \begin{itemize}
     \item \textbf{Tool Selection:} Provides quick access to various editing tools.
     \item \textbf{Map Title Editing:} Allows renaming the map for better organization.
     \item \textbf{Saving and Previewing:} Ensures seamless data persistence and view-only mode.
 \end{itemize}
 
-\subsubsection{Component Structure}
 The toolbar consists of the following elements:
 \begin{itemize}
     \item \textbf{Tool Icons:} Represent different editing modes (selection, adding seats, grid placement, area selection, standing area placement).
@@ -24,7 +23,6 @@ The toolbar consists of the following elements:
 
 Figure \ref{fig:toolbar-icons} illustrates the available tool icons, where users can select different functionalities. The currently active tool is highlighted.
 
-\subsubsection{Tool Selection and Activation}
 The toolbar supports multiple tools, each represented by an icon. Users can switch between tools to perform various stadium layout modifications.
 
 \begin{lstlisting}[language=TypeScript, caption=Defining Available Tools, label=lst:toolbar-tools]
@@ -73,14 +71,13 @@ const tools: Tool[] = [
 ];
 \end{lstlisting}
 
-\textbf{How It Works:}
+This tool selection functionality shown in Listing \ref{lst:toolbar-tools} works as follows:
 \begin{itemize}
     \item Each tool has an icon and an activation function.
     \item Hotkeys allow quick switching between tools.
     \item Selected tools modify the user’s interaction mode (e.g., clicking, selecting, adding seats).
 \end{itemize}
 
-\subsubsection{Editing the Map Name}
 The toolbar includes an editable text field for renaming the stadium layout. Clicking the pencil icon toggles the edit mode.
 
 \begin{lstlisting}[language=TypeScript, caption=Editing Map Name, label=lst:toolbar-edit-name]
@@ -109,14 +106,13 @@ The toolbar includes an editable text field for renaming the stadium layout. Cli
 }
 \end{lstlisting}
 
-\textbf{How It Works:}
+This renaming functionality shown in Listing \ref{lst:toolbar-edit-name} works as follows:
 \begin{itemize}
     \item Clicking the pencil icon allows editing the map title.
     \item The name is updated and saved via an API request.
     \item The change is immediately reflected in the UI.
 \end{itemize}
 
-\subsubsection{Save and Preview Buttons}
 The toolbar also contains buttons for saving progress and switching to a preview mode.
 
 \begin{figure}[H]
@@ -147,14 +143,13 @@ The toolbar also contains buttons for saving progress and switching to a preview
 </button>
 \end{lstlisting}
 
-\textbf{How It Works:}
+This save and preview mechanism shown in Listing \ref{lst:toolbar-save-preview} works as follows:
 \begin{itemize}
     \item The \texttt{Save} button persists all seat and standing area modifications to the backend.
     \item A checkmark icon confirms successful saving, while a warning icon indicates unsaved changes.
     \item The \texttt{Preview} button switches the interface to a non-editable mode.
 \end{itemize}
 
-\subsubsection{Summary}
 The toolbar plays a critical role in SeatGen by providing an accessible interface for stadium layout editing. It includes:
 \begin{itemize}
     \item \textbf{Interactive Tool Selection:} Enables switching between different seat and area modification tools.

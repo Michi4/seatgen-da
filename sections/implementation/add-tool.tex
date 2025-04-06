@@ -1,25 +1,13 @@
 The add tool in SeatGen provides the ability to manually place individual seats on the stadium map. It is primarily used for precise editing and complements bulk placement features such as the grid tool.
 
-\textbf{Key Responsibilities:}
+The tool’s key responsibilities include:
 \begin{itemize}
     \item Enables manual placement of seats at a specific position on the map.
     \item Internally dispatches an \texttt{AddSeatAction} to update global state.
     \item Supports undo and redo via the action system.
 \end{itemize}
 
-\subsection{Triggering the Action}
-
-A seat is created externally and passed to the \texttt{AddSeatAction} class, which is then executed via the \texttt{doAction} method from the \texttt{context}.
-
-TODO: Der code krocht, vielleicht ganz weg
-
-\begin{lstlisting}[language=TypeScript, caption=Calling AddSeatAction, label=lst:add-tool-action-call]
-context.doAction(new AddSeatAction(newSeat, context.setSeats));
-\end{lstlisting}
-
-The \texttt{newSeat} is constructed outside and passed to the action which handles the insertion of the seat into global state through the \texttt{context}.
-
-\subsection{AddSeatAction Implementation}
+A seat is created externally and passed to the \texttt{AddSeatAction} as shown in Listing \ref{lst:add-seat-action} class, which is then executed via the \texttt{doAction} method from the \texttt{context}. The add tool is defined in the toolbar as shown in Listing \ref{lst:toolbar-tools}. The \texttt{onSelect} function is triggered when the user clicks on the add tool icon. It sets the current tool to the add tool and defines a callback function that will be executed when the user clicks on the map. This callback function creates a new seat object and passes it to the \texttt{addSeat} function, which is responsible for adding the seat to the global state.
 
 The actual seat insertion logic is encapsulated in the \texttt{AddSeatAction} class.
 
@@ -44,12 +32,11 @@ export default class AddSeatAction extends Action {
 }
 \end{lstlisting}
 
-\textbf{How It Works:}
+This action implementation shown in Listing \ref{lst:add-seat-action} works as follows:
 \begin{itemize}
     \item \texttt{execute()} appends the new seat to the seat list.
-    \item \texttt{undo()} removes it again by filtering the id.
-    \item This implementation ensures full undo and redo compatibility.
+    \item \texttt{undo()} removes it again by filtering by id.
+    \item This ensures full undo and redo compatibility with SeatGen’s action history.
 \end{itemize}
 
-\subsection{Conclusion}
-The add tool provides a foundational editing feature in SeatGen, allowing users to place single seats precisely. It ties into the system's action-based architecture and contributes to a robust and reversible seat editing experience.
+In conclusion the add tool provides a foundational editing feature in SeatGen, allowing users to place single seats precisely. It ties into the system's action-based architecture and contributes to a robust and reversible seat editing experience.
