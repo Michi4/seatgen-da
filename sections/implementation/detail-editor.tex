@@ -1,5 +1,3 @@
-The detail editor component provides an interface for modifying selected seats, managing seat groups, categories, and configuring standing areas. It plays a huge role in SeatGen’s user interaction system by allowing users to efficiently modify stadium layouts in a structured and intuitive manner.
-
 \begin{wrapfigure}{r}{0.4\textwidth}
     \begin{center}
     \includegraphics[width=0.4\textwidth]{pics/DetailEditorSeat.png}
@@ -7,6 +5,8 @@ The detail editor component provides an interface for modifying selected seats, 
     \label{fig:detail-editor-seat}
     \end{center}
 \end{wrapfigure}
+
+The detail editor component provides an interface for modifying selected seats, managing seat groups, categories, and configuring standing areas. It plays a huge role in SeatGen’s user interaction system by allowing users to efficiently modify stadium layouts in a structured and intuitive manner.
 
 The core functionalities of the detail editor include:
 \begin{itemize}
@@ -131,6 +131,8 @@ The following list outlines the core features supported by seat categories:
     \item \textbf{Bulk Category Updates:} Multiple seats can be assigned a category simultaneously.
 \end{itemize}
 
+\newpage
+
 Each seat category is stored as an object that holds classification data:
 
 \begin{lstlisting}[language=TypeScript, caption=Seat Category Data Model, label=lst:seat-category-model]
@@ -176,19 +178,14 @@ Users can also manage available categories directly within the interface:
 
 \begin{lstlisting}[language=TypeScript, caption=Managing Categories, label=lst:manage-categories]
 onCreateOption={(inputValue, inputColor) =>
-    seatgenApiClient.api.createCategory({name: inputValue, color: inputColor}).then((r) => {
-        if (r.ok) {
-            enqueueSnackbar("Successfully created category", {variant: 'success'})
-            selectedSeats.forEach((seat) => {
-                seat.category = r.data;
-            });
-            context.setCategories(prevCategories => [...prevCategories, r.data]);
-            context.categoryChecksums.current.set(r.data.id!, objectHash(r.data))
-            setCurrentSelectedCategory(r.data)
-        } else {
-            console.error('Error creating category:', r.statusText);
-            enqueueSnackbar('Error creating category', {variant: 'error'});
-        }
+    seatgenApiClient.api.createCategory(
+        {name: inputValue, color: inputColor}).then((r) => {
+        selectedSeats.forEach((seat) => {
+            seat.category = r.data;
+        });
+        context.setCategories(prevCategories => [...prevCategories, r.data]);
+        context.categoryChecksums.current.set(r.data.id!, objectHash(r.data))
+        setCurrentSelectedCategory(r.data)
     })
 }
 \end{lstlisting}

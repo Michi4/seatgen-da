@@ -31,8 +31,6 @@ One of SeatGen’s central requirements is to enable direct manipulation for sea
 \setauthor{Michael Ruep}
 Since React was already in use at Solvistas, its adoption ensured that the company’s developers could seamlessly work with and extend the project. Additionally, our team had prior experience with component-based frontend frameworks, making it easy to understand React’s structure, including concepts such as routing, state management, data binding, and components. This familiarity enabled a quick understanding and utilization of React, leading to the rapid development of the first running prototype.
 
-\subsubsection{Comparison to Other Frameworks}
-\setauthor{Michael Ruep}
 Compared to alternative frameworks such as Angular or Vue, studies have shown that React generally demonstrate superior rendering performance and faster load times in dynamic applications \cite{SPAComp}. Additionally, React is preferred by developers for SPAs with frequent UI updates, with a reported 34\% higher satisfaction rate compared to other frameworks \cite{SPAComp}.
 
 \subsection{Summary}
@@ -86,6 +84,8 @@ To manage database migrations efficiently, the Flyway \cite{FlywayDocs} library 
 When selecting a migration tool, both Liquibase \cite{LiquibaseDocs} and Flyway were evaluated. While both are open-source and provide seamless integration with Spring Boot and other Java frameworks, the decision was ultimately made to opt for Flyway due to its simplicity and specific use case. Since the team is small with infrequent parallel database changes, Flyway’s linear migration approach suits the workflow without introducing complications. Although this approach might present challenges in larger teams with concurrent database modifications, it remains a practical choice for current needs.
 
 Flyway also offers a cleaner versioning system by requiring migration filenames to follow a structured naming convention: \texttt{VX.X.X\_\_migration\_name.sql} (where X.X.X is the version of the migration). In contrast, Liquibase utilizes changelog files, which provide additional features but introduce unnecessary complexity for the use case. These changelog files can be written in SQL, XML, YAML, or JSON, but they require extensive Liquibase-specific formatting. The following example in Listing \ref{lst:liquibase:example} illustrates a Liquibase-formatted SQL changelog file. Flyway's approach, which relies on plain SQL migration files, enhances readability and maintainability.
+
+\newpage
 
 \begin{lstlisting}[language=Sql,caption=Liquibase Example Changelog,label=lst:liquibase:example]
     --liquibase formatted sql

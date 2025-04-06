@@ -122,6 +122,8 @@ The toolbar also contains buttons for saving progress and switching to a preview
     \label{fig:toolbar-save-preview}
 \end{figure}
 
+\newpage
+
 \begin{lstlisting}[language=TypeScript, caption=Saving and Previewing, label=lst:toolbar-save-preview]
 <button className={SgButtonType.primarySmall} onClick={() => {
     seatgenApiClient.api.saveSeats(context.seats.map((s) => ({

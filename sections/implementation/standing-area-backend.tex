@@ -16,6 +16,8 @@ The sector\_node entity in the database has a foreign key that references itself
 
 The advantage of the second approach is that only the needed nodes are fetched, and the logic is closer to the database. The main issue is, that SQL queries in Postgres doesn't have  a built-in way to do recursion like Oracle DB has with its \texttt{connect by} clause. The solution for Postgres would have to be implemented with PostgreSQL-specific keywords. A query that fetches all the items in a loop would look as seen in Listing \ref{lst:recursive_query}. 
 
+\newpage
+
 \begin{lstlisting}[language=SQL, caption=Recursive Query, label=lst:recursive_query]
 WITH RECURSIVE cte AS (
     -- select first node with level 1

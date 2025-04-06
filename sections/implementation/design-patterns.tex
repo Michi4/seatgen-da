@@ -40,6 +40,8 @@ For both of these properties, a function is expected that can be called to execu
 
 Another important aspect of this application was to allow the execution of business logic while undoing specific actions, like sending requests to the backend. This is very easy to implement because each Action has its individual \texttt{execute} and \texttt{undo} function.
 
+\newpage
+
 While this seems like a lot more logic is required than in the other design patterns, the logic demanded by this is actually important for usability reasons, and lots of it is reusable. Because the undo function should be able to be executed manually by the user, calling the \texttt{undo()} shouldn't be the only way to reverse an action, for example when creating a new seat, you should be able to delete it again by calling the \texttt{undo()} function as well as a separate way like a delete button. So the developer should always provide both ways for usability reasons. This approach incentivizes developers to implement it as the logic for reverting actions must be implemented regardless.
 
 Here is an implementation of an action that creates a Standing Area with its counterpart action that deletes the standing area. Both actions can reference each other for the undoing part to reduce code redundancy, because the opposite of creating a standing area is deleting it. That's why deleting it is the undo action of creating it and the other way around.
@@ -76,6 +78,8 @@ export class AddStandingAreaAction implements Action {
     };
 }
 \end{lstlisting}
+
+\newpage
 
 \begin{lstlisting}[language=TypeScript,caption={Delete Standing Area Action Implementation},label={lst:delete-standing-area-action-implementation}]
 export class DeleteStandingAreaAction implements Action {

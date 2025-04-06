@@ -9,6 +9,8 @@ The map is one of the most important components in SeatGen, responsible for rend
     \item Provides support for \textbf{tool-based seat editing} (e.g., adding, deleting, moving).
 \end{itemize}
 
+\newpage
+
 The component is structured as follows:
 
 \begin{itemize}
@@ -31,18 +33,11 @@ const MapComponent: FC<MapProps> = ({ editable: initialEditable }) => {
     return (
         <MapContainer
             crs={L.CRS.Simple} // Uses a flat, pixel-based coordinate system
-            className="leaflet-container h-full w-full"
             ref={mapRef}
             center={[context.mapInfo.tileSize / (-2), context.mapInfo.tileSize / (2)]}
             zoom={context.mapInfo.defaultZoom}
             maxZoom={context.mapInfo.maxZoom}
             minZoom={context.mapInfo.minZoom}
-            scrollWheelZoom={true}
-            zoomControl={false}
-            doubleClickZoom={false}
-            preferCanvas={true}
-            dragging={true}
-            tap={false}
             renderer={L.canvas()} // Use Canvas for better performance
         >
             <TileLayer tms={true} url={`${context.mapInfo.mapDto.baseUrl}/{z}/{x}/{y}.png`} />
@@ -53,17 +48,19 @@ const MapComponent: FC<MapProps> = ({ editable: initialEditable }) => {
 
 \textbf{Custom CRS (Coordinate Reference System):}
 \begin{itemize}
-    \item Uses \textbf{L.CRS.Simple}, a \textbf{2D pixel-based coordinate system}.
+    \item Uses \texttt{L.CRS.Simple}, a 2D pixel-based coordinate system.
     \item Unlike traditional geographic maps, SeatGen does not need a curved map.
     \item All coordinates can be converted to a Cartesian X/Y grid.
 \end{itemize}
 
 \textbf{Custom Rendering Engine:}
 \begin{itemize}
-    \item Uses \textbf{L.canvas()} instead of SVG for performance.
+    \item Uses \texttt{L.canvas()} instead of SVG for performance.
     \item Enables handling of thousands of seat markers.
     \item Reduces DOM load by rendering elements in a drawing surface.
 \end{itemize}
+
+\newpage
 
 \textbf{Dynamically Loading Map Tiles:}
 \begin{itemize}
@@ -126,6 +123,7 @@ The data fetching logic can be summarized as follows:
     \item Ensures data consistency by linking seats to their corresponding categories.
 \end{itemize}
 
+\newpage
 
 This object is an example of how a seat is represented in state:
 
@@ -260,37 +258,26 @@ This mechanism works as follows:
 To support live seat repositioning, SeatGen continuously updates seat positions during drag events. While the user drags a seat, the drag distance is calculated and applied to all selected seats simultaneously:
 
 \begin{lstlisting}[language=TypeScript, caption=Updating Seat Positions During Dragging, label=lst:seat-live-dragging]
-const updateSelectedSeatsPosition = useCallback((draggedSeatId: number, newLatLngPosition: { lat: number; lng: number }) => {
-    const map = mapRef.current;
-    const primarySeat = context.seats.find(s => s.id === draggedSeatId);
+const primarySeat = context.seats.find(s => s.id === draggedSeatId);
+if (!map || !primarySeat || !primarySeat.selected) return;
 
-    if (!map || !primarySeat || !primarySeat.selected) return;
+const newPosition = map.latLngToLayerPoint(newLatLngPosition);
+const oldPosition = initialPositionsRef.current[draggedSeatId];
+const deltaX = newPosition.x - oldPosition.x;
+const deltaY = newPosition.y - oldPosition.y;
 
-    const newPosition = map.latLngToLayerPoint(newLatLngPosition);
-    const oldPosition = initialPositionsRef.current[draggedSeatId];
-
-    const deltaX = newPosition.x - oldPosition.x;
-    const deltaY = newPosition.y - oldPosition.y;
-
-    context.setSeats(prevSeats =>
-        prevSeats.map(seat => {
-            if (seat.selected) {
-                const initialPosition = initialPositionsRef.current[seat.id];
-                const newPosX = initialPosition.x + deltaX;
-                const newPosY = initialPosition.y + deltaY;
-                const newLatLngPos = map.layerPointToLatLng(new L.Point(newPosX, newPosY));
-                return { ...seat, position: newLatLngPos };
-            }
-            return seat;
-        })
-    );
-
-    // Update MoveAction for undo tracking
-    const currentAction = context.getCurrentAction();
-    if (currentAction instanceof MoveAction) {
-        currentAction.setNewSeats(selectedSeats);
-    }
-}, [context.seats, context]);
+context.setSeats(prevSeats =>
+    prevSeats.map(seat => {
+        if (seat.selected) {
+            const initialPosition = initialPositionsRef.current[seat.id];
+            const newPosX = initialPosition.x + deltaX;
+            const newPosY = initialPosition.y + deltaY;
+            const newLatLngPos = map.layerPointToLatLng(new L.Point(newPosX, newPosY));
+            return { ...seat, position: newLatLngPos };
+        }
+        return seat;
+    })
+);
 \end{lstlisting}
 
 The position update process involves the following steps:
@@ -365,7 +352,7 @@ const handlePolygonClick = useCallback((id: number, event: L.LeafletMouseEvent) 
 Once selected, standing areas can be modified as follows:
 \begin{itemize}
     \item Clicking a standing area toggles its selected state.
-    \item In the detail editor panel, renaming, capacity adjustments, and category (including color coding) updates are possible.
+    \item In the detail editor panel, renaming, capacity adjustments, and category (including color coding as seen in Listing \ref{fig:map-component-category}) updates are possible.
 \end{itemize}
 
 \begin{figure}[H]
@@ -425,6 +412,7 @@ const renderedSeats = useMemo(() => {
 SeatGen implements an asynchronous saving mechanism that synchronizes data with the backend.
 
 The saving mechanism is implemented as follows:
+\newpage
 \begin{lstlisting}[language=TypeScript, caption=Save Mechanism, label=lst:batch-save-seats]
 const saveChanges = useCallback(() => {
     seatgenApiClient.api.saveSeats(bucketName, mapName, context.seats.map(seat => ({
@@ -455,8 +443,6 @@ In summary, the map is the core of SeatGen’s interactive seating system. It ef
     \item Group Selection and Bulk Editing
     \item Drag-and-Drop Seat Repositioning
     \item Event Handling for User Interaction
-    \item Synchronizing data with global state (map context)
-    \item Asynchronous Backend Synchronization
 \end{itemize}
 
 It ensures smooth operation even for large stadium layouts with thousands of seats.
