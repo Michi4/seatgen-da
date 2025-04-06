@@ -1,6 +1,6 @@
 The standing area tool enables users to define polygonal sectors directly on the map by selecting a series of points. These sectors, referred to as standing areas, are used to represent sections of a stadium that are not associated with fixed seating.
 
-\textbf{Key Responsibilities:}
+The tool’s key responsibilities include:
 \begin{itemize}
     \item Allows users to draw a polygon on the map by clicking multiple points.
     \item Once finalized, dispatches an \texttt{AddStandingAreaAction} to insert the area into global state.
@@ -8,7 +8,6 @@ The standing area tool enables users to define polygonal sectors directly on the
     \item Supports full undo and redo through the action system.
 \end{itemize}
 
-\subsubsection{Capturing the Area}
 Users activate the tool and click on the map to add polygon points:
 
 \begin{lstlisting}[language=TypeScript, caption=Adding Polygon Points, label=lst:standingarea-add-point]
@@ -17,9 +16,12 @@ const handleMapClick = (event: L.LeafletMouseEvent) => {
 };
 \end{lstlisting}
 
-Each click appends a new vertex to the polygon. The current polygon is stored in local state and displayed as an in-progress shape.
+Listing \ref{lst:standingarea-add-point} works as follows:
+\begin{itemize}
+    \item Each click appends a new vertex to the polygon.
+    \item The current polygon is stored in local state and rendered as an in-progress shape.
+\end{itemize}
 
-\subsubsection{Finalizing the Standing Area}
 Once the polygon is complete, the user confirms by clicking a button that triggers the following logic:
 
 \begin{lstlisting}[language=TypeScript, caption=Finalizing Standing Area, label=lst:standingarea-finalize]
@@ -39,7 +41,7 @@ const handleDone = () => {
 };
 \end{lstlisting}
 
-\textbf{Explanation:}
+This finalization logic shown in Listing \ref{lst:standingarea-finalize} works as follows:
 \begin{itemize}
     \item Ensures at least three points are present to form a valid polygon.
     \item Constructs a new \texttt{StandingArea} object with default values.
@@ -47,8 +49,7 @@ const handleDone = () => {
     \item Resets the drawing state for the next operation.
 \end{itemize}
 
-\subsubsection{Integration with the Action System}
-The tool leverages the action-based architecture of SeatGen to ensure consistency and undoability. The actions are closer described in section \ref{sec:design-patterns}.
+The tool leverages the action-based architecture of SeatGen to ensure consistency and undoability. The action class is shown below and further discussed in Section \ref{sec:design-patterns}.
 
 \begin{lstlisting}[language=TypeScript, caption=AddStandingAreaAction, label=lst:add-standingarea-action]
 export default class AddStandingAreaAction extends Action {
@@ -66,13 +67,10 @@ export default class AddStandingAreaAction extends Action {
 }
 \end{lstlisting}
 
-TODO: Satz
-
-\textbf{Highlights:}
+This action implementation shown in Listing \ref{lst:add-standingarea-action} works as follows:
 \begin{itemize}
     \item \texttt{execute()} appends the new area to the list.
     \item \texttt{undo()} removes the inserted area by filtering it out by id.
 \end{itemize}
 
-\subsubsection{Summary}
-The standing area tool provides an intuitive polygon-drawing interface for defining sectors that are not associated with individual seats. Through real-time polygon tracking and integration with the action system, it supports flexible and reversible sector creation tailored to the needs of modern stadium planning.
+Overall, the standing area tool provides an intuitive polygon-drawing interface for defining sectors that are not associated with individual seats. Through real-time polygon tracking and integration with the action system, it supports flexible and reversible sector creation tailored to the needs of modern stadium planning.

@@ -1,13 +1,12 @@
 The grid tool allows the user to generate a rectangular grid of seats based on a user-defined area on the map. It is ideal for efficiently placing large blocks of seats in structured stadium sections.
 
-\textbf{Key Responsibilities:}
+The tool’s key responsibilities include:
 \begin{itemize}
     \item Allows users to draw a bounding box to define the grid area.
     \item Opens a modal dialog to configure the number of rows, columns, and padding.
     \item Internally dispatches an \texttt{AddMultipleSeatAction} to add the generated seats.
 \end{itemize}
 
-\subsection{User Interaction}
 Once the grid tool is selected, users can draw a selection box on the map. This triggers the following method:
 
 \begin{lstlisting}[language=TypeScript, caption=Handling Box Selection, label=lst:grid-handle-box]
@@ -17,13 +16,12 @@ const handleAddSeatGridBox = useCallback((bounds: L.LatLngBounds) => {
 }, []);
 \end{lstlisting}
 
-\textbf{Explanation:}
+This interaction logic shown in Listing \ref{lst:grid-handle-box} works as follows:
 \begin{itemize}
     \item Stores the selected bounds.
     \item Opens the modal to allow the user to input grid parameters.
 \end{itemize}
 
-\subsection{Generating the Seat Grid}
 When the user confirms the configuration in the modal, the tool computes and inserts a seat grid into the map:
 
 \begin{lstlisting}[language=TypeScript, caption=Add Grid Logic, label=lst:grid-add-seat-logic]
@@ -50,14 +48,13 @@ const addSeatGrid = useCallback((startPoint: L.LatLng, rows: number, columns: nu
 }, [props]);
 \end{lstlisting}
 
-\textbf{How It Works:}
+This grid generation logic shown in Listing \ref{lst:grid-add-seat-logic} works as follows:
 \begin{itemize}
     \item The bounds are converted into a grid layout using latitude and longitude step sizes.
     \item Margin (padding) is applied to space the grid evenly.
     \item All seats are bundled into an \texttt{AddMultipleSeatAction} for batch insertion and undoing.
 \end{itemize}
 
-\subsection{Modal Interface}
 The modal lets the user configure rows, columns, and padding interactively:
 
 \begin{lstlisting}[language=TypeScript, caption=Modal Input Fields, label=lst:grid-modal-ui]
@@ -73,5 +70,4 @@ The modal lets the user configure rows, columns, and padding interactively:
     \label{fig:grid-tool-toolbar}
 \end{figure}
 
-\subsection{Conclusion}
-The grid tool is designed for speed and precision when placing large quantities of seats. Its modal-based configuration, combined with interactive box selection and undoable batch insertion, makes it a powerful tool for large-scale seat placement in structured layouts.
+In conclusion the grid tool is designed for speed and precision when placing large quantities of seats. Its modal-based configuration, combined with interactive box selection and undoable batch insertion, makes it a powerful tool for large-scale seat placement in structured layouts.
