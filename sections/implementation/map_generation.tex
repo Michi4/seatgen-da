@@ -10,11 +10,12 @@
 A significant milestone in the project was the development of the map generation functionality. This feature enables the user to generate an empty seat plan. The map serves as the basic visual representation of the venue. The map is interactive in the frontend, and the user can configure several key parameters:
 
 \begin{itemize} 
-    \item The venue plan 
-    \item The name of the map 
-    \item The size of each tile (default is 256x256px for most use cases) 
-    \item The number of zoom levels 
-    \item The image compression algorithm, which is a dropdown menu with the options: No Compression, Default Algorithm, and Zopfli \end{itemize}
+    \item The venue plan.
+    \item The name of the map.
+    \item The size of each tile (default is 256x256px for most use cases).
+    \item The number of zoom levels.
+    \item The image compression algorithm, which is a dropdown menu with the options: No Compression, Default Algorithm, and Zopfli.
+\end{itemize}
 
 These configuration options are accessible under the "New Map" button, as depicted in Figure \ref{fig:impl:mapgen}.
 
@@ -42,7 +43,11 @@ As the number of zoom levels grows, the number of tiles that need to be processe
 
 The first step in generating this map structure is to convert the SVG file into a PNG image. This process is handled by the backend using the Batik image transcoder. Apache Batik is a robust, pure-Java library developed by the Apache Software Foundation for rendering, generating, and manipulating Scalable Vector Graphics (SVG). Batik provides various tools for tasks such as:
 
-\begin{itemize} \item Rendering and dynamic modification of SVG files \item Transcoding SVG files into raster image formats (as done in this project) \item Transcoding Windows Metafiles to SVG \end{itemize}
+\begin{itemize}
+    \item Rendering and dynamic modification of SVG files.
+    \item Transcoding SVG files into raster image formats (as done in this project).
+    \item Transcoding Windows Metafiles to SVG.
+\end{itemize}
 
 The size of the image is determined by the current zoom level. The width and height are calculated based on the logic described earlier and implemented in the Kotlin code snippet in Listing \ref{lst:kotlin:dimensions}.
 
